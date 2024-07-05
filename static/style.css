@@ -1,0 +1,167 @@
+:root {
+  --prim-fg: #444444;
+  --prim-bg: #f2f2f2;
+  --prim-ac: #555555;
+  --sec-fg: #333333;
+  --sec-bg: #d3d3d3;
+  --sec-ac: #555555;
+  --url: #3366cc;
+  --urlvisited: #7755bb;
+
+  --block-mark: 4px;
+  --indent: 0.5em;
+}
+html {
+  font-size: 10px;
+  font-family:
+    -apple-system,
+    /* San Fransisco, Helvetica Neue, Lucida Grande on MacOS*/ "Segoe UI",
+    /* Windows */ Roboto,
+    /* Android */ Oxygen-Sans,
+    /* KDE */ Ubuntu,
+    /* Ubuntu */ Cantarell,
+    /* Gnome */ "Open Sans",
+    "Helvetica Neue",
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+body {
+  margin: 8% auto;
+  padding: 4%;
+  background: var(--prim-bg);
+  color: var(--prim-fg);
+  max-width: 80%;
+  box-shadow:
+    0 5px 10px rgba(0, 0, 0, 0.2),
+    0 15px 40px rgba(0, 0, 0, 0.05);
+}
+
+/* Small reset style to avoid p messing with parent elems */
+p {
+  margin: 0;
+}
+p + p {
+  margin-top: 10px;
+}
+
+header {
+  display: flex;
+  padding-block: 1em;
+  justify-content: center;
+}
+header > h2 {
+  position: relative;
+  left: 2%;
+  display: none;
+}
+header h3 {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+header img {
+  border: 0.18em solid var(--prim-ac);
+  border-radius: 50%;
+  width: 3.8em;
+  height: 3.8em;
+}
+nav {
+  display: flex;
+  font-weight: bold;
+  line-height: 2em;
+  margin-bottom: 1.6em;
+  justify-content: space-evenly;
+}
+
+nav > a {
+  display: flex;
+  justify-content: space-evenly;
+  color: inherit;
+  border-style: outset;
+  border-color: var(--sec-bg);
+  border-radius: 0.5em;
+  text-decoration: none;
+  font-size: 0.8em;
+  padding: 0.25em;
+  padding-left: 1em;
+  padding-right: 1em;
+  width: 12%;
+}
+article {
+  padding-inline: 0.5em;
+  line-height: 1.5em;
+}
+footer {
+  font-size: 0.75em;
+  line-height: 1em;
+  text-align: center;
+  margin-top: 1em;
+}
+a {
+  text-decoration: underline URL;
+  color: var(--url);
+}
+a:hover {
+  text-decoration: underline dotted;
+}
+a:visited {
+  text-decoration: underline var(--urlvisited);
+  color: var(--urlvisited);
+}
+
+details {
+  margin: var(--indent);
+  border-inline-start: var(--block-mark) solid var(--spoil-fg);
+  background: var(--spoil-bg);
+  color: var(--spoil-fg);
+}
+summary {
+  padding: var(--indent);
+  cursor: pointer;
+}
+summary > * {
+  display: inline-block; /*fix block elems*/
+}
+details > p {
+  padding: var(--indent);
+}
+details[open] {
+  padding-bottom: 0.25em;
+}
+details[open] > summary {
+  border-bottom: var(--block-mark) solid var(--spoil-fg);
+}
+@media (pointer: fine), (min-width: 900px) {
+  html {
+    font-size: 18px;
+  }
+  body {
+    max-width: 69%;
+  }
+  article {
+    line-height: 1.7em;
+  }
+  header > h2 {
+    display: block;
+  }
+  nav > a {
+    font-size: 1em;
+  }
+  table {
+    margin: var(--indent);
+  }
+}
+
+@media (min-width: 2000px) {
+  html {
+    font-size: 24px;
+  }
+}
+
+@media (pointer: none), (pointer: coarse) {
+  html {
+    font-size: 16px;
+  }
+}
