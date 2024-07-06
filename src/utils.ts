@@ -8,7 +8,6 @@ export interface Row {
   occurrences: number;
 }
 interface Result {
-  // TODO
   phrase: string;
   data: Row[];
 }

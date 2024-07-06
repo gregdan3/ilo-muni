@@ -4,7 +4,6 @@ import Chart from "chart.js/auto";
 import {
   inputToPhrases,
   first_chart_build,
-  fetch_usage,
   fetch_usages,
   rebuild_chart,
 } from "./utils";
