@@ -1,7 +1,7 @@
 import { WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
 
-const USAGE_QUERY = `select day, occurrences from frequency join phrase on frequency.phrase_id = phrase.id where phrase.text = ?`;
+const USAGE_QUERY = `select day, occurrences from frequency join phrase on frequency.phrase_id = phrase.id where phrase.text = ? and min_sent_len = ?`;
 
 export interface Row {
   day: number;
@@ -32,14 +32,22 @@ export async function query_db(
   return (await worker.db.query(query, params)) as Row[];
 }
 
-export async function fetch_usage(worker: WorkerHttpvfs, phrase: string) {
-  return await query_db(worker, USAGE_QUERY, [phrase]);
+export async function fetch_usage(
+  worker: WorkerHttpvfs,
+  phrase: string,
+  min_sent_len: number,
+) {
+  return await query_db(worker, USAGE_QUERY, [phrase, min_sent_len]);
 }
 
-export async function fetch_usages(worker: WorkerHttpvfs, phrases: string[]) {
+export async function fetch_usages(
+  worker: WorkerHttpvfs,
+  phrases: string[],
+  min_sent_len: number,
+) {
   let results = await Promise.all(
     phrases.map(async (phrase) => {
-      let rows = await fetch_usage(worker, phrase);
+      let rows = await fetch_usage(worker, phrase, min_sent_len);
       return {
         phrase: phrase,
         data: rows,
@@ -66,6 +74,8 @@ export async function first_chart_build(
     },
     options: {
       spanGaps: true,
+      elements: { point: { radius: 0 } },
+      line: { datasets: { normalized: true } },
     },
   });
   return chart;

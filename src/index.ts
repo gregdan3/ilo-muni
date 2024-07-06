@@ -2,7 +2,6 @@ import { createDbWorker, WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
 
 import {
-  query_db,
   inputToPhrases,
   first_chart_build,
   fetch_usage,
@@ -20,9 +19,10 @@ async function user_request(
   worker: WorkerHttpvfs,
   chart: Chart,
   input: string,
+  min_sent_len: number,
 ) {
   let phrases = inputToPhrases(input);
-  let results = await fetch_usages(worker, phrases);
+  let results = await fetch_usages(worker, phrases, min_sent_len);
 
   await rebuild_chart(chart, results);
 }
@@ -30,6 +30,10 @@ async function user_request(
 document.addEventListener("DOMContentLoaded", async () => {
   const goButton = document.getElementById("go")! as HTMLInputElement;
   const searchBox = document.getElementById("searchbox")! as HTMLInputElement;
+  const sentLenSlider = document.getElementById(
+    "sent_len_slider",
+  )! as HTMLInputElement;
+
   const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
   const ranksCanvas = document.getElementById("ranks")! as HTMLCanvasElement;
 
@@ -41,7 +45,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         config: {
           serverMode: "full",
           url: "/db/frequency.db",
-          requestChunkSize: 4096, // TODO: reduce?
+          requestChunkSize: 1024, // TODO: reduce?
         },
       },
     ],
@@ -50,11 +54,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
 
   let phrases = inputToPhrases(searchBox.value);
-  let results = await fetch_usages(worker, phrases); // it's set in index.html
+  let results = await fetch_usages(
+    worker,
+    phrases,
+    Number(sentLenSlider.value),
+  );
   let usageChart = await first_chart_build(usageCanvas, results);
 
   goButton.addEventListener("click", async () => {
     const queryText = searchBox.value;
-    await user_request(worker, usageChart, queryText);
+    const sentLen = Number(sentLenSlider.value);
+    await user_request(worker, usageChart, queryText, sentLen);
   });
 });
