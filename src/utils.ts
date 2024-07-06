@@ -14,7 +14,14 @@ interface Result {
 }
 
 export function inputToPhrases(input: string): string[] {
-  return Array.from(new Set(input.split(",").map((item) => item.trim())));
+  return Array.from(
+    new Set(
+      input
+        .split(",")
+        .map((item) => item.trim())
+        .filter((item) => item !== ""),
+    ),
+  );
 }
 
 export function timestampToYYYYMM(timestamp: number): string {
