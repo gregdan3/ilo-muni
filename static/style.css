@@ -2,9 +2,6 @@
   --prim-fg: #444444;
   --prim-bg: #f2f2f2;
   --prim-ac: #555555;
-  --sec-fg: #333333;
-  --sec-bg: #d3d3d3;
-  --sec-ac: #555555;
   --url: #3366cc;
   --urlvisited: #7755bb;
 
@@ -38,7 +35,6 @@ body {
     0 15px 40px rgba(0, 0, 0, 0.05);
 }
 
-/* Small reset style to avoid p messing with parent elems */
 p {
   margin: 0;
 }
@@ -80,7 +76,7 @@ nav > a {
   justify-content: space-evenly;
   color: inherit;
   border-style: outset;
-  border-color: var(--sec-bg);
+  border-color: var(--prim-ac);
   border-radius: 0.5em;
   text-decoration: none;
   font-size: 0.8em;
@@ -111,29 +107,22 @@ a:visited {
   color: var(--urlvisited);
 }
 
-details {
-  margin: var(--indent);
-  border-inline-start: var(--block-mark) solid var(--spoil-fg);
-  background: var(--spoil-bg);
-  color: var(--spoil-fg);
+@media (min-width: 300px) {
+  html {
+    font-size: 12px;
+  }
 }
-summary {
-  padding: var(--indent);
-  cursor: pointer;
+@media (min-width: 450px) {
+  html {
+    font-size: 14px;
+  }
 }
-summary > * {
-  display: inline-block; /*fix block elems*/
+@media (min-width: 600px) {
+  html {
+    font-size: 16px;
+  }
 }
-details > p {
-  padding: var(--indent);
-}
-details[open] {
-  padding-bottom: 0.25em;
-}
-details[open] > summary {
-  border-bottom: var(--block-mark) solid var(--spoil-fg);
-}
-@media (pointer: fine), (min-width: 900px) {
+@media (min-width: 900px) {
   html {
     font-size: 18px;
   }
@@ -146,20 +135,22 @@ details[open] > summary {
   header > h2 {
     display: block;
   }
-  nav > a {
-    font-size: 1em;
-  }
-  table {
-    margin: var(--indent);
+}
+@media (min-width: 1200px) {
+  html {
+    font-size: 20px;
   }
 }
-
-@media (min-width: 2000px) {
+@media (min-width: 1500px) {
+  html {
+    font-size: 22px;
+  }
+}
+@media (min-width: 1800px) {
   html {
     font-size: 24px;
   }
 }
-
 @media (pointer: none), (pointer: coarse) {
   html {
     font-size: 16px;
