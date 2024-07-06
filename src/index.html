@@ -27,13 +27,13 @@
     <!-- <nav></nav> -->
     <article>
       <div>
-        <form>
+        <form id="form">
           <label for="searchbox">terms: </label>
           <input
             type="text"
             id="searchbox"
             name="query"
-            placeholder="toki, pona, mama sina"
+            value="lipu, mute, pi, toki, pona"
           />
 
           <input type="button" id="go" value="go!" />
@@ -42,9 +42,13 @@
         </form>
       </div>
 
-      <div id="graph"></div>
+      <div>
+        <canvas id="usage"></canvas>
+      </div>
 
-      <div id="ranking"></div>
+      <div>
+        <canvas id="ranks"></canvas>
+      </div>
     </article>
 
     <footer>
