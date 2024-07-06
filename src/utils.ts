@@ -90,7 +90,6 @@ export async function first_chart_build(
     },
     options: {
       spanGaps: true,
-      elements: { point: { radius: 0 } },
       line: { datasets: { normalized: true } },
     },
   });
