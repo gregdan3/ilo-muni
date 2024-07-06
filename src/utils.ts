@@ -24,6 +24,10 @@ export function timestampToYYYYMM(timestamp: number): string {
   return `${year}-${month}`;
 }
 
+function countWords(phrase: string): number {
+  return phrase.split(" ").length;
+}
+
 export async function query_db(
   worker: WorkerHttpvfs,
   query: string,
@@ -47,7 +51,12 @@ export async function fetch_usages(
 ) {
   let results = await Promise.all(
     phrases.map(async (phrase) => {
-      let rows = await fetch_usage(worker, phrase, min_sent_len);
+      let adjusted_min_sent_len = Math.max(min_sent_len, countWords(phrase));
+      // NOTE: this fixes a UX issue
+      // if the user's min sent len is 1, but they search "toki pona", they should get it
+      // but phrases always have a min sent len >= their phrase len
+
+      let rows = await fetch_usage(worker, phrase, adjusted_min_sent_len);
       return {
         phrase: phrase,
         data: rows,
