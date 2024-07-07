@@ -132,10 +132,10 @@ export async function first_chart_build(
         },
       },
       elements: {
-        point: { radius: 0 },
+        point: { radius: 1, hoverRadius: 5 },
         line: { tension: 0.25 },
       },
-      spanGaps: false,
+      spanGaps: DAY_IN_MS * 32,
       parsing: {
         xAxisKey: "day",
         yAxisKey: "occurrences",
