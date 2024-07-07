@@ -6,6 +6,7 @@ import {
   first_chart_build,
   fetch_usages,
   rebuild_chart,
+  Row,
 } from "./utils";
 
 const workerUrl = new URL(
@@ -16,7 +17,7 @@ const wasmUrl = new URL("sql.js-httpvfs/dist/sql-wasm.wasm", import.meta.url);
 
 async function user_request(
   worker: WorkerHttpvfs,
-  chart: Chart,
+  chart: Chart<"line", Row[], unknown>,
   input: string,
   min_sent_len: number,
 ) {
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         from: "inline",
         config: {
           serverMode: "full",
-          url: "/db/frequency.db",
+          url: "/db/2024-07-06-trimmed.sqlite",
           requestChunkSize: 1024, // TODO: reduce?
         },
       },

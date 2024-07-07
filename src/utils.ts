@@ -1,15 +1,47 @@
 import { WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
+import "chartjs-adapter-date-fns";
 
-const USAGE_QUERY = `select day, occurrences from frequency join phrase on frequency.phrase_id = phrase.id where phrase.text = ? and min_sent_len = ?`;
+const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ?`;
+const RANGE_QUERY = `SELECT MIN(day) AS first_month, MAX(day) AS last_month FROM total`;
+const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
+
+// NOTE: This query solves the occurrences=0 problem, but query sizes jump from 1-8kb to 3-5mb.
+// const USAGE_QUERY = `
+// WITH all_days AS (
+//     SELECT DISTINCT day
+//     FROM frequency
+// )
+// SELECT
+//     ad.day,
+//     COALESCE(f.occurrences, 0) AS occurrences
+// FROM
+//     all_days ad
+// LEFT JOIN (
+//     SELECT day, occurrences
+//     FROM frequency
+//     JOIN phrase ON frequency.phrase_id = phrase.id
+//     WHERE phrase.text = ? AND min_sent_len = ?
+// ) f ON ad.day = f.day
+// ORDER BY ad.day;
+// `;
 
 export interface Row {
-  day: number;
+  day: Date;
   occurrences: number;
 }
 interface Result {
   phrase: string;
   data: Row[];
+}
+
+export async function consoleLogAsync(
+  message: string,
+  other?: any,
+): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, 0)).then(() =>
+    console.info(message, other),
+  );
 }
 
 export function inputToPhrases(input: string): string[] {
@@ -20,11 +52,10 @@ export function inputToPhrases(input: string): string[] {
         .map((item) => item.trim())
         .filter((item) => item !== ""),
     ),
-  );
+  ).slice(0, 20); // TODO: make this choice elsewhere?
 }
 
-export function timestampToYYYYMM(timestamp: number): string {
-  const date = new Date(timestamp);
+function dateToYYYYMM(date: Date): string {
   const year = date.getUTCFullYear();
   const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
   return `${year}-${month}`;
@@ -34,20 +65,30 @@ function countWords(phrase: string): number {
   return phrase.split(" ").length;
 }
 
-export async function query_db(
+async function query_db(
   worker: WorkerHttpvfs,
   query: string,
   params: any[],
-): Promise<Row[]> {
-  return (await worker.db.query(query, params)) as Row[];
+): Promise<any[]> {
+  return await worker.db.query(query, params);
 }
 
-export async function fetch_usage(
+async function fetch_range(worker: WorkerHttpvfs) {
+  return await query_db(worker, RANGE_QUERY, []);
+}
+
+async function fetch_usage(
   worker: WorkerHttpvfs,
   phrase: string,
   min_sent_len: number,
-) {
-  return await query_db(worker, USAGE_QUERY, [phrase, min_sent_len]);
+): Promise<Row[]> {
+  let result = await query_db(worker, USAGE_QUERY, [phrase, min_sent_len]);
+  result = result.map((row: { day: number; occurrences: number }) => ({
+    day: new Date(row.day * 1000 + DAY_IN_MS),
+    occurrences: row.occurrences,
+  }));
+
+  return result;
 }
 
 export async function fetch_usages(
@@ -79,26 +120,55 @@ export async function first_chart_build(
   let chart = new Chart(canvas, {
     type: "line",
     data: {
-      labels: data[0].data.map((value: Row) =>
-        timestampToYYYYMM(value.day * 1000),
-      ),
       datasets: data.map((result: Result) => ({
-        label: `${result.phrase}`,
-        data: result.data.map((row: Row) => row.occurrences),
+        label: result.phrase,
+        data: result.data,
       })),
     },
     options: {
-      spanGaps: true,
       line: { datasets: { normalized: true } },
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            unit: "month",
+            round: "month",
+          },
+        },
+      },
+      elements: {
+        point: { radius: 0 },
+        line: { tension: 0.25 },
+      },
+      spanGaps: false,
+      parsing: {
+        xAxisKey: "day",
+        yAxisKey: "occurrences",
+      },
+      // interaction: { mode: "x" , ""},
+      plugins: {
+        tooltip: {
+          mode: "index",
+          intersect: false,
+          position: "nearest",
+        },
+      },
     },
   });
   return chart;
 }
 
-export async function rebuild_chart(chart: Chart, data: Result[]) {
+export async function rebuild_chart(
+  chart: Chart<"line", Row[], unknown>,
+  data: Result[],
+) {
+  // @ts-ignore
   chart.data.datasets = data.map((result: Result) => ({
-    label: `${result.phrase}`,
-    data: result.data.map((row: Row) => row.occurrences),
+    label: result.phrase,
+    data: result.data,
+    // data: result.data.map((row: Row) => {
+    //   row.occurrences, row.day;
+    // }),
   }));
   chart.update();
 }

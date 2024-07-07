@@ -24,30 +24,34 @@
     <header>
       <h3>Toki Pona Ngrams</h3>
     </header>
-    <!-- <nav></nav> -->
+    <nav>
+      <a href="/"> Home </a>
+      <a href="/about.html"> About </a>
+    </nav>
     <article>
       <div>
         <form id="form">
-          <label for="searchbox">terms: </label>
-          <input
-            type="text"
-            id="searchbox"
-            name="query"
-            value="toki, pona, toki pona"
-          />
+          <div>
+            <label for="searchbox">terms: </label>
+            <input type="text" id="searchbox" value="toki, pona, toki pona" />
+          </div>
 
-          <input type="button" id="go" value="go!" />
+          <div>
+            <label for="sent_len_slider">min sent len</label>
+            <input
+              type="range"
+              id="sent_len_slider"
+              min="1"
+              max="6"
+              value="1"
+              oninput="this.nextElementSibling.value = this.value"
+            />
+            <output>1</output>
 
-          <input
-            type="range"
-            id="sent_len_slider"
-            name="min_sent_len"
-            min="1"
-            max="6"
-            value="1"
-            oninput="this.nextElementSibling.value = this.value"
-          />
-          <output>1</output>
+            <input type="checkbox" id="absolute" />
+            <label for="absolute">absolute?</label>
+            <input type="button" id="go" value="go!" />
+          </div>
         </form>
       </div>
 
