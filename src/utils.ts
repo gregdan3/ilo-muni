@@ -6,26 +6,6 @@ const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequ
 const RANGE_QUERY = `SELECT MIN(day) AS first_month, MAX(day) AS last_month FROM total`;
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
-// NOTE: This query solves the occurrences=0 problem, but query sizes jump from 1-8kb to 3-5mb.
-// const USAGE_QUERY = `
-// WITH all_days AS (
-//     SELECT DISTINCT day
-//     FROM frequency
-// )
-// SELECT
-//     ad.day,
-//     COALESCE(f.occurrences, 0) AS occurrences
-// FROM
-//     all_days ad
-// LEFT JOIN (
-//     SELECT day, occurrences
-//     FROM frequency
-//     JOIN phrase ON frequency.phrase_id = phrase.id
-//     WHERE phrase.text = ? AND min_sent_len = ?
-// ) f ON ad.day = f.day
-// ORDER BY ad.day;
-// `;
-
 export interface Row {
   day: Date;
   occurrences: number;
@@ -135,6 +115,12 @@ export async function first_chart_build(
             round: "month",
             tooltipFormat: "MMM yyyy",
           },
+          // beforeFit: function (axis) {
+          //   // @ts-ignore
+          //   let lbs: string[] = axis.chart.config.data.labels!;
+          //   let len = lbs.length - 1;
+          //   axis.ticks.push({ value: len, label: lbs[len] });
+          // },
         },
       },
       elements: {
