@@ -28,7 +28,6 @@ async function user_request(
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const goButton = document.getElementById("go")! as HTMLInputElement;
   const searchBox = document.getElementById("searchbox")! as HTMLInputElement;
   const sentLenSlider = document.getElementById(
     "sent_len_slider",
@@ -61,9 +60,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   let usageChart = await first_chart_build(usageCanvas, results);
 
-  goButton.addEventListener("click", async () => {
+  const form = document.getElementById("usageform")! as HTMLFormElement;
+  form.addEventListener("change", async () => {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenSlider.value);
+    // @ts-ignore
     await user_request(worker, usageChart, queryText, sentLen);
   });
 });
