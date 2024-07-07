@@ -22,8 +22,18 @@ async function user_request(
   min_sent_len: number,
 ) {
   let phrases = inputToPhrases(input);
-  let results = await fetch_usages(worker, phrases, min_sent_len);
+  if (phrases.length === 0) {
+    return;
+  }
 
+  let results = await fetch_usages(worker, phrases, min_sent_len);
+  if (results.length === 0) {
+    // TODO: tell user nothing came back
+    return;
+  }
+  if (results.length < phrases.length) {
+    // TODO: tell user some (which) words were not found
+  }
   await rebuild_chart(chart, results);
 }
 

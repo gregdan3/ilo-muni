@@ -10,7 +10,7 @@ export interface Row {
   day: Date;
   occurrences: number;
 }
-interface Result {
+export interface Result {
   phrase: string;
   data: Row[];
 }
@@ -75,7 +75,7 @@ export async function fetch_usages(
   worker: WorkerHttpvfs,
   phrases: string[],
   min_sent_len: number,
-) {
+): Promise<Result[]> {
   let results = await Promise.all(
     phrases.map(async (phrase) => {
       let adjusted_min_sent_len = Math.max(min_sent_len, countWords(phrase));
@@ -84,13 +84,21 @@ export async function fetch_usages(
       // but phrases always have a min sent len >= their phrase len
 
       let rows = await fetch_usage(worker, phrase, adjusted_min_sent_len);
+      if (rows.length === 0) {
+        return null;
+      }
+
       return {
         phrase: phrase,
         data: rows,
       };
     }),
   );
-  return results;
+
+  results = results.filter((result) => result !== null);
+
+  // ts isn't smart enough to know i've removed all the nulls?
+  return results as Result[];
 }
 
 export async function first_chart_build(
