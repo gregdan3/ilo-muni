@@ -1,6 +1,7 @@
 import { WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
+import { htmlLegendPlugin } from "./plugins";
 
 const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ?`;
 const RANGE_QUERY = `SELECT MIN(day) AS first_month, MAX(day) AS last_month FROM total`;
@@ -113,6 +114,7 @@ export async function first_chart_build(
         data: result.data,
       })),
     },
+    plugins: [htmlLegendPlugin],
     options: {
       line: { datasets: { normalized: true } },
       scales: {
@@ -140,7 +142,19 @@ export async function first_chart_build(
         xAxisKey: "day",
         yAxisKey: "occurrences",
       },
+      hover: {
+        mode: "nearest",
+        axis: "x",
+        intersect: false,
+      },
       plugins: {
+        legend: {
+          display: false,
+        },
+        // @ts-ignore: it can't know about user-created plugins
+        htmlLegend: {
+          containerID: "usage-legend",
+        },
         tooltip: {
           mode: "nearest",
           axis: "x",
@@ -161,9 +175,6 @@ export async function rebuild_chart(
   chart.data.datasets = data.map((result: Result) => ({
     label: result.phrase,
     data: result.data,
-    // data: result.data.map((row: Row) => {
-    //   row.occurrences, row.day;
-    // }),
   }));
   chart.update();
 }
