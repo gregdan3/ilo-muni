@@ -146,10 +146,10 @@ export async function first_chart_build(
         xAxisKey: "day",
         yAxisKey: "occurrences",
       },
-      // interaction: { mode: "x" , ""},
       plugins: {
         tooltip: {
-          mode: "index",
+          mode: "nearest",
+          axis: "x",
           intersect: false,
           position: "nearest",
         },
