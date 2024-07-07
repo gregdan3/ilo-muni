@@ -133,6 +133,7 @@ export async function first_chart_build(
           time: {
             unit: "month",
             round: "month",
+            tooltipFormat: "MMM yyyy",
           },
         },
       },
