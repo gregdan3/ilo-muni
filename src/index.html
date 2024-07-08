@@ -30,17 +30,17 @@
     </nav>
     <article>
       <div>
-        <form id="usageform" onsubmit="return false;" autocomplete="off">
+        <form id="usageForm" onsubmit="return false;" autocomplete="off">
           <div>
-            <label for="searchbox">terms: </label>
-            <input type="text" id="searchbox" value="toki, pona, toki pona" />
+            <label for="searchBox">terms: </label>
+            <input type="text" id="searchBox" value="toki, pona, toki pona" />
           </div>
 
           <div>
-            <label for="sent_len_slider">min sent len</label>
+            <label for="sentLenRange">min sent len</label>
             <input
               type="range"
-              id="sent_len_slider"
+              id="sentLenRange"
               min="1"
               max="6"
               value="1"
@@ -48,19 +48,19 @@
             />
             <output>1</output>
 
-            <input type="checkbox" id="absolute" />
-            <label for="absolute">absolute?</label>
+            <input type="checkbox" id="relCheckbox" />
+            <label for="relCheckbox">relative?</label>
           </div>
         </form>
       </div>
 
       <div>
-        <div id="usage-legend"></div>
+        <div id="usageLegend"></div>
         <canvas id="usage"></canvas>
       </div>
 
       <div>
-        <div id="ranks-legend"></div>
+        <div id="ranksLegend"></div>
         <canvas id="ranks"></canvas>
       </div>
     </article>
