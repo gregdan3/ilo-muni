@@ -120,14 +120,49 @@ async function fetch_one_occurrences(
   worker: WorkerHttpvfs,
   phrase: string,
   min_sent_len: number,
-): Promise<Row[]> {
-  let result = await query_db(worker, USAGE_QUERY, [phrase, min_sent_len]);
-  result = result.map(
+): Promise<Row[] | null> {
+  let comparison = await fetch_total_occurrences(worker, 1, min_sent_len);
+  // it's possible to have periods with no occurrences for an increased sent len
+  // but that isn't really a big deal; they'd fill with 0 anyway
+
+  let resp = await query_db(worker, USAGE_QUERY, [phrase, min_sent_len]);
+  if (resp.length === 0) {
+    return null; // for filtering in next func
+  }
+
+  resp = resp.map(
     (row: { day: number; occurrences: number }): Row => ({
       day: graphableDate(row.day),
       occurrences: row.occurrences,
     }),
   );
+
+  let result: Row[] = [];
+  let iResult = 0;
+  let iCompare = 0;
+
+  while (iCompare < comparison.length) {
+    const comparisonDay = comparison[iCompare].day;
+
+    if (iResult < resp.length) {
+      const resultDay = resp[iResult].day;
+
+      // you can't directly compare dates...
+      if (resultDay < comparisonDay) {
+        iResult++;
+      } else if (resultDay > comparisonDay) {
+        result.push({ day: comparisonDay, occurrences: 0 });
+        iCompare++;
+      } else {
+        result.push(resp[iResult]);
+        iResult++;
+        iCompare++;
+      }
+    } else {
+      result.push({ day: comparisonDay, occurrences: 0 });
+      iCompare++;
+    }
+  }
 
   return result;
 }
@@ -149,7 +184,7 @@ export async function fetch_many_occurrences(
         phrase,
         adjusted_min_sent_len,
       );
-      if (rows.length === 0) {
+      if (rows === null) {
         return null;
       }
 
@@ -216,7 +251,6 @@ export async function first_chart_build(
         point: { radius: 1, hoverRadius: 5 },
         line: { tension: 0.25 },
       },
-      spanGaps: DAY_IN_MS * 32, // placeholder until i fill with 0
       parsing: {
         xAxisKey: "day",
         yAxisKey: "occurrences",
