@@ -1,4 +1,12 @@
 import Chart from "chart.js/auto";
+import {
+  Element,
+  Point,
+  Tooltip,
+  TooltipPosition,
+  TooltipPositionerFunction,
+  ChartType,
+} from "chart.js";
 
 const getOrCreateLegendList = (chart: Chart, id: string) => {
   const legendContainer = document.getElementById(id)!;
@@ -82,3 +90,24 @@ export const htmlLegendPlugin = {
     });
   },
 };
+
+// @ts-expect-error: i am making a custom positioner
+Tooltip.positioners.cursor = function (
+  elements: Element[],
+  eventPosition: Point,
+): TooltipPosition {
+  // A reference to the tooltip model
+  const tooltip = this;
+
+  return {
+    x: eventPosition.x,
+    y: eventPosition.y,
+    // You may also include xAlign and yAlign to override those tooltip options.
+  };
+};
+
+declare module "chart.js" {
+  interface TooltipPositionerMap {
+    cursor: TooltipPositionerFunction<ChartType>;
+  }
+}

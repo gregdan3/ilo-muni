@@ -1,5 +1,6 @@
 import { WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
+import { TooltipItem, ChartTypeRegistry } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 import { htmlLegendPlugin } from "./plugins";
 
@@ -255,7 +256,15 @@ export async function first_chart_build(
           mode: "nearest",
           axis: "x",
           intersect: false,
-          position: "nearest",
+          position: "cursor",
+          animation: { duration: 100 },
+          itemSort: function (
+            a: TooltipItem<keyof ChartTypeRegistry>,
+            b: TooltipItem<keyof ChartTypeRegistry>,
+          ): number {
+            // @ts-expect-error: it doesn't know about `raw`
+            return b.raw.occurrences - a.raw.occurrences;
+          },
           callbacks: {
             label: (ctx) => {
               // @ts-ignore
