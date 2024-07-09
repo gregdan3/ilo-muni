@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         from: "inline",
         config: {
           serverMode: "full",
-          url: "/db/2024-07-07-trimmed.sqlite",
+          url: "/db/2024-07-08-trimmed.sqlite",
           requestChunkSize: 1024, // TODO: reduce?
         },
       },
