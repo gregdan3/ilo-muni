@@ -71,25 +71,8 @@ function roundForGraph(num: number): number {
 }
 
 async function _make_relative(phrase_occs: Row[], total_occs: Row[]) {
-  // holy hell i hate this function
-  let iPhrase = 0;
-  for (let iTotal = 0; iTotal < total_occs.length; iTotal++) {
-    if (iPhrase >= total_occs.length) {
-      break;
-    }
-
-    if (phrase_occs[iPhrase].day > total_occs[iTotal].day) {
-      continue; // phrase is ahead of total
-    }
-    if (phrase_occs[iPhrase].day < total_occs[iTotal].day) {
-      iPhrase++;
-    }
-
-    if (
-      phrase_occs[iPhrase].day.getTime() === total_occs[iTotal].day.getTime()
-    ) {
-      phrase_occs[iPhrase].occurrences /= total_occs[iTotal].occurrences;
-    }
+  for (let i = 0; i < phrase_occs.length; i++) {
+    phrase_occs[i].occurrences /= total_occs[i].occurrences;
   }
   return phrase_occs;
 }
