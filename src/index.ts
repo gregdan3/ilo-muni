@@ -6,7 +6,6 @@ import {
   first_chart_build,
   fetch_many_occurrences,
   rebuild_chart,
-  make_relative,
   Row,
   consoleLogAsync,
 } from "./utils";
