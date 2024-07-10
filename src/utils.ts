@@ -91,35 +91,12 @@ function mergeOccurrences(rows: Row[][]): Row[] {
   return result;
 }
 
-async function _make_relative(phrase_occs: Row[], total_occs: Row[]) {
+async function makeRelative(phrase_occs: Row[], total_occs: Row[]) {
   for (let i = 0; i < phrase_occs.length; i++) {
     phrase_occs[i].occurrences /= total_occs[i].occurrences;
   }
   return phrase_occs;
 }
-export async function make_relative(
-  worker: WorkerHttpvfs,
-  results: Result[],
-  min_sent_len: number,
-): Promise<Result[]> {
-  results = await Promise.all(
-    results.map(async (res: Result): Promise<Result> => {
-      const phrase_len = countWords(res.phrase);
-      const adjusted_min_sent_len = Math.max(phrase_len, min_sent_len);
-
-      const totals = await fetch_total_occurrences(
-        worker,
-        phrase_len,
-        adjusted_min_sent_len,
-      );
-      res.data = await _make_relative(res.data, totals);
-      return res;
-    }),
-  );
-
-  return results;
-}
-
 async function fetch_one_occurrences(
   worker: WorkerHttpvfs,
   phrase: string,
@@ -168,7 +145,7 @@ async function fetch_one_occurrences(
     }
   }
   if (relative) {
-    result = await _make_relative(result, totals);
+    result = await makeRelative(result, totals);
   }
 
   return result;
