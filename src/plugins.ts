@@ -8,6 +8,7 @@ import {
   ChartType,
 } from "chart.js";
 import crosshairPlugin from "chartjs-plugin-crosshair";
+import zoomPlugin from "chartjs-plugin-zoom";
 
 // i slapped a bunch of ignores in here because it's chart.js's code
 const getOrCreateLegendList = (chart: Chart, id: string) => {
@@ -115,3 +116,4 @@ declare module "chart.js" {
 
 Chart.register(htmlLegendPlugin);
 Chart.register(crosshairPlugin);
+Chart.register(zoomPlugin);
