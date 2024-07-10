@@ -9,6 +9,7 @@ import {
 } from "chart.js";
 import crosshairPlugin from "chartjs-plugin-crosshair";
 
+// i slapped a bunch of ignores in here because it's chart.js's code
 const getOrCreateLegendList = (chart: Chart, id: string) => {
   const legendContainer = document.getElementById(id)!;
   let listContainer = legendContainer.querySelector("ul");
@@ -27,7 +28,6 @@ const getOrCreateLegendList = (chart: Chart, id: string) => {
   return listContainer;
 };
 
-// i slapped a bunch of ignores in here because it's chart.js's code
 export const htmlLegendPlugin = {
   id: "htmlLegend",
   afterUpdate(chart: Chart, args: any, options: any) {
@@ -104,7 +104,6 @@ Tooltip.positioners.cursor = function (
   return {
     x: eventPosition.x,
     y: eventPosition.y,
-    // You may also include xAlign and yAlign to override those tooltip options.
   };
 };
 

@@ -5,7 +5,6 @@ import "chartjs-adapter-date-fns";
 import { htmlLegendPlugin } from "./plugins";
 
 const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? ORDER BY day`;
-const RANGE_QUERY = `SELECT MIN(day) AS first_month, MAX(day) AS last_month FROM total`;
 const OCCUR_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? ORDER BY day`;
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
