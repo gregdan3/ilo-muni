@@ -24,22 +24,23 @@ async function user_request(
   min_sent_len: number,
   relative: boolean,
 ) {
-  let phrases = inputToPhrases(input);
+  const phrases = inputToPhrases(input);
   if (phrases.length === 0) {
     return;
   }
 
-  let results = await fetch_many_occurrences(worker, phrases, min_sent_len);
+  const results = await fetch_many_occurrences(
+    worker,
+    phrases,
+    min_sent_len,
+    relative,
+  );
   if (results.length === 0) {
     // TODO: tell user nothing came back
     return;
   }
   if (results.length < phrases.length) {
     // TODO: tell user some (which) words were not found
-  }
-
-  if (relative) {
-    results = await make_relative(worker, results, min_sent_len);
   }
 
   await rebuild_chart(chart, results);
@@ -73,13 +74,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     wasmUrl.toString(),
   );
 
-  let phrases = inputToPhrases(searchBox.value);
-  let results = await fetch_many_occurrences(
+  const phrases = inputToPhrases(searchBox.value);
+  const results = await fetch_many_occurrences(
     worker,
     phrases,
     Number(sentLenSlider.value),
+    relCheckbox.checked,
   );
-  let usageChart = await first_chart_build(usageCanvas, results);
+  const usageChart = await first_chart_build(usageCanvas, results);
 
   const form = document.getElementById("usageForm")! as HTMLFormElement;
   form.addEventListener("change", async () => {

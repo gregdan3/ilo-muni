@@ -27,15 +27,20 @@ export async function consoleLogAsync(
   );
 }
 
-export function inputToPhrases(input: string): string[] {
-  return Array.from(
-    new Set(
-      input
-        .split(",")
-        .map((item) => item.trim())
-        .filter((item) => item !== ""),
-    ),
-  ).slice(0, 20); // TODO: make this choice elsewhere?
+function cleanAndSplit(input: string, delimiter: string): string[] {
+  return input
+    .split(delimiter)
+    .map((item) => item.trim())
+    .filter((item) => item !== "");
+}
+
+export function inputToPhrases(input: string): string[][] {
+  const phrases = cleanAndSplit(input, ",");
+  const uniquePhrases = Array.from(new Set(phrases));
+  const phraseGroups = uniquePhrases.map((phrase) =>
+    cleanAndSplit(phrase, "+"),
+  );
+  return phraseGroups.slice(0, 20);
 }
 
 function graphableDate(timestamp: number): Date {
@@ -55,10 +60,6 @@ async function query_db(
   return await worker.db.query(query, params);
 }
 
-async function fetch_range(worker: WorkerHttpvfs) {
-  return await query_db(worker, RANGE_QUERY, []);
-}
-
 function roundForGraph(num: number): number {
   if (num >= 1) {
     return num;
@@ -69,6 +70,25 @@ function roundForGraph(num: number): number {
   const exponent = Math.floor(Math.log10(Math.abs(num))) + 1;
   const multiplier = Math.pow(10, 5 - exponent);
   return Math.floor(num * multiplier) / multiplier;
+}
+
+function mergeOccurrences(rows: Row[][]): Row[] {
+  if (rows.length === 0 || rows[0].length === 0) {
+    return [];
+  }
+
+  const result: Row[] = [];
+
+  for (let i = 0; i < rows[0].length; i++) {
+    const day = rows[0][i].day;
+    let totalOccurrences = 0;
+
+    for (let j = 0; j < rows.length; j++) {
+      totalOccurrences += rows[j][i].occurrences;
+    }
+    result.push({ day, occurrences: totalOccurrences });
+  }
+  return result;
 }
 
 async function _make_relative(phrase_occs: Row[], total_occs: Row[]) {
@@ -84,10 +104,10 @@ export async function make_relative(
 ): Promise<Result[]> {
   results = await Promise.all(
     results.map(async (res: Result): Promise<Result> => {
-      let phrase_len = countWords(res.phrase);
-      let adjusted_min_sent_len = Math.max(phrase_len, min_sent_len);
+      const phrase_len = countWords(res.phrase);
+      const adjusted_min_sent_len = Math.max(phrase_len, min_sent_len);
 
-      let totals = await fetch_total_occurrences(
+      const totals = await fetch_total_occurrences(
         worker,
         phrase_len,
         adjusted_min_sent_len,
@@ -104,8 +124,9 @@ async function fetch_one_occurrences(
   worker: WorkerHttpvfs,
   phrase: string,
   min_sent_len: number,
+  relative: boolean,
 ): Promise<Row[] | null> {
-  let comparison = await fetch_total_occurrences(worker, 1, min_sent_len);
+  const totals = await fetch_total_occurrences(worker, 1, min_sent_len);
   // it's possible to have periods with no occurrences for an increased sent len
   // but that isn't really a big deal; they'd fill with 0 anyway
 
@@ -120,13 +141,12 @@ async function fetch_one_occurrences(
       occurrences: row.occurrences,
     }),
   );
-
   let result: Row[] = [];
   let iResult = 0;
   let iCompare = 0;
 
-  while (iCompare < comparison.length) {
-    const comparisonDay = comparison[iCompare].day;
+  while (iCompare < totals.length) {
+    const comparisonDay = totals[iCompare].day;
 
     if (iResult < resp.length) {
       const resultDay = resp[iResult].day;
@@ -147,34 +167,43 @@ async function fetch_one_occurrences(
       iCompare++;
     }
   }
+  if (relative) {
+    result = await _make_relative(result, totals);
+  }
 
   return result;
 }
 
 export async function fetch_many_occurrences(
   worker: WorkerHttpvfs,
-  phrases: string[],
+  phrases: string[][],
   min_sent_len: number,
+  relative: boolean,
 ): Promise<Result[]> {
   let results = await Promise.all(
-    phrases.map(async (phrase) => {
-      let adjusted_min_sent_len = Math.max(min_sent_len, countWords(phrase));
-      // NOTE: this fixes a UX issue
-      // if the user's min sent len is 1, but they search "toki pona", they should get it
-      // but phrases always have a min sent len >= their phrase len
-
-      let rows = await fetch_one_occurrences(
-        worker,
-        phrase,
-        adjusted_min_sent_len,
-      );
-      if (rows === null) {
-        return null;
+    phrases.map(async (phrase: string[]) => {
+      const phrase_occurrences = [];
+      for (const segment of phrase) {
+        const adjusted_min_sent_len = Math.max(
+          min_sent_len,
+          countWords(segment),
+        );
+        const rows = await fetch_one_occurrences(
+          worker,
+          segment,
+          adjusted_min_sent_len,
+          relative,
+        );
+        if (rows === null) {
+          return null;
+        }
+        phrase_occurrences.push(rows);
       }
+      const merged_rows = mergeOccurrences(phrase_occurrences);
 
       return {
-        phrase: phrase,
-        data: rows,
+        phrase: phrase.join(" + "),
+        data: merged_rows,
       };
     }),
   );
@@ -204,7 +233,7 @@ export async function first_chart_build(
   canvas: HTMLCanvasElement,
   data: Result[],
 ) {
-  let chart = new Chart(canvas, {
+  const chart = new Chart(canvas, {
     type: "line",
     data: {
       datasets: data.map((result: Result) => ({
@@ -214,7 +243,10 @@ export async function first_chart_build(
     },
     plugins: [htmlLegendPlugin],
     options: {
-      line: { datasets: { normalized: true } },
+      animation: { duration: 100, easing: "easeInOutQuint" },
+      line: {
+        datasets: { normalized: true },
+      },
       scales: {
         x: {
           type: "time",
@@ -224,7 +256,7 @@ export async function first_chart_build(
             tooltipFormat: "MMM yyyy",
           },
           // beforeFit: function (axis) {
-          //   // @ts-ignore
+          //   // @ts-expect-error
           //   let lbs: string[] = axis.chart.config.data.labels!;
           //   let len = lbs.length - 1;
           //   axis.ticks.push({ value: len, label: lbs[len] });
@@ -232,8 +264,8 @@ export async function first_chart_build(
         },
       },
       elements: {
-        point: { radius: 1, hoverRadius: 5 },
-        line: { tension: 0.25 },
+        point: { radius: 0, hoverRadius: 5 },
+        line: { tension: 0.4 },
       },
       parsing: {
         xAxisKey: "day",
@@ -248,7 +280,7 @@ export async function first_chart_build(
         legend: {
           display: false,
         },
-        // @ts-ignore: it can't know about user-created plugins
+        // @ts-expect-error: registration can't fix inline config
         htmlLegend: {
           containerID: "usageLegend",
         },
@@ -257,7 +289,7 @@ export async function first_chart_build(
           axis: "x",
           intersect: false,
           position: "cursor",
-          animation: { duration: 100 },
+          animation: false,
           itemSort: function (
             a: TooltipItem<keyof ChartTypeRegistry>,
             b: TooltipItem<keyof ChartTypeRegistry>,
@@ -266,9 +298,9 @@ export async function first_chart_build(
             return b.raw.occurrences - a.raw.occurrences;
           },
           callbacks: {
-            label: (ctx) => {
-              // @ts-ignore
-              let occurrences = roundForGraph(ctx.raw.occurrences);
+            label: (ctx: TooltipItem<keyof ChartTypeRegistry>) => {
+              // @ts-expect-error: it doesn't know about `raw`
+              const occurrences = roundForGraph(ctx.raw.occurrences);
               return `${ctx.dataset.label}: ${occurrences}`;
             },
           },
@@ -283,7 +315,6 @@ export async function rebuild_chart(
   chart: Chart<"line", Row[], unknown>,
   data: Result[],
 ) {
-  // @ts-ignore
   chart.data.datasets = data.map((result: Result) => ({
     label: result.phrase,
     data: result.data,
