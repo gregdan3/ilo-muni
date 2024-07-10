@@ -7,6 +7,7 @@ import {
   TooltipPositionerFunction,
   ChartType,
 } from "chart.js";
+import crosshairPlugin from "chartjs-plugin-crosshair";
 
 const getOrCreateLegendList = (chart: Chart, id: string) => {
   const legendContainer = document.getElementById(id)!;
@@ -112,3 +113,6 @@ declare module "chart.js" {
     cursor: TooltipPositionerFunction<ChartType>;
   }
 }
+
+Chart.register(htmlLegendPlugin);
+Chart.register(crosshairPlugin);

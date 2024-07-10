@@ -261,6 +261,15 @@ export async function first_chart_build(
         htmlLegend: {
           containerID: "usageLegend",
         },
+        crosshair: {
+          line: {
+            color: "#A3A3A3",
+            width: 2,
+            dashPattern: [2, 2],
+          },
+          snap: { enabled: true },
+          zoom: { enabled: false },
+        },
         tooltip: {
           mode: "nearest",
           axis: "x",
