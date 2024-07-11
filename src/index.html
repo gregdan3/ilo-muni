@@ -32,24 +32,24 @@
       <div>
         <form id="usageForm" onsubmit="return false;" autocomplete="off">
           <div>
-            <label for="searchBox">terms: </label>
+            <label for="searchBox"></label>
             <input type="text" id="searchBox" />
           </div>
 
           <div>
-            <label for="sentLenRange">min sent len</label>
-            <input
-              type="range"
-              id="sentLenRange"
-              min="1"
-              max="6"
-              value="1"
-              oninput="this.nextElementSibling.value = this.value"
-            />
-            <output>1</output>
+            <select id="sentLenDropdown" value="1">
+              <option value="1">All sentences</option>
+              <option value="2">2+ words per sentence</option>
+              <option value="3">3+ words per sentence</option>
+              <option value="4">4+ words per sentence</option>
+              <option value="5">5+ words per sentence</option>
+              <option value="6">6+ words per sentence</option>
+            </select>
 
-            <input type="checkbox" id="relCheckbox" />
-            <label for="relCheckbox">relative?</label>
+            <select id="relAbsDropdown" value="absolute">
+              <option value="absolute">Absolute</option>
+              <option value="relative">Relative</option>
+            </select>
           </div>
         </form>
       </div>
@@ -59,7 +59,7 @@
           type="button"
           id="resetZoom"
           value="Reset Zoom"
-          style="position: absolute; top: -2em; right: 0"
+          style="position: absolute; top: -2em; right: 2em"
         />
         <canvas id="usage"></canvas>
         <div id="usageLegend"></div>

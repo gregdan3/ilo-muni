@@ -41,6 +41,8 @@ const SAMPLE_SEARCHES = [
   "sonja, jan sonja",
 ];
 
+const REL_ABS_OPTS = ["absolute", "relative"];
+
 async function user_request(
   worker: WorkerHttpvfs,
   chart: Chart<"line", Row[], unknown>,
@@ -75,14 +77,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   searchBox.value =
     SAMPLE_SEARCHES[Math.floor(Math.random() * SAMPLE_SEARCHES.length)];
 
-  const sentLenSlider = document.getElementById(
-    "sentLenRange",
+  const sentLenDropdown = document.getElementById(
+    "sentLenDropdown",
   )! as HTMLInputElement;
 
-  const relCheckbox = document.getElementById(
-    "relCheckbox",
+  const relAbsDropdown = document.getElementById(
+    "relAbsDropdown",
   )! as HTMLInputElement;
-  relCheckbox.checked = Math.random() < 0.5;
+  consoleLogAsync("start", [relAbsDropdown.value]);
+
+  relAbsDropdown.value =
+    REL_ABS_OPTS[Math.floor(Math.random() * REL_ABS_OPTS.length)];
+  consoleLogAsync("assigned", [relAbsDropdown.value]);
 
   const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
   const ranksCanvas = document.getElementById("ranks")! as HTMLCanvasElement;
@@ -107,8 +113,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const results = await fetch_many_occurrences(
     worker,
     phrases,
-    Number(sentLenSlider.value),
-    relCheckbox.checked,
+    Number(sentLenDropdown.value),
+    relAbsDropdown.value === "relative",
   );
   const usageChart = await first_chart_build(usageCanvas, results);
 
@@ -122,8 +128,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("usageForm")! as HTMLFormElement;
   form.addEventListener("change", async () => {
     const queryText = searchBox.value;
-    const sentLen = Number(sentLenSlider.value);
-    const relative = relCheckbox.checked;
+    const sentLen = Number(sentLenDropdown.value);
+    const relative = relAbsDropdown.value === "relative";
     // @ts-ignore
     await user_request(worker, usageChart, queryText, sentLen, relative);
   });
