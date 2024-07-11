@@ -84,11 +84,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   const relAbsDropdown = document.getElementById(
     "relAbsDropdown",
   )! as HTMLInputElement;
-  consoleLogAsync("start", [relAbsDropdown.value]);
 
   relAbsDropdown.value =
     REL_ABS_OPTS[Math.floor(Math.random() * REL_ABS_OPTS.length)];
-  consoleLogAsync("assigned", [relAbsDropdown.value]);
 
   const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
   const ranksCanvas = document.getElementById("ranks")! as HTMLCanvasElement;
