@@ -301,6 +301,7 @@ export async function first_chart_build(
           intersect: false,
           position: "cursor",
           animation: false,
+          yAlign: "center",
           itemSort: function (
             a: TooltipItem<keyof ChartTypeRegistry>,
             b: TooltipItem<keyof ChartTypeRegistry>,
