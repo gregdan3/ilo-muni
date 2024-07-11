@@ -282,7 +282,7 @@ export async function first_chart_build(
               enabled: false,
             },
             pinch: {
-              enabled: false,
+              enabled: true,
             },
             drag: {
               enabled: true,

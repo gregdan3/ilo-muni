@@ -112,6 +112,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   );
   const usageChart = await first_chart_build(usageCanvas, results);
 
+  const resetZoomButton = document.getElementById(
+    "resetZoom",
+  )! as HTMLInputElement;
+  resetZoomButton.addEventListener("click", () => {
+    usageChart.resetZoom();
+  });
+
   const form = document.getElementById("usageForm")! as HTMLFormElement;
   form.addEventListener("change", async () => {
     const queryText = searchBox.value;
