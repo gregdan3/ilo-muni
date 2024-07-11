@@ -8,7 +8,6 @@ import {
   ChartType,
 } from "chart.js";
 import annotationPlugin from "chartjs-plugin-annotation";
-import crosshairPlugin from "chartjs-plugin-crosshair";
 import zoomPlugin from "chartjs-plugin-zoom";
 
 // i slapped a bunch of ignores in here because it's chart.js's code
@@ -95,6 +94,37 @@ export const htmlLegendPlugin = {
   },
 };
 
+export const verticalLinePlugin = {
+  id: "verticalLine",
+  afterTooltipDraw: (chart: Chart) => {
+    const tooltip = chart.tooltip;
+    const ctx = chart.ctx;
+    const area = chart.chartArea;
+
+    if (!tooltip || !tooltip.caretX) {
+      return;
+    }
+
+    // caret is cursor pos
+    const x = tooltip.caretX;
+    const y = tooltip.caretY;
+
+    if (x < area.left || x > area.right || y < area.top || y > area.bottom) {
+      return;
+    }
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(x, area.top);
+    ctx.lineTo(x, area.bottom);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(120, 130, 130, 0.8)";
+    ctx.setLineDash([2, 2]);
+    ctx.stroke();
+    ctx.restore();
+  },
+};
+
 // @ts-expect-error: i am making a custom positioner
 Tooltip.positioners.cursor = function (
   elements: Element[],
@@ -117,5 +147,5 @@ declare module "chart.js" {
 
 Chart.register(annotationPlugin);
 Chart.register(htmlLegendPlugin);
-Chart.register(crosshairPlugin);
+Chart.register(verticalLinePlugin);
 Chart.register(zoomPlugin);

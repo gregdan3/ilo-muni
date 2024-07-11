@@ -2,7 +2,7 @@ import { WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
 import { TooltipItem, ChartTypeRegistry } from "chart.js/auto";
 import "chartjs-adapter-date-fns";
-import { htmlLegendPlugin } from "./plugins";
+import { htmlLegendPlugin, verticalLinePlugin } from "./plugins";
 
 const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? ORDER BY day`;
 const OCCUR_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? ORDER BY day`;
@@ -218,7 +218,7 @@ export async function first_chart_build(
         data: result.data,
       })),
     },
-    plugins: [htmlLegendPlugin],
+    plugins: [htmlLegendPlugin, verticalLinePlugin],
     options: {
       animation: { duration: 100, easing: "easeInOutQuint" },
       line: {
@@ -262,15 +262,6 @@ export async function first_chart_build(
         // @ts-expect-error: registration can't fix inline config
         htmlLegend: {
           containerID: "usageLegend",
-        },
-        crosshair: {
-          line: {
-            color: "#A3A3A3",
-            width: 2,
-            dashPattern: [2, 2],
-          },
-          snap: { enabled: false }, // TODO: enable if we get more data
-          zoom: { enabled: false },
         },
         zoom: {
           limits: {
