@@ -7,6 +7,7 @@ import {
   TooltipPositionerFunction,
   ChartType,
 } from "chart.js";
+import annotationPlugin from "chartjs-plugin-annotation";
 import crosshairPlugin from "chartjs-plugin-crosshair";
 import zoomPlugin from "chartjs-plugin-zoom";
 
@@ -114,6 +115,7 @@ declare module "chart.js" {
   }
 }
 
+Chart.register(annotationPlugin);
 Chart.register(htmlLegendPlugin);
 Chart.register(crosshairPlugin);
 Chart.register(zoomPlugin);
