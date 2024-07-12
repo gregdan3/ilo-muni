@@ -238,6 +238,7 @@ export async function first_chart_build(
           //   let len = lbs.length - 1;
           //   axis.ticks.push({ value: len, label: lbs[len] });
           // },
+        },
         y: {
           beginAtZero: true,
         },
