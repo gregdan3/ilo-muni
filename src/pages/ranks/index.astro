@@ -1,0 +1,32 @@
+---
+import Layout from '@layouts/Layout.astro'
+---
+
+<Layout>
+  <div>
+    <form id="ranksForm" onsubmit="return false;" autocomplete="off">
+      <div>
+      <div>
+        <select id="sentLenDropdown" value="1">
+          <option value="1">All sentences</option>
+          <option value="2">2+ words per sentence</option>
+          <option value="3">3+ words per sentence</option>
+          <option value="4">4+ words per sentence</option>
+          <option value="5">5+ words per sentence</option>
+          <option value="6">6+ words per sentence</option>
+        </select>
+
+        <select id="yearDropdown" value="all">
+          <option value="all">All Time</option>
+          <option value="2016">2016-2017</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <div style="position: relative">
+    <canvas id="ranks"></canvas>
+    <div id="ranksLegend"></div>
+  </div>
+
+</Layout>

@@ -1,20 +1,17 @@
-import { createDbWorker, WorkerHttpvfs } from "sql.js-httpvfs";
+---
+import Layout from '@layouts/Layout.astro'
+---
+
+<script>
+import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import Chart from "chart.js/auto";
 
-import {
-  inputToPhrases,
-  first_chart_build,
-  fetch_many_occurrences,
-  rebuild_chart,
-  Row,
-  consoleLogAsync,
-} from "./utils";
-
-const workerUrl = new URL(
-  "sql.js-httpvfs/dist/sqlite.worker.js",
-  import.meta.url,
-);
-const wasmUrl = new URL("sql.js-httpvfs/dist/sql-wasm.wasm", import.meta.url);
+import { initDB } from "@utils/sqlite"
+import { inputToPhrases } from "@utils/input";
+import { first_chart_build, rebuild_chart } from "@utils/chart";
+import { fetchManyOccurrenceSet } from "@utils/search";
+import type { Row } from '@utils/search';
+import {DB_URL} from '@utils/constants';
 
 const SAMPLE_SEARCHES = [
   // duh
@@ -27,15 +24,19 @@ const SAMPLE_SEARCHES = [
   "ala, x, ala + x",
   "anu, y, anu + y",
   // word groups
-  "walo, pimeja, laso, loje, jelo",
+  "laso, loje, walo, jelo, pimeja",
   "soweli, waso, kala, akesi, pipi",
+  "sewi, poka, anpa, sinpin, monsi",
   "meli, mije, tonsi",
   "pu, ku, su",
+  "sin, lukin, kin, namako, oko",
   // modifier usage
-  "wawa sewi, wawa mute, wawa suli, wawa a",
+  "wawa a, wawa mute, wawa suli, wawa sewi",
+  "tenpo ni, tenpo pini, tenpo kama, tenpo mute, tenpo suli, tenpo poka",
   // grammatical things
   "kepeken ilo, kepeken e ilo",
-  "kin la, namako la, poka la, sama la",
+  "kin la, poka la, sama la, namako la",
+  "ale la, ala la",
   // names
   "kekan, kekan san, jan kekan, mun kekan",
   "sonja, jan sonja",
@@ -43,7 +44,7 @@ const SAMPLE_SEARCHES = [
 
 const REL_ABS_OPTS = ["absolute", "relative"];
 
-async function user_request(
+async function userRequest(
   worker: WorkerHttpvfs,
   chart: Chart<"line", Row[], unknown>,
   input: string,
@@ -55,7 +56,7 @@ async function user_request(
     return;
   }
 
-  const results = await fetch_many_occurrences(
+  const results = await fetchManyOccurrenceSet(
     worker,
     phrases,
     min_sent_len,
@@ -89,26 +90,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     REL_ABS_OPTS[Math.floor(Math.random() * REL_ABS_OPTS.length)];
 
   const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-  const ranksCanvas = document.getElementById("ranks")! as HTMLCanvasElement;
 
-  const worker = await createDbWorker(
-    [
-      {
-        // TODO: investigate
-        from: "inline",
-        config: {
-          serverMode: "full",
-          url: "/db/2024-07-08-trimmed.sqlite",
-          requestChunkSize: 1024, // TODO: reduce?
-        },
-      },
-    ],
-    workerUrl.toString(),
-    wasmUrl.toString(),
-  );
+  const worker = await initDB(DB_URL)
 
   const phrases = inputToPhrases(searchBox.value);
-  const results = await fetch_many_occurrences(
+  const results = await fetchManyOccurrenceSet(
     worker,
     phrases,
     Number(sentLenDropdown.value),
@@ -129,6 +115,49 @@ document.addEventListener("DOMContentLoaded", async () => {
     const sentLen = Number(sentLenDropdown.value);
     const relative = relAbsDropdown.value === "relative";
     // @ts-ignore
-    await user_request(worker, usageChart, queryText, sentLen, relative);
+    await userRequest(worker, usageChart, queryText, sentLen, relative);
   });
 });
+</script>
+
+<Layout title="Toki Pona Phrase Frequency">
+  <div>
+    <form id="usageForm" onsubmit="return false;" autocomplete="off">
+      <div>
+        <label for="searchBox"></label>
+        <input
+          type="text"
+          id="searchBox"
+          style="width: 69%; height: 1.6em; font-size: 18px"
+        />
+      </div>
+
+      <div>
+        <select id="sentLenDropdown" value="1">
+          <option value="1">All sentences</option>
+          <option value="2">2+ words per sentence</option>
+          <option value="3">3+ words per sentence</option>
+          <option value="4">4+ words per sentence</option>
+          <option value="5">5+ words per sentence</option>
+          <option value="6">6+ words per sentence</option>
+        </select>
+
+        <select id="relAbsDropdown" value="absolute">
+          <option value="absolute">Absolute</option>
+          <option value="relative">Relative</option>
+        </select>
+      </div>
+    </form>
+  </div>
+
+  <div style="position: relative">
+    <input
+      type="button"
+      id="resetZoom"
+      value="Reset Zoom"
+      style="position: absolute; top: -2em; right: 1em"
+    />
+    <canvas id="usage" style="width: 100%; margin-top: 0.25em"></canvas>
+    <div id="usageLegend" style="height: 6em; margin-top: 0.75em;"></div>
+  </div>
+</Layout>

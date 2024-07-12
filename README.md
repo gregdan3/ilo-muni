@@ -56,3 +56,9 @@ Check the [about page!]()
 1. select from [global occurrence table] where phrase like [given phrase] and phrase_len = found len order by occurrences desc limit 10
 
 </details>
+
+##### Acknowledgements
+
+- Thanks to [Phiresky](https://github.com/phiresky/sql.js-httpvfs) for the unreal capabilities of sql.js-httpvfs
+
+- Thanks to [Jordemort](https://jordemort.dev/blog/client-side-search/) for figuring out how to use

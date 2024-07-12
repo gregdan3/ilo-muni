@@ -4,28 +4,32 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "devDependencies": {
     "@eslint/js": "^9.6.0",
     "eslint": "~9.6.0",
     "globals": "^15.8.0",
-    "http-server": "^14.1.1",
     "ts-loader": "^9.5.1",
-    "typescript": "^5.5.3",
-    "typescript-eslint": "^7.16.0",
-    "vite": "^5.3.1"
+    "typescript-eslint": "^7.16.0"
   },
   "dependencies": {
+    "@astrojs/check": "^0.8.1",
+    "@astrojs/mdx": "^3.1.2",
     "@types/chartjs-plugin-crosshair": "^1.1.4",
+    "astro": "^4.11.5",
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
     "chartjs-plugin-annotation": "^3.0.1",
     "chartjs-plugin-crosshair": "^2.0.0",
     "chartjs-plugin-zoom": "^2.0.1",
     "date-fns": "^3.6.0",
-    "sql.js-httpvfs": "^0.8.12"
+    "sql.js": "^1.10.3",
+    "sql.js-httpvfs": "^0.8.12",
+    "typescript": "^5.5.3"
   }
 }
