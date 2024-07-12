@@ -129,9 +129,21 @@ export const verticalLinePlugin = {
 Tooltip.positioners.cursor = function (
   elements: Element[],
   eventPosition: Point,
-): TooltipPosition {
-  // A reference to the tooltip model
-  const tooltip = this;
+): TooltipPosition | boolean {
+  if (elements.length === 0) {
+    return false;
+  }
+
+  const chart = this.chart;
+  const chartArea = chart.chartArea;
+  if (
+    eventPosition.x < chartArea.left ||
+    eventPosition.x > chartArea.right ||
+    eventPosition.y < chartArea.top ||
+    eventPosition.y > chartArea.bottom
+  ) {
+    return false;
+  }
 
   return {
     x: eventPosition.x,
