@@ -1,5 +1,5 @@
 import { htmlLegendPlugin, verticalLinePlugin } from "@utils/plugins";
-import type { Result } from "@utils/search";
+import type { Result, Row } from "@utils/search";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
