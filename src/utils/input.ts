@@ -123,6 +123,5 @@ export function inputToQueries(
 ): Query[] {
   input = cleanInput(input);
   const queries = toQueries(input, givenMinSentLen);
-  console.log(queries);
   return queries;
 }
