@@ -1,6 +1,8 @@
 import { queryDb } from "@utils/sqlite";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
 
+import type { Query, Separator } from "@utils/input";
+
 const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? ORDER BY day`;
 const OCCUR_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? ORDER BY day`;
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
@@ -18,12 +20,7 @@ function graphableDate(timestamp: number): Date {
   return new Date(timestamp * 1000 + DAY_IN_MS);
 }
 
-function countWords(phrase: string): number {
-  return phrase.split(" ").length;
-  // FIXME: incorrect count for UCSUR text
-}
-
-function mergeOccurrences(rows: Row[][]): Row[] {
+function mergeOccurrences(rows: Row[][], separators: Separator[]): Row[] {
   if (rows.length === 0 || rows[0].length === 0) {
     return [];
   }
@@ -35,7 +32,11 @@ function mergeOccurrences(rows: Row[][]): Row[] {
     let totalOccurrences = 0;
 
     for (let j = 0; j < rows.length; j++) {
-      totalOccurrences += rows[j][i].occurrences;
+      if (separators[j] === "-") {
+        totalOccurrences -= rows[j][i].occurrences;
+      } else {
+        totalOccurrences += rows[j][i].occurrences;
+      }
     }
     result.push({ day, occurrences: totalOccurrences });
   }
@@ -105,33 +106,31 @@ async function fetchOneOccurrenceSet(
 
 export async function fetchManyOccurrenceSet(
   worker: WorkerHttpvfs,
-  phrases: string[][],
-  min_sent_len: number,
+  queries: Query[],
   relative: boolean,
 ): Promise<Result[]> {
   let results = await Promise.all(
-    phrases.map(async (phrase: string[]) => {
+    queries.map(async (query: Query) => {
       const phrase_occurrences = [];
-      for (const segment of phrase) {
-        const adjusted_min_sent_len = Math.max(
-          min_sent_len,
-          countWords(segment),
-        );
+      const separators = [] as Separator[];
+
+      for (const phrase of query.phrases) {
         const rows = await fetchOneOccurrenceSet(
           worker,
-          segment,
-          adjusted_min_sent_len,
+          phrase.term,
+          phrase.minSentLen,
           relative,
         );
         if (rows === null) {
           return null;
         }
         phrase_occurrences.push(rows);
+        separators.push(phrase.separator); // TODO: kinda gross?
       }
-      const merged_rows = mergeOccurrences(phrase_occurrences);
+      const merged_rows = mergeOccurrences(phrase_occurrences, separators);
 
       return {
-        phrase: phrase.join(" + "),
+        phrase: query.repr,
         data: merged_rows,
       };
     }),

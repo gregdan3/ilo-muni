@@ -4,10 +4,11 @@ import Layout from '@layouts/Layout.astro'
 
 <script>
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
+import type {Length} from "@utils/input"
 import Chart from "chart.js/auto";
 
 import { initDB } from "@utils/sqlite"
-import { inputToPhrases } from "@utils/input";
+import { inputToQueries } from "@utils/input";
 import { first_chart_build, rebuild_chart } from "@utils/chart";
 import { fetchManyOccurrenceSet } from "@utils/search";
 import type { Row } from '@utils/search';
@@ -48,25 +49,24 @@ async function userRequest(
   worker: WorkerHttpvfs,
   chart: Chart<"line", Row[], unknown>,
   input: string,
-  min_sent_len: number,
+  min_sent_len: Length,
   relative: boolean,
 ) {
-  const phrases = inputToPhrases(input);
-  if (phrases.length === 0) {
+  const queries = inputToQueries(input, min_sent_len);
+  if (queries.length === 0) {
     return;
   }
 
   const results = await fetchManyOccurrenceSet(
     worker,
-    phrases,
-    min_sent_len,
+    queries,
     relative,
   );
   if (results.length === 0) {
     // TODO: tell user nothing came back
     return;
   }
-  if (results.length < phrases.length) {
+  if (results.length < queries.length) {
     // TODO: tell user some (which) words were not found
   }
 
@@ -93,11 +93,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   const worker = await initDB(DB_URL)
 
-  const phrases = inputToPhrases(searchBox.value);
+  const queries = inputToQueries(searchBox.value, Number(sentLenDropdown.value) as Length);
   const results = await fetchManyOccurrenceSet(
     worker,
-    phrases,
-    Number(sentLenDropdown.value),
+    queries,
     relAbsDropdown.value === "relative",
   );
   const usageChart = await first_chart_build(usageCanvas, results);

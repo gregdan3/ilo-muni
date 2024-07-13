@@ -1,5 +1,5 @@
-type Separator = "+" | "-" | null;
-type Length = 1 | 2 | 3 | 4 | 5 | 6;
+export type Separator = "+" | "-" | null;
+export type Length = 1 | 2 | 3 | 4 | 5 | 6;
 
 // searchable words/phrases after split by separator and stripped of whitespace
 export interface Phrase {
@@ -60,7 +60,9 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
   tokens.forEach((token) => {
     if (token === "+" || token === "-") {
       if (currentPhrase.length > 0) {
-        phrases.push(createPhrase(currentPhrase.join(" "), separator));
+        phrases.push(
+          createPhrase(currentPhrase.join(" "), separator, givenMinSentLen),
+        );
         currentPhrase = [];
       }
       separator = token as Separator;
@@ -87,25 +89,21 @@ function createPhrase(
   const term = termWithMin.trim();
   const length = countWords(term) as Length;
   const parsedMinLen = minLen ? (parseInt(minLen, 10) as Length) : length;
-
   let repr = combinedPhrase;
   let minSentLen = Math.max(length, givenMinSentLen) as Length;
-  if (parsedMinLen !== minSentLen && 1 <= parsedMinLen && parsedMinLen <= 6) {
+
+  if (minLen && parsedMinLen != minSentLen) {
     minSentLen = parsedMinLen;
   } else {
     repr = term;
   }
-
-  // parsed overrides given unless <= length or > 6
-  // given overrides length unless <= length or > 6
-  // repr includes minLen only if parsed is used
 
   return {
     raw: combinedPhrase,
     repr,
     term,
     length,
-    minSentLen: parsedMinLen,
+    minSentLen,
     separator,
   };
 }
