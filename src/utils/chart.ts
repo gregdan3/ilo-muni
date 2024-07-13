@@ -2,6 +2,7 @@ import { htmlLegendPlugin, verticalLinePlugin } from "@utils/plugins";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
+import type { Result, Row } from "@utils/search";
 
 function roundForGraph(num: number): number {
   if (num >= 1) {

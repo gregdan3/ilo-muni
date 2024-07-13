@@ -1,6 +1,5 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
-import type { QueryExecResult } from "sql.js";
 import { BASE_URL } from "@utils/constants";
 
 export async function initDB(dbUrl: string): Promise<WorkerHttpvfs> {
@@ -27,6 +26,6 @@ export async function queryDb(
   worker: WorkerHttpvfs,
   query: string,
   params: any[],
-): Promise<QueryExecResult> {
+): Promise<any[]> {
   return await worker.db.query(query, params);
 }
