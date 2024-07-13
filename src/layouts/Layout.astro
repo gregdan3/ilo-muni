@@ -1,9 +1,15 @@
 ---
 interface Props {
 	title: string;
+  frontmatter: any;
+  // TODO: what is the type of this thing
 }
 
-const { title } = Astro.props;
+let { title } = Astro.props;
+if (Astro.props.frontmatter?.title) {
+  title = Astro.props.frontmatter?.title;
+}
+
 
 import { BASE_URL } from '@utils/constants';
 ---
