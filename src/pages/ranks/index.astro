@@ -1,8 +1,10 @@
 ---
 import Layout from '@layouts/Layout.astro'
+
+const frontmatter = {"title": "Rank by Frequency"}
 ---
 
-<Layout title="Rank by Frequency">
+<Layout frontmatter={frontmatter}>
   <div>
     <form id="ranksForm" onsubmit="return false;" autocomplete="off">
       <div>

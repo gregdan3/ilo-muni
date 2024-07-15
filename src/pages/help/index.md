@@ -1,6 +1,6 @@
 ---
 layout: "@layouts/Layout.astro"
-title: help!
+title: How To, and more
 ---
 
 help!

@@ -1,15 +1,13 @@
 ---
+interface Frontmatter {
+  title: string
+}
+
 interface Props {
-	title: string;
-  frontmatter: any;
-  // TODO: what is the type of this thing
+  frontmatter: Frontmatter;
 }
 
-let { title } = Astro.props;
-if (Astro.props.frontmatter?.title) {
-  title = Astro.props.frontmatter?.title;
-}
-
+const { title } = Astro.props.frontmatter;
 
 import { BASE_URL } from '@utils/constants';
 ---
@@ -64,6 +62,9 @@ import { BASE_URL } from '@utils/constants';
   --prim-fg: #444444;
   --prim-bg: #f2f2f2;
   --prim-ac: #555555;
+
+  --sec-fg: #333333;
+  --sec-bg: #d3d3d3;
   --url: #3366cc;
   --urlvisited: #7755bb;
 
@@ -128,6 +129,11 @@ nav > a:hover {
 nav > a:active {
   border-style: inset;
   background: #dddddd;
+}
+
+code {
+  background: var(--sec-bg);
+  padding: 0.1em;
 }
 
 article {

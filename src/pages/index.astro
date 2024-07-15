@@ -1,5 +1,7 @@
 ---
 import Layout from '@layouts/Layout.astro'
+
+const frontmatter = {"title": "Toki Pona Phrase Frequency"}
 ---
 
 <script>
@@ -119,7 +121,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
-<Layout title="Toki Pona Phrase Frequency">
+<Layout frontmatter={frontmatter}>
   <div>
     <form id="usageForm" onsubmit="return false;" autocomplete="off">
       <div>
