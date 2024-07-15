@@ -32,7 +32,7 @@ function queryRepr(phrases: Phrase[]): string {
 }
 
 function countWords(phrase: string): number {
-  return phrase.split(" ").length;
+  return phrase.split(/\s+/).length;
   // TODO: allow UCSUR to be entered without spaces
 }
 
