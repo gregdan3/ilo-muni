@@ -117,11 +117,24 @@ function toQueries(input: string, givenMinSentLen: Length): Query[] {
   return queries;
 }
 
+function dedupeQueries(queries: Query[]) {
+  const seen = new Set<string>();
+  return queries.filter((query) => {
+    if (seen.has(query.repr)) {
+      return false;
+    } else {
+      seen.add(query.repr);
+      return true;
+    }
+  });
+}
+
 export function inputToQueries(
   input: string,
   givenMinSentLen: Length,
 ): Query[] {
   input = cleanInput(input);
-  const queries = toQueries(input, givenMinSentLen);
+  let queries = toQueries(input, givenMinSentLen);
+  queries = dedupeQueries(queries);
   return queries;
 }
