@@ -9,12 +9,25 @@ Check the [about page!]()
 ## Planned QoL
 
 - Telling user when/why their phrases don't show up
-- More distinct colors
+- More distinct colors, but not ugly ones
 - Bold every August (for Toki Pona's birthday)
 - Always show the last tick on the graph
-- Mobile improvements (why is the zooming so jank)
+
+## Planned Fixes
+
+- Move adding/subtracting before relative math to avoid floating point nonsense occurring (example: `tenpo ni - tenpo ni la - lon tenpo ni`, check feb 2019)
+- Mobile zoom is super janky
 
 ## Planned Features
+
+### Real Input Parser
+
+- The current input parser is kinda bad.
+- It works for + and -, but adding onto it would be hell
+- It has no awareness of operator precedence or parentheses
+- There is no division (because I can't implement it in a sane way without operator precedence)
+- So I can't do neat things like `ali / (ale + ali)`
+- And anyone expecting my input to do cool things like that will actually get a result, but a nonsense one!
 
 ### Major Event Annotations
 
