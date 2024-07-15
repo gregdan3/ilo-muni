@@ -6,10 +6,6 @@
 
 Check the [about page!]()
 
-## Planned Fixes
-
-- Crosshair breaks the graph on small screens
-
 ## Planned QoL
 
 - Telling user when/why their phrases don't show up
@@ -19,13 +15,6 @@ Check the [about page!]()
 - Mobile improvements (why is the zooming so jank)
 
 ## Planned Features
-
-### Subtraction Search
-
-- Search input option
-- word1 - word2 results in a line with word2's frequency removed
-- Needs a rework to handling of input, since I currently assume any multi-word input are +. Annotation?
-- Tbh input needs a real parser
 
 ### Major Event Annotations
 
@@ -51,7 +40,7 @@ Check the [about page!]()
   <summary>notes for me</summary>
 
 1. create global occurrences table [overlapping need with bar graph]
-1. count length of input including \*
+1. count phrase length of input including \*
 1. substitute \* for %
 1. select from [global occurrence table] where phrase like [given phrase] and phrase_len = found len order by occurrences desc limit 10
 
@@ -59,6 +48,5 @@ Check the [about page!]()
 
 ##### Acknowledgements
 
-- Thanks to [Phiresky](https://github.com/phiresky/sql.js-httpvfs) for the unreal capabilities of sql.js-httpvfs
-
-- Thanks to [Jordemort](https://jordemort.dev/blog/client-side-search/) for figuring out how to use
+- Thanks to Phiresky for [the unreal capabilities of sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs).
+- Thanks to Jordemort for [figuring out how to use that library in Astro](https://jordemort.dev/blog/client-side-search/))
