@@ -17,7 +17,7 @@ export interface Query {
   raw: string; // unaltered user input, per-phrase
   repr: string; // to be printed later
   phrases: Phrase[];
-  error: string[];
+  // error: string[];
 }
 
 function queryRepr(phrases: Phrase[]): string {
