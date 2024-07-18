@@ -1,164 +1,217 @@
 ---
-import Layout from '@layouts/Layout.astro'
+import Layout from "@layouts/Layout.astro";
 
-const frontmatter = {"title": "Toki Pona Phrase Frequency"}
+const frontmatter = { title: "Toki Pona Ngrams" };
 ---
 
 <script>
-import type { WorkerHttpvfs } from "sql.js-httpvfs";
-import type {Length} from "@utils/input"
-import Chart from "chart.js/auto";
+  import type { WorkerHttpvfs } from "sql.js-httpvfs";
+  import type {
+    Length,
+    SearchURLParams,
+    MinSentLen,
+    Scale,
+  } from "@utils/input";
 
-import { initDB } from "@utils/sqlite"
-import { inputToQueries } from "@utils/input";
-import { rebuild_chart } from "@utils/chart";
-import { fetchManyOccurrenceSet } from "@utils/search";
-import type { Row } from '@utils/search';
-import {DB_URL} from '@utils/constants';
+  import { initDB } from "@utils/sqlite";
+  import { inputToQueries } from "@utils/input";
+  import { rebuild_chart } from "@utils/chart";
+  import { fetchManyOccurrenceSet } from "@utils/search";
+  import { DB_URL } from "@utils/constants";
 
-const urlParams = new URLSearchParams(window.location.search)
-const queryParam = urlParams.get('query');
-const minLenParam = urlParams.get('minlen') || '';
-const relAbsParam = urlParams.get('relabs')
+  const SAMPLE_SEARCHES = [
+    // duh
+    "toki, pona, toki pona",
+    // phrase trends
+    "tomo tawa, ilo tawa",
+    // idk how to label this
+    "toki_1 - toki_2, pona_1 - pona_2",
+    // synonyms
+    "lukin, oko, lukin + oko",
+    "ale, ali, ale + ali",
+    "ala, x, ala + x",
+    "anu, y, anu + y",
+    // word groups
+    "laso, loje, walo, jelo, pimeja",
+    "soweli, waso, kala, akesi, pipi",
+    "sewi, poka, anpa, sinpin, monsi",
+    "meli, mije, tonsi",
+    "pu, ku, su",
+    "sin, lukin, kin, namako, oko",
+    "selo, sijelo",
+    // modifier usage
+    "wawa a, wawa mute, wawa suli, wawa sewi",
+    "tenpo ni, tenpo pini, tenpo kama, tenpo mute, tenpo suli, tenpo poka",
+    // grammatical things
+    "kepeken ilo, kepeken e ilo",
+    "kin la, poka la, sama la, namako la",
+    "ale la, ala la",
+    // names
+    "kekan, kekan san, jan kekan, mun kekan",
+    "sonja, jan sonja",
+  ];
 
-const SAMPLE_SEARCHES = [
-  // duh
-  "toki, pona, toki pona",
-  // phrase trends
-  "tomo tawa, ilo tawa",
-  // semantically identical words
-  "lukin, oko, lukin + oko",
-  "ale, ali, ale + ali",
-  "ala, x, ala + x",
-  "anu, y, anu + y",
-  // word groups
-  "laso, loje, walo, jelo, pimeja",
-  "soweli, waso, kala, akesi, pipi",
-  "sewi, poka, anpa, sinpin, monsi",
-  "meli, mije, tonsi",
-  "pu, ku, su",
-  "sin, lukin, kin, namako, oko",
-  // modifier usage
-  "wawa a, wawa mute, wawa suli, wawa sewi",
-  "tenpo ni, tenpo pini, tenpo kama, tenpo mute, tenpo suli, tenpo poka",
-  // grammatical things
-  "kepeken ilo, kepeken e ilo",
-  "kin la, poka la, sama la, namako la",
-  "ale la, ala la",
-  // names
-  "kekan, kekan san, jan kekan, mun kekan",
-  "sonja, jan sonja",
-];
+  // TODO: these are repeated like, 2.5x between here and input...
+  // can i convert types to lists of their literals and reuse them?
+  const SAMPLE_SENTLENS = ["1", "2"];
+  const SCALE_OPTS = ["absolute", "relative"];
 
-const SAMPLE_SENTLENS = ["1", "2"];
-
-const REL_ABS_OPTS = ["absolute", "relative"];
-
-function getInitialParams() {
-  let searchTerm: string;
-  let minSentLen: string;
-  let relAbs: string;
-
-  let parsed = parseInt(minLenParam, 10);
-
-  if (queryParam) {
-    searchTerm = queryParam
-  } else {
-    searchTerm = SAMPLE_SEARCHES[Math.floor(Math.random() * SAMPLE_SEARCHES.length)];
+  function randomElem(arr: any[]) {
+    return arr[Math.floor(Math.random() * arr.length)];
   }
 
-  if (parsed && 1 <= parsed && parsed <= 6) {
-    minSentLen = minLenParam;
-  }  else {
-    minSentLen = SAMPLE_SENTLENS[Math.floor(Math.random() * SAMPLE_SENTLENS.length)];
+  function getInitialParams(): SearchURLParams {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const queryParam = urlParams.get("query");
+    const minLenParam = urlParams.get("minSentLen") || "";
+    const scaleParam = urlParams.get("scale");
+
+    let query: string;
+    let minSentLen: MinSentLen;
+    let scale: Scale;
+
+    let parsed = parseInt(minLenParam, 10);
+
+    if (queryParam) {
+      query = queryParam;
+    } else {
+      query = randomElem(SAMPLE_SEARCHES);
+    }
+
+    if (parsed && 1 <= parsed && parsed <= 6) {
+      minSentLen = minLenParam as MinSentLen;
+    } else {
+      minSentLen = randomElem(SAMPLE_SENTLENS);
+    }
+
+    if (scaleParam && SCALE_OPTS.includes(scaleParam)) {
+      scale = scaleParam as Scale;
+    } else {
+      scale = randomElem(SCALE_OPTS);
+    }
+    return { query, minSentLen, scale };
   }
 
-  if (relAbsParam && REL_ABS_OPTS.includes(relAbsParam)) {
-    relAbs = relAbsParam;
-  } else {
-    relAbs = REL_ABS_OPTS[Math.floor(Math.random() * REL_ABS_OPTS.length)];
+  function toUrlParams(params: SearchURLParams) {
+    const urlParams = new URLSearchParams();
+
+    for (const key in params) {
+      // @ts-ignore
+      if (params[key]) {
+        //@ts-ignore
+        urlParams.append(key, params[key]);
+      }
+    }
+
+    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+    window.history.replaceState({}, "", newUrl);
   }
 
-  return {searchTerm, minSentLen, relAbs};
-
-
-}
-
-async function manipForUserRequest(
-  worker: WorkerHttpvfs,
-  canvas: HTMLCanvasElement,
-  searchBox: HTMLInputElement,
-  sentLenDropdown: HTMLInputElement,
-  relAbsDropdown: HTMLInputElement,
-) {
+  async function manipForUserRequest(
+    worker: WorkerHttpvfs,
+    canvas: HTMLCanvasElement,
+    searchBox: HTMLInputElement,
+    sentLenDropdown: HTMLInputElement,
+    scaleDropdown: HTMLInputElement,
+  ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
-    const relative = relAbsDropdown.value === "relative";
+    const relative = scaleDropdown.value === "relative";
 
-    let queries = await userRequest(worker, canvas, queryText, sentLen, relative);
-}
+    let queries = await userRequest(
+      worker,
+      canvas,
+      queryText,
+      sentLen,
+      relative,
+    );
+    if (!queries) {
+      return;
+    }
 
-async function userRequest(
-  worker: WorkerHttpvfs,
-  canvas: HTMLCanvasElement,
-  input: string,
-  min_sent_len: Length,
-  relative: boolean,
-) {
-  const queries = inputToQueries(input, min_sent_len);
-  if (queries.length === 0) {
-    return;
+    // rewrite urlParams with query repr so we don't copy user input error
+    let queryReprs = queries.map((query) => query.repr);
+    let query = queryReprs.join(", ");
+
+    let urlParams: SearchURLParams = {
+      query: query,
+      minSentLen: sentLenDropdown.value as MinSentLen,
+      scale: scaleDropdown.value as Scale,
+    };
+
+    toUrlParams(urlParams);
   }
 
-  const results = await fetchManyOccurrenceSet(
-    worker,
-    queries,
-    relative,
-  );
-  if (results.length === 0) {
-    // TODO: tell user nothing came back
-    return;
+  async function userRequest(
+    worker: WorkerHttpvfs,
+    canvas: HTMLCanvasElement,
+    input: string,
+    min_sent_len: Length,
+    relative: boolean,
+  ) {
+    const queries = inputToQueries(input, min_sent_len);
+    if (queries.length === 0) {
+      return;
+    }
+
+    const results = await fetchManyOccurrenceSet(worker, queries, relative);
+    if (results.length === 0) {
+      // TODO: tell user nothing came back
+      return;
+    }
+    if (results.length < queries.length) {
+      // TODO: tell user some (which) words were not found
+    }
+
+    await rebuild_chart(canvas, results);
+    return queries;
   }
-  if (results.length < queries.length) {
-    // TODO: tell user some (which) words were not found
-  }
 
-  await rebuild_chart(canvas, results);
-  return queries;
-}
+  document.addEventListener("DOMContentLoaded", async () => {
+    const searchBox = document.getElementById("searchBox")! as HTMLInputElement;
+    const sentLenDropdown = document.getElementById(
+      "sentLenDropdown",
+    )! as HTMLInputElement;
+    const scaleDropdown = document.getElementById(
+      "scaleDropdown",
+    )! as HTMLInputElement;
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const searchBox = document.getElementById("searchBox")! as HTMLInputElement;
-  const sentLenDropdown = document.getElementById(
-    "sentLenDropdown",
-  )! as HTMLInputElement;
-  const relAbsDropdown = document.getElementById(
-    "relAbsDropdown",
-  )! as HTMLInputElement;
+    let initialParams = getInitialParams();
+    searchBox.value = initialParams.query;
+    sentLenDropdown.value = initialParams.minSentLen;
+    scaleDropdown.value = initialParams.scale;
 
-  let initialParams = getInitialParams()
-  searchBox.value = initialParams.searchTerm
-  sentLenDropdown.value = initialParams.minSentLen
-  relAbsDropdown.value = initialParams.relAbs
+    const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
+    const worker = await initDB(DB_URL);
 
-  const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-  const worker = await initDB(DB_URL)
+    // TODO: reintroduce
+    // const resetZoomButton = document.getElementById(
+    //   "resetZoom",
+    // )! as HTMLInputElement;
+    // resetZoomButton.addEventListener("click", () => {
+    //   usageChart.resetZoom();
+    // });
+    await manipForUserRequest(
+      worker,
+      usageCanvas,
+      searchBox,
+      sentLenDropdown,
+      scaleDropdown,
+    );
 
-  // TODO: reintroduce
-  // const resetZoomButton = document.getElementById(
-  //   "resetZoom",
-  // )! as HTMLInputElement;
-  // resetZoomButton.addEventListener("click", () => {
-  //   usageChart.resetZoom();
-  // });
-  await manipForUserRequest(worker, usageCanvas, searchBox, sentLenDropdown, relAbsDropdown)
-
-  const form = document.getElementById("usageForm")! as HTMLFormElement;
-  form.addEventListener("change", async () => {
-    // @ts-ignore
-    await manipForUserRequest(worker, usageCanvas, searchBox, sentLenDropdown, relAbsDropdown)
+    const form = document.getElementById("usageForm")! as HTMLFormElement;
+    form.addEventListener("change", async () => {
+      // @ts-ignore
+      await manipForUserRequest(
+        worker,
+        usageCanvas,
+        searchBox,
+        sentLenDropdown,
+        scaleDropdown,
+      );
+    });
   });
-});
 </script>
 
 <Layout frontmatter={frontmatter}>
@@ -184,7 +237,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           <option value="6">6+ words per sentence</option>
         </select>
 
-        <select id="relAbsDropdown" value="absolute">
+        <select id="scaleDropdown" value="absolute">
           <option value="absolute">Absolute</option>
           <option value="relative">Relative</option>
         </select>
