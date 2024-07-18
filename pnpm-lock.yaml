@@ -32,9 +32,6 @@ importers:
       chartjs-plugin-crosshair:
         specifier: ^2.0.0
         version: 2.0.0(chart.js@4.4.3)
-      chartjs-plugin-zoom:
-        specifier: ^2.0.1
-        version: 2.0.1(chart.js@4.4.3)
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -1036,11 +1033,6 @@ packages:
     peerDependencies:
       chart.js: ^4.0.1
 
-  chartjs-plugin-zoom@2.0.1:
-    resolution: {integrity: sha512-ogOmLu6e+Q7E1XWOCOz9YwybMslz9qNfGV2a+qjfmqJYpsw5ZMoRHZBUyW+NGhkpQ5PwwPA/+rikHpBZb7PZuA==}
-    peerDependencies:
-      chart.js: '>=3.2.0'
-
   chokidar@3.6.0:
     resolution: {integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==}
     engines: {node: '>= 8.10.0'}
@@ -1420,10 +1412,6 @@ packages:
   gray-matter@4.0.3:
     resolution: {integrity: sha512-5v6yZd4JK3eMI3FqqCouswVqwugaA9r4dNZB1wwcmrD02QkV5H0y7XBQW8QwQqEaZY1pM9aqORSORhJRdNK44Q==}
     engines: {node: '>=6.0'}
-
-  hammerjs@2.0.8:
-    resolution: {integrity: sha512-tSQXBXS/MWQOn/RKckawJ61vvsDpCom87JgxiYdGwHdOa0ht0vzUWDlfioofFCRU0L+6NGDt6XzbgoJvZkMeRQ==}
-    engines: {node: '>=0.8.0'}
 
   has-flag@3.0.0:
     resolution: {integrity: sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw==}
@@ -3753,11 +3741,6 @@ snapshots:
     dependencies:
       chart.js: 4.4.3
 
-  chartjs-plugin-zoom@2.0.1(chart.js@4.4.3):
-    dependencies:
-      chart.js: 4.4.3
-      hammerjs: 2.0.8
-
   chokidar@3.6.0:
     dependencies:
       anymatch: 3.1.3
@@ -4156,8 +4139,6 @@ snapshots:
       kind-of: 6.0.3
       section-matter: 1.0.0
       strip-bom-string: 1.0.0
-
-  hammerjs@2.0.8: {}
 
   has-flag@3.0.0: {}
 

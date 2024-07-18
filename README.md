@@ -16,7 +16,6 @@ Check the [about page!]()
 ## Planned Fixes
 
 - Move adding/subtracting before relative math to avoid floating point nonsense occurring (example: `tenpo ni - tenpo ni la - lon tenpo ni`, check feb 2019)
-- Mobile zoom is super janky
 
 ## Planned Features
 

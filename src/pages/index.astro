@@ -185,13 +185,6 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
     const worker = await initDB(DB_URL);
 
-    // TODO: reintroduce
-    // const resetZoomButton = document.getElementById(
-    //   "resetZoom",
-    // )! as HTMLInputElement;
-    // resetZoomButton.addEventListener("click", () => {
-    //   usageChart.resetZoom();
-    // });
     await manipForUserRequest(
       worker,
       usageCanvas,
@@ -246,12 +239,6 @@ const frontmatter = { title: "Toki Pona Ngrams" };
   </div>
 
   <div style="position: relative">
-    <input
-      type="button"
-      id="resetZoom"
-      value="Reset Zoom"
-      style="position: absolute; top: -4.5em; right: 1em"
-    />
     <div>
       <canvas id="usage" style="width: 100%; margin-top: 0.25em"></canvas>
     </div>

@@ -78,29 +78,6 @@ export async function first_chart_build(
         htmlLegend: {
           containerID: "usageLegend",
         },
-        zoom: {
-          limits: {
-            x: { min: "original", max: "original" },
-            y: { min: "original", max: "original" },
-          },
-          zoom: {
-            wheel: {
-              enabled: false,
-            },
-            pinch: {
-              enabled: true,
-            },
-            drag: {
-              enabled: true,
-              backgroundColor: "rgba(220, 220, 255, 0.3)",
-              borderColor: "rgba(150, 150, 255, 0.8)",
-              borderWidth: 2,
-            },
-            mode: "x",
-            // scaleMode: "x",
-            // overScaleMode: "x",
-          },
-        },
         tooltip: {
           mode: "nearest",
           axis: "x",

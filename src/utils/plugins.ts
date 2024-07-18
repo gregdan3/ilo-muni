@@ -5,7 +5,6 @@ import type {
   TooltipPositionerFunction,
 } from "chart.js/auto";
 import Chart, { Element, Tooltip } from "chart.js/auto";
-import zoomPlugin from "chartjs-plugin-zoom";
 import annotationPlugin from "chartjs-plugin-annotation";
 
 // i slapped a bunch of ignores in here because it's chart.js's code
@@ -158,4 +157,3 @@ declare module "chart.js" {
 Chart.register(annotationPlugin);
 Chart.register(htmlLegendPlugin);
 Chart.register(verticalLinePlugin);
-Chart.register(zoomPlugin);
