@@ -11,10 +11,15 @@ import Chart from "chart.js/auto";
 
 import { initDB } from "@utils/sqlite"
 import { inputToQueries } from "@utils/input";
-import { first_chart_build, rebuild_chart } from "@utils/chart";
+import { rebuild_chart } from "@utils/chart";
 import { fetchManyOccurrenceSet } from "@utils/search";
 import type { Row } from '@utils/search';
 import {DB_URL} from '@utils/constants';
+
+const urlParams = new URLSearchParams(window.location.search)
+const queryParam = urlParams.get('query');
+const minLenParam = urlParams.get('minlen') || '';
+const relAbsParam = urlParams.get('relabs')
 
 const SAMPLE_SEARCHES = [
   // duh
@@ -45,11 +50,57 @@ const SAMPLE_SEARCHES = [
   "sonja, jan sonja",
 ];
 
+const SAMPLE_SENTLENS = ["1", "2"];
+
 const REL_ABS_OPTS = ["absolute", "relative"];
+
+function getInitialParams() {
+  let searchTerm: string;
+  let minSentLen: string;
+  let relAbs: string;
+
+  let parsed = parseInt(minLenParam, 10);
+
+  if (queryParam) {
+    searchTerm = queryParam
+  } else {
+    searchTerm = SAMPLE_SEARCHES[Math.floor(Math.random() * SAMPLE_SEARCHES.length)];
+  }
+
+  if (parsed && 1 <= parsed && parsed <= 6) {
+    minSentLen = minLenParam;
+  }  else {
+    minSentLen = SAMPLE_SENTLENS[Math.floor(Math.random() * SAMPLE_SENTLENS.length)];
+  }
+
+  if (relAbsParam && REL_ABS_OPTS.includes(relAbsParam)) {
+    relAbs = relAbsParam;
+  } else {
+    relAbs = REL_ABS_OPTS[Math.floor(Math.random() * REL_ABS_OPTS.length)];
+  }
+
+  return {searchTerm, minSentLen, relAbs};
+
+
+}
+
+async function manipForUserRequest(
+  worker: WorkerHttpvfs,
+  canvas: HTMLCanvasElement,
+  searchBox: HTMLInputElement,
+  sentLenDropdown: HTMLInputElement,
+  relAbsDropdown: HTMLInputElement,
+) {
+    const queryText = searchBox.value;
+    const sentLen = Number(sentLenDropdown.value) as Length;
+    const relative = relAbsDropdown.value === "relative";
+
+    let queries = await userRequest(worker, canvas, queryText, sentLen, relative);
+}
 
 async function userRequest(
   worker: WorkerHttpvfs,
-  chart: Chart<"line", Row[], unknown>,
+  canvas: HTMLCanvasElement,
   input: string,
   min_sent_len: Length,
   relative: boolean,
@@ -72,51 +123,40 @@ async function userRequest(
     // TODO: tell user some (which) words were not found
   }
 
-  await rebuild_chart(chart, results);
+  await rebuild_chart(canvas, results);
+  return queries;
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   const searchBox = document.getElementById("searchBox")! as HTMLInputElement;
-  searchBox.value =
-    SAMPLE_SEARCHES[Math.floor(Math.random() * SAMPLE_SEARCHES.length)];
-
   const sentLenDropdown = document.getElementById(
     "sentLenDropdown",
   )! as HTMLInputElement;
-
   const relAbsDropdown = document.getElementById(
     "relAbsDropdown",
   )! as HTMLInputElement;
 
-  relAbsDropdown.value =
-    REL_ABS_OPTS[Math.floor(Math.random() * REL_ABS_OPTS.length)];
+  let initialParams = getInitialParams()
+  searchBox.value = initialParams.searchTerm
+  sentLenDropdown.value = initialParams.minSentLen
+  relAbsDropdown.value = initialParams.relAbs
 
   const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-
   const worker = await initDB(DB_URL)
 
-  const queries = inputToQueries(searchBox.value, Number(sentLenDropdown.value) as Length);
-  const results = await fetchManyOccurrenceSet(
-    worker,
-    queries,
-    relAbsDropdown.value === "relative",
-  );
-  const usageChart = await first_chart_build(usageCanvas, results);
-
-  const resetZoomButton = document.getElementById(
-    "resetZoom",
-  )! as HTMLInputElement;
-  resetZoomButton.addEventListener("click", () => {
-    usageChart.resetZoom();
-  });
+  // TODO: reintroduce
+  // const resetZoomButton = document.getElementById(
+  //   "resetZoom",
+  // )! as HTMLInputElement;
+  // resetZoomButton.addEventListener("click", () => {
+  //   usageChart.resetZoom();
+  // });
+  await manipForUserRequest(worker, usageCanvas, searchBox, sentLenDropdown, relAbsDropdown)
 
   const form = document.getElementById("usageForm")! as HTMLFormElement;
   form.addEventListener("change", async () => {
-    const queryText = searchBox.value;
-    const sentLen = Number(sentLenDropdown.value);
-    const relative = relAbsDropdown.value === "relative";
     // @ts-ignore
-    await userRequest(worker, usageChart, queryText, sentLen, relative);
+    await manipForUserRequest(worker, usageCanvas, searchBox, sentLenDropdown, relAbsDropdown)
   });
 });
 </script>
@@ -159,7 +199,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       value="Reset Zoom"
       style="position: absolute; top: -4.5em; right: 1em"
     />
-    <canvas id="usage" style="width: 100%; margin-top: 0.25em"></canvas>
+    <div>
+      <canvas id="usage" style="width: 100%; margin-top: 0.25em"></canvas>
+    </div>
     <div id="usageLegend" style="height: 6em; margin-top: 0.75em;"></div>
   </div>
 </Layout>

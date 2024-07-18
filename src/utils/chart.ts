@@ -4,6 +4,8 @@ import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 
+let existingChart: Chart<"line", Row[], unknown> | null = null;
+
 function roundForGraph(num: number): number {
   if (num >= 1) {
     return num;
@@ -67,6 +69,7 @@ export async function first_chart_build(
         axis: "x",
         intersect: false,
       },
+      maintainAspectRatio: true,
       plugins: {
         legend: {
           display: false,
@@ -126,13 +129,14 @@ export async function first_chart_build(
   return chart;
 }
 
-export async function rebuild_chart(
-  chart: Chart<"line", Row[], unknown>,
-  data: Result[],
-) {
-  chart.data.datasets = data.map((result: Result) => ({
-    label: result.phrase,
-    data: result.data,
-  }));
-  chart.update();
+export async function rebuild_chart(canvas: HTMLCanvasElement, data: Result[]) {
+  if (!existingChart) {
+    existingChart = await first_chart_build(canvas, data);
+  } else {
+    existingChart.data.datasets = data.map((result: Result) => ({
+      label: result.phrase,
+      data: result.data,
+    }));
+    existingChart.update();
+  }
 }
