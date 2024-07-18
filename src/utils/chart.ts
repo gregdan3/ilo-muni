@@ -4,7 +4,7 @@ import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
 
-let existingChart: Chart<"line", Row[], unknown> | null = null;
+let existingChart: Chart<keyof ChartTypeRegistry, Row[], unknown> | null = null;
 
 function roundForGraph(num: number): number {
   if (num >= 1) {
