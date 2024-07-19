@@ -43,7 +43,30 @@ function mergeOccurrences(rows: Row[][], separators: Separator[]): Row[] {
   return result;
 }
 
-async function makeRelative(phrase_occs: Row[], total_occs: Row[]) {
+function makeSmooth(phraseOccs: Row[], smoothing: number): Row[] {
+  const smoothed: Row[] = phraseOccs.map((row) => ({ ...row }));
+  const len = phraseOccs.length;
+
+  for (let i = 0; i < len; i++) {
+    let sum = 0;
+    let count = 0;
+
+    for (
+      let j = Math.max(0, i - smoothing);
+      j <= Math.min(len - 1, i + smoothing);
+      j++
+    ) {
+      sum += phraseOccs[j].occurrences;
+      count++;
+    }
+
+    smoothed[i].occurrences = sum / count;
+  }
+
+  return smoothed;
+}
+
+function makeRelative(phrase_occs: Row[], total_occs: Row[]): Row[] {
   for (let i = 0; i < phrase_occs.length; i++) {
     phrase_occs[i].occurrences /= total_occs[i].occurrences;
   }
@@ -55,6 +78,7 @@ async function fetchOneOccurrenceSet(
   phrase: string,
   min_sent_len: number,
   relative: boolean,
+  smoothing: number,
 ): Promise<Row[] | null> {
   const totals = await fetch_total_occurrences(worker, 1, min_sent_len);
   // it's possible to have periods with no occurrences for an increased sent len
@@ -98,7 +122,11 @@ async function fetchOneOccurrenceSet(
     }
   }
   if (relative) {
-    result = await makeRelative(result, totals);
+    result = makeRelative(result, totals);
+  }
+
+  if (smoothing > 0 && relative) {
+    result = makeSmooth(result, smoothing);
   }
 
   return result;
@@ -108,6 +136,7 @@ export async function fetchManyOccurrenceSet(
   worker: WorkerHttpvfs,
   queries: Query[],
   relative: boolean,
+  smoothing: number,
 ): Promise<Result[]> {
   let results = await Promise.all(
     queries.map(async (query: Query) => {
@@ -120,6 +149,7 @@ export async function fetchManyOccurrenceSet(
           phrase.term,
           phrase.minSentLen,
           relative,
+          smoothing,
         );
         if (rows === null) {
           return null;

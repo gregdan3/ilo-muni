@@ -11,6 +11,7 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     SearchURLParams,
     MinSentLen,
     Scale,
+    Smoothing,
   } from "@utils/input";
 
   import { initDB } from "@utils/sqlite";
@@ -67,12 +68,17 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     const queryParam = urlParams.get("query");
     const minLenParam = urlParams.get("minSentLen") || "";
     const scaleParam = urlParams.get("scale");
+    const smoothingParam = urlParams.get("smoothing") || "";
 
     let query: string;
     let minSentLen: MinSentLen;
     let scale: Scale;
+    let smoothing: Smoothing;
 
-    let parsed = parseInt(minLenParam, 10);
+    let parsedMinLen = parseInt(minLenParam, 10);
+    let parsedSmoothing = parseInt(smoothingParam, 10);
+
+    // TODO: double check all of these  against type
 
     if (queryParam) {
       query = queryParam;
@@ -80,18 +86,25 @@ const frontmatter = { title: "Toki Pona Ngrams" };
       query = randomElem(SAMPLE_SEARCHES);
     }
 
-    if (parsed && 1 <= parsed && parsed <= 6) {
+    if (parsedMinLen && 1 <= parsedMinLen && parsedMinLen <= 6) {
       minSentLen = minLenParam as MinSentLen;
     } else {
-      minSentLen = randomElem(SAMPLE_SENTLENS);
+      minSentLen = "1";
     }
 
     if (scaleParam && SCALE_OPTS.includes(scaleParam)) {
       scale = scaleParam as Scale;
     } else {
-      scale = randomElem(SCALE_OPTS);
+      scale = "relative";
     }
-    return { query, minSentLen, scale };
+
+    if (smoothingParam && parsedSmoothing >= 0) {
+      smoothing = smoothingParam as Smoothing;
+    } else {
+      smoothing = "2"; // TODO: default smoothing
+    }
+
+    return { query, minSentLen, scale, smoothing };
   }
 
   function toUrlParams(params: SearchURLParams) {
@@ -115,10 +128,12 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     searchBox: HTMLInputElement,
     sentLenDropdown: HTMLInputElement,
     scaleDropdown: HTMLInputElement,
+    smoothingDropdown: HTMLInputElement,
   ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const relative = scaleDropdown.value === "relative";
+    const smoothing = Number(smoothingDropdown.value);
 
     let queries = await userRequest(
       worker,
@@ -126,6 +141,7 @@ const frontmatter = { title: "Toki Pona Ngrams" };
       queryText,
       sentLen,
       relative,
+      smoothing,
     );
     if (!queries) {
       return;
@@ -139,6 +155,7 @@ const frontmatter = { title: "Toki Pona Ngrams" };
       query: query,
       minSentLen: sentLenDropdown.value as MinSentLen,
       scale: scaleDropdown.value as Scale,
+      smoothing: smoothingDropdown.value as Smoothing,
     };
 
     toUrlParams(urlParams);
@@ -150,13 +167,19 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     input: string,
     min_sent_len: Length,
     relative: boolean,
+    smoothing: number,
   ) {
     const queries = inputToQueries(input, min_sent_len);
     if (queries.length === 0) {
       return;
     }
 
-    const results = await fetchManyOccurrenceSet(worker, queries, relative);
+    const results = await fetchManyOccurrenceSet(
+      worker,
+      queries,
+      relative,
+      smoothing,
+    );
     if (results.length === 0) {
       // TODO: tell user nothing came back
       return;
@@ -177,11 +200,15 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     const scaleDropdown = document.getElementById(
       "scaleDropdown",
     )! as HTMLInputElement;
+    const smoothingDropdown = document.getElementById(
+      "smoothingDropdown",
+    )! as HTMLInputElement;
 
     let initialParams = getInitialParams();
     searchBox.value = initialParams.query;
     sentLenDropdown.value = initialParams.minSentLen;
     scaleDropdown.value = initialParams.scale;
+    smoothingDropdown.value = initialParams.smoothing;
 
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
     const worker = await initDB(DB_URL);
@@ -192,6 +219,7 @@ const frontmatter = { title: "Toki Pona Ngrams" };
       searchBox,
       sentLenDropdown,
       scaleDropdown,
+      smoothingDropdown,
     );
 
     const form = document.getElementById("usageForm")! as HTMLFormElement;
@@ -203,7 +231,16 @@ const frontmatter = { title: "Toki Pona Ngrams" };
         searchBox,
         sentLenDropdown,
         scaleDropdown,
+        smoothingDropdown,
       );
+    });
+
+    form.addEventListener("change", () => {
+      if (scaleDropdown.value === "relative") {
+        smoothingDropdown.disabled = false;
+      } else {
+        smoothingDropdown.disabled = true;
+      }
     });
   });
 </script>
@@ -231,10 +268,30 @@ const frontmatter = { title: "Toki Pona Ngrams" };
           <option value="6">6+ words per sentence</option>
         </select>
 
-        <select id="scaleDropdown" value="absolute">
+        <select id="scaleDropdown" value="relative">
           <option value="absolute">Absolute</option>
           <option value="relative">Relative</option>
         </select>
+
+        <span>
+          <select id="smoothingDropdown" value="2">
+            <option value="0">0 smoothing</option>
+            <option value="1">1 smoothing</option>
+            <option value="2">2 smoothing</option>
+            <option value="3">3 smoothing</option>
+            <option value="4">4 smoothing</option>
+            <option value="5">5 smoothing</option>
+            <option value="6">6 smoothing</option>
+            <option value="7">7 smoothing</option>
+            <option value="8">8 smoothing</option>
+            <option value="9">9 smoothing</option>
+            <option value="10">10 smoothing</option>
+            <option value="20">20 smoothing</option>
+            <option value="30">30 smoothing</option>
+            <option value="40">40 smoothing</option>
+            <option value="50">50 smoothing</option>
+          </select>
+        </span>
       </div>
     </form>
   </div>
