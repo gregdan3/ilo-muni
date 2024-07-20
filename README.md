@@ -1,4 +1,4 @@
-# lipu mute
+# ilo Muni
 
 "Multiplicity document" or "many pages": a graph of word occurrence in Toki Pona, based on [Google Ngrams](https://books.google.com/ngrams/) but simultaneously more and less ambitious.
 
