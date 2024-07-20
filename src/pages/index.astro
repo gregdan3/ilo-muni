@@ -55,6 +55,17 @@ const frontmatter = { title: "Toki Pona Ngrams" };
 
   const SCALE_OPTS = ["absolute", "relative"];
 
+  function disableWhenAbsolute(
+    scaleDropdown: HTMLInputElement,
+    smoothingDropdown: HTMLInputElement,
+  ) {
+    if (scaleDropdown.value === "relative") {
+      smoothingDropdown.disabled = false;
+    } else {
+      smoothingDropdown.disabled = true;
+    }
+  }
+
   function randomElem(arr: any[]) {
     return arr[Math.floor(Math.random() * arr.length)];
   }
@@ -207,6 +218,8 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     scaleDropdown.value = initialParams.scale;
     smoothingDropdown.value = initialParams.smoothing;
 
+    disableWhenAbsolute(scaleDropdown, smoothingDropdown);
+
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
     const worker = await initDB(DB_URL);
 
@@ -233,11 +246,7 @@ const frontmatter = { title: "Toki Pona Ngrams" };
     });
 
     form.addEventListener("change", () => {
-      if (scaleDropdown.value === "relative") {
-        smoothingDropdown.disabled = false;
-      } else {
-        smoothingDropdown.disabled = true;
-      }
+      disableWhenAbsolute(scaleDropdown, smoothingDropdown);
     });
   });
 </script>
