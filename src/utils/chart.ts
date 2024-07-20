@@ -33,7 +33,7 @@ export async function first_chart_build(
     plugins: [htmlLegendPlugin, verticalLinePlugin],
     options: {
       responsive: true,
-      animation: { duration: 100, easing: "easeInOutQuint" },
+      animation: false,
       line: {
         datasets: { normalized: true },
       },
