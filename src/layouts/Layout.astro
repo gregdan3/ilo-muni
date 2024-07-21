@@ -31,7 +31,30 @@ import { BASE_URL } from "@utils/constants";
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
-    <link href=`${BASE_URL}/favicon.ico` rel="icon" type="image/x-icon" />
+    <link rel="icon" type="image/svg+xml" href=`${BASE_URL}/favicon.svg` />
+    <link rel="icon" type="image/x-icon" href=`${BASE_URL}/favicon.ico` />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href=`${BASE_URL}/favicon-32x32.png`
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href=`${BASE_URL}/favicon-16x16.png`
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#f2f2f2"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#333333"
+    />
   </head>
 
   <body>
@@ -44,7 +67,7 @@ import { BASE_URL } from "@utils/constants";
 
     <article>
       <header>
-        <img src=`${BASE_URL}/favicon.ico` />
+        <img src=`${BASE_URL}/favicon.svg` />
         <h3>{title}</h3>
       </header>
       <slot />
@@ -85,9 +108,7 @@ import { BASE_URL } from "@utils/constants";
     margin-right: auto;
   }
   header > img {
-    border: 0.3em solid var(--prim-ac);
-    border-radius: 20%;
-    width: 3em;
+    width: 4em;
     height: 3em;
   }
   nav {
