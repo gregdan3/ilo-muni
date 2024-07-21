@@ -69,7 +69,6 @@ export async function first_chart_build(
         axis: "x",
         intersect: false,
       },
-      maintainAspectRatio: true,
       plugins: {
         legend: {
           display: false,
