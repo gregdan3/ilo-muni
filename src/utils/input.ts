@@ -1,3 +1,5 @@
+import { PHRASE_RE } from "@utils/constants";
+
 export type Separator = "+" | "-" | null;
 export type Length = 1 | 2 | 3 | 4 | 5 | 6;
 // yes this is kinda silly
@@ -77,7 +79,7 @@ function splitOnDelim(input: string, delimiter: string): string[] {
 }
 
 function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
-  const phraseRegex = /^[a-zA-Z*\s]+(?:_\d)?$/; // star is for future wildcard
+  const phraseRegex = /^[a-zA-Z0-9* ]+(?:_\d)?$/; // star is for future wildcard
   const phrases: Phrase[] = [];
   let separator: Separator = null;
   let currentPhrase: string[] = [];
@@ -93,7 +95,7 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
         currentPhrase = [];
       }
       separator = token as Separator;
-    } else if (phraseRegex.test(token)) {
+    } else if (PHRASE_RE) {
       currentPhrase.push(token);
     }
   });
