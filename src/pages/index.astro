@@ -271,11 +271,11 @@ const frontmatter = { title: "ilo Muni" };
       <div>
         <select id="sentLenDropdown" value="1">
           <option value="1">All sentences</option>
-          <option value="2">2+ words per sentence</option>
-          <option value="3">3+ words per sentence</option>
-          <option value="4">4+ words per sentence</option>
-          <option value="5">5+ words per sentence</option>
-          <option value="6">6+ words per sentence</option>
+          {
+            Array.from({ length: 5 }, (_, i) => (
+              <option value={i + 2}>{i + 2}+ words per sentence</option>
+            ))
+          }
         </select>
 
         <select id="scaleDropdown" value="relative">
@@ -283,25 +283,18 @@ const frontmatter = { title: "ilo Muni" };
           <option value="relative">Relative</option>
         </select>
 
-        <span>
-          <select id="smoothingDropdown" value="2">
-            <option value="0">0 smoothing</option>
-            <option value="1">1 smoothing</option>
-            <option value="2">2 smoothing</option>
-            <option value="3">3 smoothing</option>
-            <option value="4">4 smoothing</option>
-            <option value="5">5 smoothing</option>
-            <option value="6">6 smoothing</option>
-            <option value="7">7 smoothing</option>
-            <option value="8">8 smoothing</option>
-            <option value="9">9 smoothing</option>
-            <option value="10">10 smoothing</option>
-            <option value="20">20 smoothing</option>
-            <option value="30">30 smoothing</option>
-            <option value="40">40 smoothing</option>
-            <option value="50">50 smoothing</option>
-          </select>
-        </span>
+        <select id="smoothingDropdown" value="2">
+          {
+            Array.from({ length: 10 }, (_, i) => (
+              <option value={i}>{i} smoothing</option>
+            ))
+          }
+          {
+            Array.from({ length: 5 }, (_, i) => (
+              <option value={(i + 1) * 10}>{(i + 1) * 10} smoothing</option>
+            ))
+          }
+        </select>
       </div>
     </form>
   </div>
