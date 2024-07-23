@@ -7,5 +7,14 @@ export default defineConfig({
   site: "https://gregdan3.github.io/ilo-muni/",
   base: "/ilo-muni",
   publicDir: "./static",
-  integrations: [mdx()]
+  integrations: [mdx()],
+  server: {
+    headers: {
+      "Cross-Origin-Embedder-Policy": "require-corp",
+      "Cross-Origin-Opener-Policy": "same-origin",
+    },
+  },
+  devToolbar: {
+    enabled: false,
+  }
 });
