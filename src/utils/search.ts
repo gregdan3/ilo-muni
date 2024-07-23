@@ -1,5 +1,4 @@
 import { queryDb } from "@utils/sqlite";
-import type { WorkerHttpvfs } from "sql.js-httpvfs";
 
 import type { Query, Separator } from "@utils/input";
 
@@ -74,17 +73,16 @@ function makeRelative(phrase_occs: Row[], total_occs: Row[]): Row[] {
 }
 
 async function fetchOneOccurrenceSet(
-  worker: WorkerHttpvfs,
   phrase: string,
   min_sent_len: number,
   relative: boolean,
   smoothing: number,
 ): Promise<Row[] | null> {
-  const totals = await fetch_total_occurrences(worker, 1, min_sent_len);
+  const totals = await fetchTotalOccurrences(1, min_sent_len);
   // it's possible to have periods with no occurrences for an increased sent len
   // but that isn't really a big deal; they'd fill with 0 anyway
 
-  let resp = await queryDb(worker, USAGE_QUERY, [phrase, min_sent_len]);
+  let resp = await queryDb(USAGE_QUERY, [phrase, min_sent_len]);
   if (resp.length === 0) {
     return null; // for filtering in next func
   }
@@ -133,7 +131,6 @@ async function fetchOneOccurrenceSet(
 }
 
 export async function fetchManyOccurrenceSet(
-  worker: WorkerHttpvfs,
   queries: Query[],
   relative: boolean,
   smoothing: number,
@@ -145,7 +142,6 @@ export async function fetchManyOccurrenceSet(
 
       for (const phrase of query.phrases) {
         const rows = await fetchOneOccurrenceSet(
-          worker,
           phrase.term,
           phrase.minSentLen,
           relative,
@@ -172,12 +168,11 @@ export async function fetchManyOccurrenceSet(
   return results as Result[];
 }
 
-async function fetch_total_occurrences(
-  worker: WorkerHttpvfs,
+async function fetchTotalOccurrences(
   phrase_len: number,
   min_sent_len: number,
 ): Promise<Row[]> {
-  let result = await queryDb(worker, OCCUR_QUERY, [phrase_len, min_sent_len]);
+  let result = await queryDb(OCCUR_QUERY, [phrase_len, min_sent_len]);
   result = result.map(
     (row: { day: number; occurrences: number }): Row => ({
       day: graphableDate(row.day),

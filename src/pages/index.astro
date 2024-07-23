@@ -5,7 +5,6 @@ const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type { WorkerHttpvfs } from "sql.js-httpvfs";
   import type {
     Length,
     SearchURLParams,
@@ -14,11 +13,9 @@ const frontmatter = { title: "ilo Muni" };
     Smoothing,
   } from "@utils/input";
 
-  import { initDB } from "@utils/sqlite";
   import { inputToQueries } from "@utils/input";
   import { rebuild_chart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/search";
-  import { DB_URL } from "@utils/constants";
 
   const SAMPLE_SEARCHES = [
     // duh
@@ -135,7 +132,6 @@ const frontmatter = { title: "ilo Muni" };
   }
 
   async function manipForUserRequest(
-    worker: WorkerHttpvfs,
     canvas: HTMLCanvasElement,
     searchBox: HTMLInputElement,
     sentLenDropdown: HTMLInputElement,
@@ -148,7 +144,6 @@ const frontmatter = { title: "ilo Muni" };
     const smoothing = Number(smoothingDropdown.value);
 
     let queries = await userRequest(
-      worker,
       canvas,
       queryText,
       sentLen,
@@ -174,7 +169,6 @@ const frontmatter = { title: "ilo Muni" };
   }
 
   async function userRequest(
-    worker: WorkerHttpvfs,
     canvas: HTMLCanvasElement,
     input: string,
     min_sent_len: Length,
@@ -186,12 +180,7 @@ const frontmatter = { title: "ilo Muni" };
       return;
     }
 
-    const results = await fetchManyOccurrenceSet(
-      worker,
-      queries,
-      relative,
-      smoothing,
-    );
+    const results = await fetchManyOccurrenceSet(queries, relative, smoothing);
     if (results.length === 0) {
       // TODO: tell user nothing came back
       return;
@@ -225,10 +214,8 @@ const frontmatter = { title: "ilo Muni" };
     disableWhenAbsolute(scaleDropdown, smoothingDropdown);
 
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-    const worker = await initDB(DB_URL);
 
     await manipForUserRequest(
-      worker,
       usageCanvas,
       searchBox,
       sentLenDropdown,
@@ -240,7 +227,6 @@ const frontmatter = { title: "ilo Muni" };
     form.addEventListener("change", async () => {
       // @ts-ignore
       await manipForUserRequest(
-        worker,
         usageCanvas,
         searchBox,
         sentLenDropdown,
