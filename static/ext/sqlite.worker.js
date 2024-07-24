@@ -1,1 +1,0 @@
-../../node_modules/sql.js-httpvfs/dist/sqlite.worker.js

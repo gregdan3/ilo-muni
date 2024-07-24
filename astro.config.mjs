@@ -16,5 +16,10 @@ export default defineConfig({
   },
   devToolbar: {
     enabled: false,
-  }
+  },
+  vite: {
+    optimizeDeps: {
+      exclude: ["sqlite-wasm-http"],
+    },
+  },
 });

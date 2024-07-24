@@ -1,14 +1,19 @@
 {
   "extends": "astro/tsconfigs/strict",
-  "exclude": ["static/ext/*"],
   "compilerOptions": {
     "types": ["astro/client"],
+    "target": "ES6",
+    "module": "ESNext",
+    "moduleResolution": "module",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
       "@layouts/*": ["src/layouts/*"],
       "@utils/*": ["src/utils/*"]
     }
-    // "plugins": [{ "name": "@astrojs/ts-plugin" }]
   }
 }
