@@ -153,6 +153,7 @@ const frontmatter = { title: "ilo Muni" };
       relative,
       smoothing,
     );
+    searchLoader.style.visibility = "hidden";
     if (!queries) {
       return;
     }
@@ -169,7 +170,6 @@ const frontmatter = { title: "ilo Muni" };
     };
 
     toUrlParams(urlParams);
-    searchLoader.style.visibility = "hidden";
   }
 
   async function userRequest(
