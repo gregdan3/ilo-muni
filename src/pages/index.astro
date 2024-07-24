@@ -1,5 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import Loader from "@components/Loader.astro";
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -137,12 +138,14 @@ const frontmatter = { title: "ilo Muni" };
     sentLenDropdown: HTMLInputElement,
     scaleDropdown: HTMLInputElement,
     smoothingDropdown: HTMLInputElement,
+    searchLoader: HTMLSpanElement,
   ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const relative = scaleDropdown.value === "relative";
     const smoothing = Number(smoothingDropdown.value);
 
+    searchLoader.style.visibility = "visible";
     let queries = await userRequest(
       canvas,
       queryText,
@@ -166,6 +169,7 @@ const frontmatter = { title: "ilo Muni" };
     };
 
     toUrlParams(urlParams);
+    searchLoader.style.visibility = "hidden";
   }
 
   async function userRequest(
@@ -205,6 +209,10 @@ const frontmatter = { title: "ilo Muni" };
       "smoothingDropdown",
     )! as HTMLInputElement;
 
+    const searchLoader = document.getElementById(
+      "searchLoader",
+    )! as HTMLSpanElement;
+
     let initialParams = getInitialParams();
     searchBox.value = initialParams.query;
     sentLenDropdown.value = initialParams.minSentLen;
@@ -221,6 +229,7 @@ const frontmatter = { title: "ilo Muni" };
       sentLenDropdown,
       scaleDropdown,
       smoothingDropdown,
+      searchLoader,
     );
 
     const form = document.getElementById("usageForm")! as HTMLFormElement;
@@ -232,6 +241,7 @@ const frontmatter = { title: "ilo Muni" };
         sentLenDropdown,
         scaleDropdown,
         smoothingDropdown,
+        searchLoader,
       );
     });
 
@@ -250,8 +260,9 @@ const frontmatter = { title: "ilo Muni" };
           type="text"
           id="searchBox"
           spellcheck="false"
-          style="width: 65%; height: 1.6em; font-size: 18px"
+          style="width: 65%; height: 1.6em; font-size: 18px; margin-right: 0.4em;"
         />
+        <Loader id="searchLoader" />
       </div>
 
       <div>
