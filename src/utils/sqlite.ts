@@ -102,7 +102,10 @@ function makeSmooth(phraseOccs: Row[], smoothing: number): Row[] {
 
 function makeRelative(phrase_occs: Row[], total_occs: Row[]): Row[] {
   for (let i = 0; i < phrase_occs.length; i++) {
-    phrase_occs[i].occurrences /= total_occs[i].occurrences;
+    const total = total_occs[i].occurrences;
+    total
+      ? (phrase_occs[i].occurrences /= total)
+      : (phrase_occs[i].occurrences = 0);
   }
   return phrase_occs;
 }
