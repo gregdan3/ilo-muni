@@ -312,7 +312,7 @@ const frontmatter = { title: "ilo Muni" };
 
       <div>
         <select id="sentLenDropdown" value="1">
-          <option value="1">All sentences</option>
+          <option value="1" selected={true}>All sentences</option>
           {
             Array.from({ length: 5 }, (_, i) => (
               <option value={i + 2}>{i + 2}+ words per sentence</option>
@@ -320,15 +320,17 @@ const frontmatter = { title: "ilo Muni" };
           }
         </select>
 
-        <select id="scaleDropdown" value="relative">
+        <select id="scaleDropdown">
           <option value="absolute">Absolute</option>
-          <option value="relative">Relative</option>
+          <option value="relative" selected={true}>Relative</option>
         </select>
 
-        <select id="smoothingDropdown" value="2">
+        <select id="smoothingDropdown">
           {
             Array.from({ length: 10 }, (_, i) => (
-              <option value={i}>{i} smoothing</option>
+              <option value={i} selected={i === 2}>
+                {i} smoothing
+              </option>
             ))
           }
           {
