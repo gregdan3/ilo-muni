@@ -222,9 +222,19 @@ export async function fetchManyOccurrenceSet(
 }
 
 async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
+  let minSentLen = params.phrase.minSentLen;
+  if (params.relative) {
+    // Override minimum sentence length when relative is set for fetching totals.
+    // This creates more comparable percentages,
+    // because the percentages are made against the total number of words,
+    // rather than among the words in sentences of a specific length.
+    // Critically, searches like "toki_2 - toki_1" cannot produce negative values.
+    minSentLen = params.phrase.length;
+  }
+
   let result = await queryDb(TOTAL_QUERY, [
     params.phrase.length,
-    params.phrase.minSentLen,
+    minSentLen,
     params.start,
     params.end,
   ]);
