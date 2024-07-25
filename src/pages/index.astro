@@ -1,5 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 
 const frontmatter = { title: "ilo Muni" };
@@ -294,6 +295,13 @@ const frontmatter = { title: "ilo Muni" };
             ))
           }
         </select>
+        <EpochRangePicker
+          startYear={2014}
+          endYear={2024}
+          startId="startDateDropdown"
+          endId="endDateDropdown"
+          renderAs="date"
+        />
       </div>
     </form>
   </div>

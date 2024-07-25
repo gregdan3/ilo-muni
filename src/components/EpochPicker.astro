@@ -1,0 +1,36 @@
+---
+export interface EpochPickerConfig {
+  startYear: number;
+  endYear: number;
+  renderAs: "date" | "age";
+  // TODO: age is wrong if you specify a different range
+  valueYear: number;
+  id: string;
+}
+
+function makeAugust(year: number) {
+  return new Date(Date.UTC(year, 7, 1));
+}
+
+const { startYear, endYear, valueYear, renderAs, id } = Astro.props;
+const dates = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
+  makeAugust(startYear + i),
+);
+
+const valueDate = makeAugust(valueYear);
+---
+
+<select id={id} value={valueDate.getTime()}>
+  {
+    dates.map((date, index) => (
+      <option
+        value={date.getTime()}
+        selected={date.getTime() === valueDate.getTime()}
+      >
+        {renderAs === "date"
+          ? `Aug ${date.getUTCFullYear()}`
+          : `${index} years old`}
+      </option>
+    ))
+  }
+</select>
