@@ -57,17 +57,6 @@ const frontmatter = { title: "ilo Muni" };
 
   const SCALE_OPTS = ["absolute", "relative"];
 
-  function disableWhenAbsolute(
-    scaleDropdown: HTMLInputElement,
-    smoothingDropdown: HTMLInputElement,
-  ) {
-    if (scaleDropdown.value === "relative") {
-      smoothingDropdown.disabled = false;
-    } else {
-      smoothingDropdown.disabled = true;
-    }
-  }
-
   function randomElem(arr: any[]) {
     return arr[Math.floor(Math.random() * arr.length)];
   }
@@ -132,26 +121,37 @@ const frontmatter = { title: "ilo Muni" };
     window.history.replaceState({}, "", newUrl);
   }
 
-  async function manipForUserRequest(
+  async function updatePage(
     canvas: HTMLCanvasElement,
     searchBox: HTMLInputElement,
     sentLenDropdown: HTMLInputElement,
     scaleDropdown: HTMLInputElement,
     smoothingDropdown: HTMLInputElement,
     searchLoader: HTMLSpanElement,
+    // TODO: startDate, endDate
   ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const relative = scaleDropdown.value === "relative";
     const smoothing = Number(smoothingDropdown.value);
 
+    // disable smoothness if relative if set
+    // graphing absolute data with smoothness is silly
+    if (relative) {
+      smoothingDropdown.disabled = false;
+    } else {
+      smoothingDropdown.disabled = true;
+    }
+
     searchLoader.style.visibility = "visible";
-    let queries = await userRequest(
+    let queries = await updateChart(
       canvas,
       queryText,
       sentLen,
       relative,
       smoothing,
+      new Date(1000000000),
+      new Date(9999999999),
     );
     searchLoader.style.visibility = "hidden";
     if (!queries) {
@@ -172,19 +172,27 @@ const frontmatter = { title: "ilo Muni" };
     toUrlParams(urlParams);
   }
 
-  async function userRequest(
+  async function updateChart(
     canvas: HTMLCanvasElement,
     input: string,
     min_sent_len: Length,
     relative: boolean,
     smoothing: number,
+    start: Date,
+    end: Date,
   ) {
     const queries = inputToQueries(input, min_sent_len);
     if (queries.length === 0) {
       return;
     }
 
-    const results = await fetchManyOccurrenceSet(queries, relative, smoothing);
+    const results = await fetchManyOccurrenceSet(
+      queries,
+      relative,
+      smoothing,
+      start,
+      end,
+    );
     if (results.length === 0) {
       // TODO: tell user nothing came back
       return;
@@ -219,11 +227,9 @@ const frontmatter = { title: "ilo Muni" };
     scaleDropdown.value = initialParams.scale;
     smoothingDropdown.value = initialParams.smoothing;
 
-    disableWhenAbsolute(scaleDropdown, smoothingDropdown);
-
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
 
-    await manipForUserRequest(
+    await updatePage(
       usageCanvas,
       searchBox,
       sentLenDropdown,
@@ -235,7 +241,7 @@ const frontmatter = { title: "ilo Muni" };
     const form = document.getElementById("usageForm")! as HTMLFormElement;
     form.addEventListener("change", async () => {
       // @ts-ignore
-      await manipForUserRequest(
+      await updatePage(
         usageCanvas,
         searchBox,
         sentLenDropdown,
@@ -243,10 +249,6 @@ const frontmatter = { title: "ilo Muni" };
         smoothingDropdown,
         searchLoader,
       );
-    });
-
-    form.addEventListener("change", () => {
-      disableWhenAbsolute(scaleDropdown, smoothingDropdown);
     });
   });
 </script>

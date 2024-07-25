@@ -1,6 +1,7 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL } from "@utils/constants";
+import type { Phrase, Query, Separator } from "@utils/input";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -33,10 +34,8 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
   return await worker.db.query(query, params);
 }
 
-import type { Query, Separator } from "@utils/input";
-
-const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? ORDER BY day`;
-const OCCUR_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? ORDER BY day`;
+const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? AND day >= ? AND day < ?  ORDER BY day`;
+const TOTAL_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? AND day >= ? AND day < ? ORDER BY day`;
 const RANK_QUERY = `SELECT phrase.text, sum(occurrences) AS total FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.len = 1 AND frequency.min_sent_len = 1 GROUP BY phrase_id ORDER BY total DESC LIMIT 500`;
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
@@ -48,6 +47,15 @@ export interface Row {
 export interface Result {
   phrase: string;
   data: Row[];
+}
+
+export interface QueryParams {
+  // TODO: is date or number a better interface?
+  phrase: Phrase;
+  relative: boolean;
+  smoothing: number;
+  start: number;
+  end: number;
 }
 
 function graphableDate(timestamp: number): Date {
@@ -111,16 +119,14 @@ function makeRelative(phrase_occs: Row[], total_occs: Row[]): Row[] {
 }
 
 async function fetchOneOccurrenceSet(
-  phrase: string,
-  min_sent_len: number,
-  relative: boolean,
-  smoothing: number,
+  params: QueryParams,
 ): Promise<Row[] | null> {
-  const totals = await fetchTotalOccurrences(1, min_sent_len);
-  // it's possible to have periods with no occurrences for an increased sent len
-  // but that isn't really a big deal; they'd fill with 0 anyway
-
-  let resp = await queryDb(USAGE_QUERY, [phrase, min_sent_len]);
+  let resp = await queryDb(USAGE_QUERY, [
+    params.phrase.term,
+    params.phrase.minSentLen,
+    params.start,
+    params.end,
+  ]);
   if (resp.length === 0) {
     return null; // for filtering in next func
   }
@@ -131,9 +137,12 @@ async function fetchOneOccurrenceSet(
       occurrences: row.occurrences,
     }),
   );
+
   let result: Row[] = [];
   let iResult = 0;
   let iCompare = 0;
+
+  const totals = await fetchTotalOccurrences(params);
 
   while (iCompare < totals.length) {
     const comparisonDay = totals[iCompare].day;
@@ -157,12 +166,13 @@ async function fetchOneOccurrenceSet(
       iCompare++;
     }
   }
-  if (relative) {
+
+  if (params.relative) {
     result = makeRelative(result, totals);
   }
 
-  if (smoothing > 0 && relative) {
-    result = makeSmooth(result, smoothing);
+  if (params.smoothing > 0 && params.relative) {
+    result = makeSmooth(result, params.smoothing);
   }
 
   return result;
@@ -172,28 +182,32 @@ export async function fetchManyOccurrenceSet(
   queries: Query[],
   relative: boolean,
   smoothing: number,
+  start: Date,
+  end: Date,
 ): Promise<Result[]> {
-  const queryPromises = queries.map(async (query) => {
-    // Process each phrase within a query concurrently
-    const phraseOccurrencesPromises = query.phrases.map(async (phrase) => {
-      const rows = await fetchOneOccurrenceSet(
-        phrase.term,
-        phrase.minSentLen,
-        relative,
-        smoothing,
-      );
-      return rows !== null ? { rows, separator: phrase.separator } : null;
-    });
+  const queryPromises = queries.map(async (query: Query) => {
+    const phraseOccurrencesPromises = query.phrases.map(
+      async (phrase: Phrase) => {
+        const rows = await fetchOneOccurrenceSet({
+          phrase,
+          relative,
+          smoothing,
+          start: start.getTime(),
+          end: end.getTime(),
+        } as QueryParams);
+        return rows !== null ? { rows, separator: phrase.separator } : null;
+      },
+    );
 
     const phraseOccurrences = await Promise.all(phraseOccurrencesPromises);
 
-    if (phraseOccurrences.some((occurrence) => occurrence === null)) {
+    if (phraseOccurrences.some((occurrence): boolean => occurrence === null)) {
       return null;
     }
 
     const mergedRows = mergeOccurrences(
-      phraseOccurrences.map((occurrence) => occurrence!.rows),
-      phraseOccurrences.map((occurrence) => occurrence!.separator),
+      phraseOccurrences.map((occurrence): Row[] => occurrence!.rows),
+      phraseOccurrences.map((occurrence): Separator => occurrence!.separator),
     );
 
     return {
@@ -207,11 +221,13 @@ export async function fetchManyOccurrenceSet(
   return resolvedResults.filter((result) => result !== null) as Result[];
 }
 
-async function fetchTotalOccurrences(
-  phrase_len: number,
-  min_sent_len: number,
-): Promise<Row[]> {
-  let result = await queryDb(OCCUR_QUERY, [phrase_len, min_sent_len]);
+async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
+  let result = await queryDb(TOTAL_QUERY, [
+    params.phrase.length,
+    params.phrase.minSentLen,
+    params.start,
+    params.end,
+  ]);
   result = result.map(
     (row: { day: number; occurrences: number }): Row => ({
       day: graphableDate(row.day),
