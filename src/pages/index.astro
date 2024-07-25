@@ -198,8 +198,8 @@ const frontmatter = { title: "ilo Muni" };
       minSentLen: sentLenDropdown.value as MinSentLen,
       scale: scaleDropdown.value as Scale,
       smoothing: smoothingDropdown.value as Smoothing,
-      start,
-      end,
+      start: startDropdown.value,
+      end: endDropdown.value,
     };
 
     toUrlParams(urlParams);
