@@ -9,6 +9,9 @@
    id="svg1"
    inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
    sodipodi:docname="mutenimi.svg"
+   inkscape:export-filename="mutenimi_pini.svg"
+   inkscape:export-xdpi="408.53"
+   inkscape:export-ydpi="408.53"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,15 +27,16 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      showguides="false"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="305.47013"
-     inkscape:cy="550.48263"
+     inkscape:zoom="2"
+     inkscape:cx="372.5"
+     inkscape:cy="541.75"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="1912"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg1">
+     inkscape:current-layer="svg1"
+     showgrid="false">
     <sodipodi:guide
        position="50.756981,327.17866"
        orientation="0,-1"
@@ -216,7 +220,10 @@
   <g
      id="g36"
      inkscape:label="wide"
-     transform="matrix(0.9670511,0,0,1,-44.008883,-147.90209)">
+     transform="matrix(0.9670511,0,0,1,-44.008883,-147.90209)"
+     inkscape:export-filename="mutenimi_nija.png"
+     inkscape:export-xdpi="408.53"
+     inkscape:export-ydpi="408.53">
     <g
        id="g21-4"
        inkscape:label="shadow"
@@ -269,13 +276,13 @@
          id="layer1-6"
          transform="matrix(1.1322705,0,0,1,-9.9057127,0)" />
       <rect
-         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#0060e2;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.275481px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+         style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#0060e2;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.273594px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
          id="rect34-5"
-         width="4.0045247"
-         height="3.884999"
-         x="149.9325"
-         y="10.603506"
-         transform="matrix(0.87954587,0.47581411,-0.5244447,0.85144451,0,0)"
+         width="3.9884803"
+         height="3.8473659"
+         x="149.97324"
+         y="13.313162"
+         transform="matrix(0.8877059,0.46041094,-0.51411002,0.85772425,0,0)"
          inkscape:label="rect34" />
       <rect
          style="font-variation-settings:normal;vector-effect:none;fill:#0060e2;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.255326px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
@@ -327,13 +334,13 @@
          y="18.11569"
          transform="matrix(0.90246132,0.4307709,-0.5229168,0.85238373,0,0)" />
       <rect
-         style="font-variation-settings:normal;vector-effect:none;fill:#f4be15;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.28079px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+         style="font-variation-settings:normal;vector-effect:none;fill:#f4be15;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.280495px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
          id="rect36-1"
-         width="2.8785121"
-         height="2.5883908"
-         x="141.78276"
-         y="-12.983239"
-         transform="matrix(0.90528362,0.42480769,-0.51645355,0.8563152,0,0)"
+         width="2.8773177"
+         height="2.5840235"
+         x="141.78685"
+         y="-12.851166"
+         transform="matrix(0.90565945,0.42400585,-0.51732643,0.85578815,0,0)"
          inkscape:label="rect36-1" />
     </g>
     <g
