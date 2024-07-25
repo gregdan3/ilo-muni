@@ -34,8 +34,8 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
   return await worker.db.query(query, params);
 }
 
-const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? AND day >= ? AND day < ?  ORDER BY day`;
-const TOTAL_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? AND day >= ? AND day < ? ORDER BY day`;
+const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? AND day >= ? AND day <= ?  ORDER BY day`;
+const TOTAL_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? AND day >= ? AND day <= ? ORDER BY day`;
 const RANK_QUERY = `SELECT phrase.text, sum(occurrences) AS total FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.len = 1 AND frequency.min_sent_len = 1 GROUP BY phrase_id ORDER BY total DESC LIMIT 500`;
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
