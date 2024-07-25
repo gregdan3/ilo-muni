@@ -26,7 +26,7 @@ export async function first_chart_build(
     type: "line",
     data: {
       datasets: data.map((result: Result) => ({
-        label: result.phrase,
+        label: result.term,
         data: result.data,
       })),
     },
@@ -110,7 +110,7 @@ export async function rebuild_chart(canvas: HTMLCanvasElement, data: Result[]) {
     existingChart = await first_chart_build(canvas, data);
   } else {
     existingChart.data.datasets = data.map((result: Result) => ({
-      label: result.phrase,
+      label: result.term,
       data: result.data,
     }));
     existingChart.update();

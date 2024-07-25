@@ -45,7 +45,7 @@ export interface Row {
   occurrences: number;
 }
 export interface Result {
-  phrase: string;
+  term: string;
   data: Row[];
 }
 
@@ -211,7 +211,7 @@ export async function fetchManyOccurrenceSet(
     );
 
     return {
-      phrase: query.repr,
+      term: query.repr,
       data: mergedRows,
     };
   });
