@@ -182,8 +182,8 @@ export async function fetchManyOccurrenceSet(
   queries: Query[],
   relative: boolean,
   smoothing: number,
-  start: Date,
-  end: Date,
+  start: number,
+  end: number,
 ): Promise<Result[]> {
   const queryPromises = queries.map(async (query: Query) => {
     const phraseOccurrencesPromises = query.phrases.map(
@@ -192,8 +192,8 @@ export async function fetchManyOccurrenceSet(
           phrase,
           relative,
           smoothing,
-          start: start.getTime(),
-          end: end.getTime(),
+          start,
+          end,
         } as QueryParams);
         return rows !== null ? { rows, separator: phrase.separator } : null;
       },

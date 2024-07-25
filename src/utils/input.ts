@@ -27,6 +27,8 @@ export interface SearchURLParams {
   minSentLen: MinSentLen;
   scale: Scale;
   smoothing: Smoothing;
+  start: string;
+  end: string;
 }
 
 // searchable words/phrases after split by separator and stripped of whitespace

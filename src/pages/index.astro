@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
+import { EARLIEST_YEAR, LATEST_YEAR } from "@utils/constants";
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -14,10 +15,10 @@ const frontmatter = { title: "ilo Muni" };
     Scale,
     Smoothing,
   } from "@utils/input";
-
   import { inputToQueries } from "@utils/input";
   import { rebuild_chart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
+  import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
 
   const SAMPLE_SEARCHES = [
     // duh
@@ -62,49 +63,75 @@ const frontmatter = { title: "ilo Muni" };
     return arr[Math.floor(Math.random() * arr.length)];
   }
 
+  function isValidTimestamp(timestamp: number): boolean {
+    if (!timestamp) {
+      return false;
+    }
+    if (timestamp < EARLIEST_TIMESTAMP) {
+      return false;
+    }
+    if (timestamp > LATEST_TIMESTAMP) {
+      return false;
+    }
+    return true;
+  }
+
   function getInitialParams(): SearchURLParams {
     const urlParams = new URLSearchParams(window.location.search);
 
     const queryParam = urlParams.get("query");
-    const minLenParam = urlParams.get("minSentLen") || "";
-    const scaleParam = urlParams.get("scale");
-    const smoothingParam = urlParams.get("smoothing") || "";
-
     let query: string;
-    let minSentLen: MinSentLen;
-    let scale: Scale;
-    let smoothing: Smoothing;
-
-    let parsedMinLen = parseInt(minLenParam, 10);
-    let parsedSmoothing = parseInt(smoothingParam, 10);
-
-    // TODO: double check all of these  against type
-
     if (queryParam) {
       query = queryParam;
     } else {
       query = randomElem(SAMPLE_SEARCHES);
     }
 
-    if (parsedMinLen && 1 <= parsedMinLen && parsedMinLen <= 6) {
+    const minLenParam = urlParams.get("minSentLen") || "";
+    const minLenParsed = parseInt(minLenParam, 10);
+    let minSentLen: MinSentLen;
+    if (minLenParsed && 1 <= minLenParsed && minLenParsed <= 6) {
       minSentLen = minLenParam as MinSentLen;
     } else {
       minSentLen = "1";
     }
 
+    const scaleParam = urlParams.get("scale");
+    let scale: Scale;
     if (scaleParam && SCALE_OPTS.includes(scaleParam)) {
       scale = scaleParam as Scale;
     } else {
       scale = "relative";
     }
 
-    if (smoothingParam && parsedSmoothing >= 0) {
+    const smoothingParam = urlParams.get("smoothing") || "";
+    const smoothingParsed = parseInt(smoothingParam, 10);
+    let smoothing: Smoothing;
+    if (smoothingParam && smoothingParsed >= 0) {
       smoothing = smoothingParam as Smoothing;
     } else {
-      smoothing = "2"; // TODO: default smoothing
+      smoothing = "2";
     }
 
-    return { query, minSentLen, scale, smoothing };
+    const startParam = urlParams.get("start") || "";
+    const startParsed = parseInt(startParam, 10);
+    let start: string;
+    if (isValidTimestamp(startParsed)) {
+      start = startParam;
+    } else {
+      start = EARLIEST_TIMESTAMP.toString();
+    }
+
+    const endParam = urlParams.get("end") || "";
+    const endParsed = parseInt(endParam, 10);
+    let end: string;
+    if (isValidTimestamp(endParsed)) {
+      end = endParam;
+    } else {
+      end = LATEST_TIMESTAMP.toString();
+    }
+
+    return { query, minSentLen, scale, smoothing, start, end };
   }
 
   function toUrlParams(params: SearchURLParams) {
@@ -128,13 +155,16 @@ const frontmatter = { title: "ilo Muni" };
     sentLenDropdown: HTMLInputElement,
     scaleDropdown: HTMLInputElement,
     smoothingDropdown: HTMLInputElement,
+    startDropdown: HTMLInputElement,
+    endDropdown: HTMLInputElement,
     searchLoader: HTMLSpanElement,
-    // TODO: startDate, endDate
   ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const relative = scaleDropdown.value === "relative";
     const smoothing = Number(smoothingDropdown.value);
+    const start = Number(startDropdown.value);
+    const end = Number(endDropdown.value);
 
     // disable smoothness if relative if set
     // graphing absolute data with smoothness is silly
@@ -151,8 +181,8 @@ const frontmatter = { title: "ilo Muni" };
       sentLen,
       relative,
       smoothing,
-      new Date(1000000000),
-      new Date(9999999999),
+      start,
+      end,
     );
     searchLoader.style.visibility = "hidden";
     if (!queries) {
@@ -168,6 +198,8 @@ const frontmatter = { title: "ilo Muni" };
       minSentLen: sentLenDropdown.value as MinSentLen,
       scale: scaleDropdown.value as Scale,
       smoothing: smoothingDropdown.value as Smoothing,
+      start,
+      end,
     };
 
     toUrlParams(urlParams);
@@ -179,8 +211,8 @@ const frontmatter = { title: "ilo Muni" };
     min_sent_len: Length,
     relative: boolean,
     smoothing: number,
-    start: Date,
-    end: Date,
+    start: number,
+    end: number,
   ) {
     const queries = inputToQueries(input, min_sent_len);
     if (queries.length === 0) {
@@ -217,6 +249,12 @@ const frontmatter = { title: "ilo Muni" };
     const smoothingDropdown = document.getElementById(
       "smoothingDropdown",
     )! as HTMLInputElement;
+    const startDropdown = document.getElementById(
+      "startDropdown",
+    )! as HTMLInputElement;
+    const endDropdown = document.getElementById(
+      "endDropdown",
+    )! as HTMLInputElement;
 
     const searchLoader = document.getElementById(
       "searchLoader",
@@ -227,27 +265,31 @@ const frontmatter = { title: "ilo Muni" };
     sentLenDropdown.value = initialParams.minSentLen;
     scaleDropdown.value = initialParams.scale;
     smoothingDropdown.value = initialParams.smoothing;
+    startDropdown.value = initialParams.start;
+    endDropdown.value = initialParams.end;
 
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-
     await updatePage(
       usageCanvas,
       searchBox,
       sentLenDropdown,
       scaleDropdown,
       smoothingDropdown,
+      startDropdown,
+      endDropdown,
       searchLoader,
     );
 
     const form = document.getElementById("usageForm")! as HTMLFormElement;
     form.addEventListener("change", async () => {
-      // @ts-ignore
       await updatePage(
         usageCanvas,
         searchBox,
         sentLenDropdown,
         scaleDropdown,
         smoothingDropdown,
+        startDropdown,
+        endDropdown,
         searchLoader,
       );
     });
@@ -296,10 +338,10 @@ const frontmatter = { title: "ilo Muni" };
           }
         </select>
         <EpochRangePicker
-          startYear={2014}
-          endYear={2024}
-          startId="startDateDropdown"
-          endId="endDateDropdown"
+          startYear={EARLIEST_YEAR}
+          endYear={LATEST_YEAR}
+          startId="startDropdown"
+          endId="endDropdown"
           renderAs="date"
         />
       </div>

@@ -1,4 +1,6 @@
 ---
+import { makeAugust } from "@utils/other";
+
 export interface EpochPickerConfig {
   startYear: number;
   endYear: number;
@@ -6,10 +8,6 @@ export interface EpochPickerConfig {
   // TODO: age is wrong if you specify a different range
   valueYear: number;
   id: string;
-}
-
-function makeAugust(year: number) {
-  return new Date(Date.UTC(year, 7, 1));
 }
 
 const { startYear, endYear, valueYear, renderAs, id } = Astro.props;
@@ -20,11 +18,11 @@ const dates = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
 const valueDate = makeAugust(valueYear);
 ---
 
-<select id={id} value={valueDate.getTime()}>
+<select id={id}>
   {
     dates.map((date, index) => (
       <option
-        value={date.getTime()}
+        value={date.getTime() / 1000}
         selected={date.getTime() === valueDate.getTime()}
       >
         {renderAs === "date"
