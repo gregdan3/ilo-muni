@@ -1,34 +1,76 @@
 ---
-import Layout from '@layouts/Layout.astro'
+import Layout from "@layouts/Layout.astro";
+import LenDropdown from "@components/LenDropdown.astro";
+import EpochPicker from "@components/EpochPicker.astro";
+import { EARLIEST_YEAR, LATEST_YEAR } from "@utils/constants";
 
-const frontmatter = {"title": "Rank by Frequency"}
+const frontmatter = { title: "Rank by Frequency" };
 ---
+
+<script>
+  import { fetchRanks } from "@utils/sqlite";
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
+    let data = await fetchRanks(1, 1, 1628380800);
+
+    ranksDiv.innerHTML = "";
+
+    const maxOccurrences = data[0].occurrences;
+
+    data.forEach((item, index: number) => {
+      const rankItem = document.createElement("div");
+
+      const rankText = document.createElement("span");
+      rankText.textContent = `${index + 1}. ${item.text}: ${item.occurrences}`;
+
+      const rankBar = document.createElement("span");
+      rankBar.style.width = `${(item.occurrences / maxOccurrences) * 100}%`;
+
+      rankItem.appendChild(rankText);
+      rankItem.appendChild(rankBar);
+      ranksDiv.appendChild(rankItem);
+    });
+  });
+</script>
 
 <Layout frontmatter={frontmatter}>
   <div>
-    <form id="ranksForm" onsubmit="return false;" autocomplete="off">
-      <div>
-      <div>
-        <select id="sentLenDropdown" value="1">
-          <option value="1">All sentences</option>
-          <option value="2">2+ words per sentence</option>
-          <option value="3">3+ words per sentence</option>
-          <option value="4">4+ words per sentence</option>
-          <option value="5">5+ words per sentence</option>
-          <option value="6">6+ words per sentence</option>
-        </select>
+    <div>
+      <form id="ranksForm" onsubmit="return false;" autocomplete="off">
+        <LenDropdown
+          maxLength={6}
+          singularText="All sentences"
+          pluralText="+ words per sentence"
+          id="sentLenDropdown"
+        />
 
-        <select id="yearDropdown" value="all">
-          <option value="all">All Time</option>
-          <option value="2016">2016-2017</option>
-        </select>
-      </div>
-    </form>
+        <LenDropdown
+          maxLength={6}
+          singularText="1 word"
+          pluralText=" words"
+          id="phraseLenDropdown"
+        />
+
+        <!-- TODO: all time picker -->
+
+        <EpochPicker
+          startYear={EARLIEST_YEAR}
+          endYear={LATEST_YEAR}
+          valueYear={LATEST_YEAR}
+          renderAs="date"
+          allTime="true"
+          id="yearDropdown"
+        />
+      </form>
+    </div>
+    <div style="position: relative">
+      <div id="ranksDiv"></div>
+
+      <canvas id="ranks"></canvas>
+      <div id="ranksLegend"></div>
+    </div>
   </div>
 
-  <div style="position: relative">
-    <canvas id="ranks"></canvas>
-    <div id="ranksLegend"></div>
-  </div>
-
+  <div id="errorBin"></div>
 </Layout>
