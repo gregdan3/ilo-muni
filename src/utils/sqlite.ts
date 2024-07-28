@@ -1,7 +1,7 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL } from "@utils/constants";
-import type { Phrase, Query, Separator } from "@utils/input";
+import type { Length, Phrase, Query, Separator } from "@utils/input";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -34,9 +34,11 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
   return await worker.db.query(query, params);
 }
 
+// inclusive on both ends makes sense for the graph
 const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? AND day >= ? AND day <= ?  ORDER BY day`;
 const TOTAL_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? AND day >= ? AND day <= ? ORDER BY day`;
-const RANK_QUERY = `SELECT phrase.text, sum(occurrences) AS total FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.len = 1 AND frequency.min_sent_len = 1 GROUP BY phrase_id ORDER BY total DESC LIMIT 500`;
+const RANKS_QUERY = `SELECT p.text, r.occurrences FROM ranks r JOIN phrase p ON r.phrase_id = p.id WHERE p.len = ? AND r.min_sent_len = ? AND r.day = ? ORDER BY occurrences DESC;`;
+// but for ranks, we've queried ahead data which is exclusive on the right
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
@@ -47,6 +49,10 @@ export interface Row {
 export interface Result {
   term: string;
   data: Row[];
+}
+export interface Rank {
+  term: string;
+  occurrences: number;
 }
 
 export interface QueryParams {
@@ -255,4 +261,20 @@ async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
     }),
   );
   return result as Row[];
+}
+
+export async function fetchRanks(
+  phraseLen: Length,
+  minSentLen: Length,
+  start: number,
+  // end: number,
+): Promise<Rank[]> {
+  const result = await queryDb(RANKS_QUERY, [
+    phraseLen,
+    minSentLen,
+    start,
+    // end,
+  ]);
+
+  return result as Rank[];
 }
