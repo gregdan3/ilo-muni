@@ -16,7 +16,7 @@ const frontmatter = { title: "ilo Muni" };
     Smoothing,
   } from "@utils/input";
   import { inputToQueries } from "@utils/input";
-  import { rebuild_chart } from "@utils/chart";
+  import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
   import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
 
@@ -234,7 +234,7 @@ const frontmatter = { title: "ilo Muni" };
       // TODO: tell user some (which) words were not found
     }
 
-    await rebuild_chart(canvas, results);
+    await reloadUsageChart(canvas, results);
     return queries;
   }
 

@@ -18,10 +18,7 @@ function roundForGraph(num: number): number {
   return Math.floor(num * multiplier) / multiplier;
 }
 
-export async function first_chart_build(
-  canvas: HTMLCanvasElement,
-  data: Result[],
-) {
+async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
   const chart = new Chart(canvas, {
     type: "line",
     data: {
@@ -105,9 +102,12 @@ export async function first_chart_build(
   return chart;
 }
 
-export async function rebuild_chart(canvas: HTMLCanvasElement, data: Result[]) {
+export async function reloadUsageChart(
+  canvas: HTMLCanvasElement,
+  data: Result[],
+) {
   if (!existingChart) {
-    existingChart = await first_chart_build(canvas, data);
+    existingChart = await initUsageChart(canvas, data);
   } else {
     existingChart.data.datasets = data.map((result: Result) => ({
       label: result.term,
