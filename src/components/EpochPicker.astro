@@ -7,10 +7,18 @@ export interface EpochPickerConfig {
   renderAs: "date" | "age";
   // TODO: age is wrong if you specify a different range
   valueYear: number;
+  allTime: boolean;
   id: string;
 }
 
-const { startYear, endYear, valueYear, renderAs, id } = Astro.props;
+const {
+  startYear,
+  endYear,
+  valueYear,
+  renderAs,
+  allTime = false,
+  id,
+} = Astro.props;
 const dates = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
   makeAugust(startYear + i),
 );
@@ -30,5 +38,12 @@ const valueDate = makeAugust(valueYear);
           : `${index} years old`}
       </option>
     ))
+  }
+  {
+    allTime && (
+      <option value={0} selected={0 === valueDate.getTime()}>
+        All Time
+      </option>
+    )
   }
 </select>
