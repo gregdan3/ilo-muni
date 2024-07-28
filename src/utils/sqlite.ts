@@ -232,6 +232,16 @@ async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
     minSentLen = params.phrase.length;
   }
 
+  // NOTE: Why not override phraseLen too?
+  // Google measures percentages by their number of occurrences among same-length ngrams
+  // This means percentages for different-length ngrams are **not** comparable
+  // Demonstrating: https://books.google.com/ngrams/graph?content=%28kindergarten+-+child+care%29&year_start=1800
+  // Granted, it is differently misleading to take them as a percentage of unigrams
+  // But this would mean you couldn't go negative when subtracting longer ngrams from a shorter ngram contained within the longer ones
+  // e.g. tenpo ni - tenpo ni la - lon tenpo ni
+  // And this could be useful because in the above search, the resultant line would be "Percentage prevalence of 'tenpo ni' without the prevalence of 'tenpo ni la' or 'lon tenpo ni'"
+  // Which right now you can only get in absolute mode
+
   let result = await queryDb(TOTAL_QUERY, [
     params.phrase.length,
     minSentLen,
