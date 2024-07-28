@@ -1,0 +1,19 @@
+---
+export interface sentLenDropdownProps {
+  maxLength: number;
+  singularText: string;
+  pluralText: string;
+  id: string;
+}
+
+const { maxLength, singularText, pluralText, id } = Astro.props;
+---
+
+<select id={id} value="1">
+  <option value="1" selected={true}>{singularText}</option>
+  {
+    Array.from({ length: maxLength - 1 }, (_, i) => (
+      <option value={i + 2}>{`${i + 2}${pluralText}`}</option>
+    ))
+  }
+</select>
