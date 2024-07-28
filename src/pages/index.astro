@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
+import SentLenDropdown from "@components/SentLenDropdown.astro";
 import { EARLIEST_YEAR, LATEST_YEAR } from "@utils/constants";
 
 const frontmatter = { title: "ilo Muni" };
@@ -311,14 +312,7 @@ const frontmatter = { title: "ilo Muni" };
       </div>
 
       <div>
-        <select id="sentLenDropdown" value="1">
-          <option value="1" selected={true}>All sentences</option>
-          {
-            Array.from({ length: 5 }, (_, i) => (
-              <option value={i + 2}>{i + 2}+ words per sentence</option>
-            ))
-          }
-        </select>
+        <SentLenDropdown maxMinSentLen={6} />
 
         <select id="scaleDropdown">
           <option value="absolute">Absolute</option>
