@@ -45,8 +45,13 @@ const frontmatter = { title: "Rank by Frequency" };
     yearDropdown: HTMLInputElement,
   ) {
     const phraseLen = Number(phraseLenDropdown.value) as Length;
-    const sentLen = Number(sentLenDropdown.value) as Length;
+    let sentLen = Number(sentLenDropdown.value) as Length;
     const year = Number(yearDropdown.value);
+
+    if (sentLen < phraseLen) {
+      sentLenDropdown.value = phraseLenDropdown.value;
+      sentLen = phraseLen;
+    }
 
     await updateChart(ranksDiv, phraseLen, sentLen, year);
   }
