@@ -2,6 +2,7 @@ import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
 import type { Length, Phrase, Query, Separator } from "@utils/input";
+import { consoleLogAsync } from "./debug";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -29,6 +30,8 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
   if (!workerPromise) {
     workerPromise = initDB(DB_URL);
   }
+
+  await consoleLogAsync(query, params);
 
   const worker = await workerPromise;
   return await worker.db.query(query, params);
