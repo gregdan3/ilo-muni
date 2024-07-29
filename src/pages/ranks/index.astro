@@ -8,21 +8,26 @@ const frontmatter = { title: "Rank by Frequency" };
 ---
 
 <script>
+  import type { Length, SearchURLParams } from "@utils/input";
   import { fetchRanks } from "@utils/sqlite";
 
-  document.addEventListener("DOMContentLoaded", async () => {
-    const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
-    let data = await fetchRanks(1, 1, 1628380800);
+  function getInitialParams(): SearchURLParams {}
+
+  async function updateChart(
+    ranksDiv: HTMLDivElement,
+    phraseLen: Length,
+    minSentLen: Length,
+    year: number,
+  ) {
+    let data = await fetchRanks(phraseLen, minSentLen, year);
 
     ranksDiv.innerHTML = "";
-
     const maxOccurrences = data[0].occurrences;
-
     data.forEach((item, index: number) => {
       const rankItem = document.createElement("div");
 
       const rankText = document.createElement("span");
-      rankText.textContent = `${index + 1}. ${item.text}: ${item.occurrences}`;
+      rankText.textContent = `${index + 1}. ${item.term}: ${item.occurrences}`;
 
       const rankBar = document.createElement("span");
       rankBar.style.width = `${(item.occurrences / maxOccurrences) * 100}%`;
@@ -30,6 +35,49 @@ const frontmatter = { title: "Rank by Frequency" };
       rankItem.appendChild(rankText);
       rankItem.appendChild(rankBar);
       ranksDiv.appendChild(rankItem);
+    });
+  }
+
+  async function updatePage(
+    ranksDiv: HTMLDivElement,
+    phraseLenDropdown: HTMLInputElement,
+    sentLenDropdown: HTMLInputElement,
+    yearDropdown: HTMLInputElement,
+  ) {
+    const phraseLen = Number(phraseLenDropdown.value) as Length;
+    const sentLen = Number(sentLenDropdown.value) as Length;
+    const year = Number(yearDropdown.value);
+
+    await updateChart(ranksDiv, phraseLen, sentLen, year);
+  }
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const sentLenDropdown = document.getElementById(
+      "sentLenDropdown",
+    )! as HTMLInputElement;
+    const phraseLenDropdown = document.getElementById(
+      "phraseLenDropdown",
+    )! as HTMLInputElement;
+    const yearDropdown = document.getElementById(
+      "yearDropdown",
+    )! as HTMLInputElement;
+
+    const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
+    await updatePage(
+      ranksDiv,
+      phraseLenDropdown,
+      sentLenDropdown,
+      yearDropdown,
+    );
+
+    const form = document.getElementById("ranksForm")! as HTMLFormElement;
+    form.addEventListener("change", async () => {
+      await updatePage(
+        ranksDiv,
+        phraseLenDropdown,
+        sentLenDropdown,
+        yearDropdown,
+      );
     });
   });
 </script>
@@ -56,8 +104,8 @@ const frontmatter = { title: "Rank by Frequency" };
 
         <EpochPicker
           startYear={EARLIEST_YEAR}
-          endYear={LATEST_YEAR}
-          valueYear={LATEST_YEAR}
+          endYear={LATEST_YEAR - 1}
+          valueYear={0}
           renderAs="date"
           allTime="true"
           id="yearDropdown"
