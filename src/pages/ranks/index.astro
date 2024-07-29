@@ -86,30 +86,33 @@ const frontmatter = { title: "Rank by Frequency" };
   <div>
     <div>
       <form id="ranksForm" onsubmit="return false;" autocomplete="off">
-        <LenDropdown
-          maxLength={6}
-          singularText="All sentences"
-          pluralText="+ words per sentence"
-          id="sentLenDropdown"
-        />
+        <div>
+          <LenDropdown
+            maxLength={6}
+            singularText="All sentences"
+            pluralText="+ words per sentence"
+            id="sentLenDropdown"
+          />
 
-        <LenDropdown
-          maxLength={6}
-          singularText="1 word"
-          pluralText=" words"
-          id="phraseLenDropdown"
-        />
-
+          <LenDropdown
+            maxLength={6}
+            singularText="1 word"
+            pluralText=" words"
+            id="phraseLenDropdown"
+          />
+        </div>
         <!-- TODO: all time picker -->
 
-        <EpochPicker
-          startYear={EARLIEST_YEAR}
-          endYear={LATEST_YEAR - 1}
-          valueYear={0}
-          renderAs="date"
-          allTime="true"
-          id="yearDropdown"
-        />
+        <div>
+          <EpochPicker
+            startYear={EARLIEST_YEAR}
+            endYear={LATEST_YEAR - 1}
+            valueYear={0}
+            renderAs="date"
+            allTime="true"
+            id="yearDropdown"
+          />
+        </div>
       </form>
     </div>
     <div style="position: relative">
