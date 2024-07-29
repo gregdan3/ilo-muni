@@ -1,6 +1,6 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
-import { BASE_URL, DB_URL } from "@utils/constants";
+import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
 import type { Length, Phrase, Query, Separator } from "@utils/input";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
@@ -191,6 +191,10 @@ export async function fetchManyOccurrenceSet(
   start: number,
   end: number,
 ): Promise<Result[]> {
+  if (end > LATEST_ALLOWED_TIMESTAMP) {
+    end = LATEST_ALLOWED_TIMESTAMP;
+  }
+
   const queryPromises = queries.map(async (query: Query) => {
     const phraseOccurrencesPromises = query.phrases.map(
       async (phrase: Phrase) => {

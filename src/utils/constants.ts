@@ -13,3 +13,8 @@ export const LATEST_YEAR = 2024;
 
 export const EARLIEST_TIMESTAMP = makeAugust(EARLIEST_YEAR).getTime() / 1000;
 export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
+
+// start of june 1 in epoch time
+// avoids the fact that july is incomplete in my dataset
+// no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
+export const LATEST_ALLOWED_TIMESTAMP = 1717200000;
