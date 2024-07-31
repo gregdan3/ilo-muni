@@ -28,13 +28,6 @@ const valueDate = makeAugust(valueYear);
 
 <select id={id}>
   {
-    allTime && (
-      <option value={0} selected={0 === valueYear}>
-        All Time
-      </option>
-    )
-  }
-  {
     dates.map((date, index) => (
       <option
         value={date.getTime() / 1000}
@@ -45,5 +38,12 @@ const valueDate = makeAugust(valueYear);
           : `${index} years old`}
       </option>
     ))
+  }
+  {
+    allTime && (
+      <option value={0} selected={0 === valueYear}>
+        All Time
+      </option>
+    )
   }
 </select>
