@@ -30,10 +30,9 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
   if (!workerPromise) {
     workerPromise = initDB(DB_URL);
   }
+  const worker = await workerPromise;
 
   await consoleLogAsync(query, params);
-
-  const worker = await workerPromise;
   return await worker.db.query(query, params);
 }
 
