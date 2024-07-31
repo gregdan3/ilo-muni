@@ -80,7 +80,7 @@ const frontmatter = { title: "Rank by Frequency" };
     await updateChart(ranksDiv, phraseLen, sentLen, year);
     loader.style.visibility = "hidden";
 
-    let usedParams = {
+    let usedParams: Record<string, string> = {
       phraseLen: phraseLenDropdown.value,
       minSentLen: sentLenDropdown.value,
       year: yearDropdown.value,

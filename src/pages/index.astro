@@ -61,7 +61,7 @@ const frontmatter = { title: "ilo Muni" };
     let query = queryReprs.join(", ");
     // the space is technically wasteful but looks better
 
-    let usedParams = {
+    let usedParams: Record<string, string> = {
       query: query,
       minSentLen: sentLenDropdown.value,
       scale: scaleDropdown.value,
