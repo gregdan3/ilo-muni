@@ -1,7 +1,7 @@
 import { makeAugust } from "@utils/other";
 
 export const BASE_URL = "/ilo-muni";
-export const DB_URL = `${BASE_URL}/db/2024-07-29-trimmed.sqlite`;
+export const DB_URL = `${BASE_URL}/db/2024-07-30-trimmed.sqlite`;
 export const PHRASE_RE =
   /^[a-z\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}* ]+(?:_\d)?$/iu;
 export const UCSUR_RE =
