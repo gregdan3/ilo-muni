@@ -4,6 +4,8 @@ export const BASE_URL = "/ilo-muni";
 export const DB_URL = `${BASE_URL}/db/2024-07-29-trimmed.sqlite`;
 export const PHRASE_RE =
   /^[a-zA-Z0-9\uF1900-\uF1977\uF1978-\uF1988\uF19A0-\uF19A3* ]+(?:_\d)?$/;
+export const UCSUR_RE =
+  /^[\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}]$/u;
 
 // TODO: fetch from db at init? would make it not so much a constant
 export const EARLIEST_YEAR = 2015;

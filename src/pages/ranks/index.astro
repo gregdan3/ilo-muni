@@ -1,5 +1,6 @@
 ---
 import Layout from "@layouts/Layout.astro";
+import Loader from "@components/Loader.astro";
 import LenDropdown from "@components/LenDropdown.astro";
 import EpochPicker from "@components/EpochPicker.astro";
 import { EARLIEST_YEAR, LATEST_YEAR } from "@utils/constants";
@@ -8,10 +9,20 @@ const frontmatter = { title: "Rank by Frequency" };
 ---
 
 <script>
-  import type { Length, SearchURLParams } from "@utils/input";
+  import type { Length } from "@utils/input";
+  import { getLinkuCategories } from "@utils/linku";
+  import { isUCSUR } from "@utils/other";
   import { fetchRanks } from "@utils/sqlite";
+  import { getRanksParams, toURLParams } from "@utils/urlparams";
 
-  function getInitialParams(): SearchURLParams {}
+  function calcWidth(maxOccurrences: number, thisOccurrences: number): number {
+    // neither value can be 0
+    const adjustedThisOccurrences = Math.log(thisOccurrences);
+    const adjustedMaxOccurrences = Math.log(maxOccurrences);
+
+    return adjustedThisOccurrences / adjustedMaxOccurrences;
+    // return thisOccurrences / maxOccurrences;
+  }
 
   async function updateChart(
     ranksDiv: HTMLDivElement,
@@ -23,14 +34,25 @@ const frontmatter = { title: "Rank by Frequency" };
 
     ranksDiv.innerHTML = "";
     const maxOccurrences = data[0].occurrences;
-    data.forEach((item, index: number) => {
+    data.forEach(async (item, index: number) => {
       const rankItem = document.createElement("div");
+      rankItem.classList.add("rankItem");
 
       const rankText = document.createElement("span");
-      rankText.textContent = `${index + 1}. ${item.term}: ${item.occurrences}`;
+      rankText.textContent = `${index + 1}. ${item.term.slice(0, 30)}: ${item.occurrences}`;
 
       const rankBar = document.createElement("span");
-      rankBar.style.width = `${(item.occurrences / maxOccurrences) * 100}%`;
+      rankBar.style.width = `${calcWidth(maxOccurrences, item.occurrences) * 60}%`;
+      rankBar.classList.add("rankBar");
+
+      if (phraseLen === 1) {
+        const classes = await getLinkuCategories(item.term);
+        rankBar.classList.add(...classes);
+      }
+
+      if (isUCSUR(item.term)) {
+        rankBar.classList.add("ucsur");
+      }
 
       rankItem.appendChild(rankText);
       rankItem.appendChild(rankBar);
@@ -43,6 +65,7 @@ const frontmatter = { title: "Rank by Frequency" };
     phraseLenDropdown: HTMLInputElement,
     sentLenDropdown: HTMLInputElement,
     yearDropdown: HTMLInputElement,
+    loader: HTMLSpanElement,
   ) {
     const phraseLen = Number(phraseLenDropdown.value) as Length;
     let sentLen = Number(sentLenDropdown.value) as Length;
@@ -53,7 +76,17 @@ const frontmatter = { title: "Rank by Frequency" };
       sentLen = phraseLen;
     }
 
+    loader.style.visibility = "visible";
     await updateChart(ranksDiv, phraseLen, sentLen, year);
+    loader.style.visibility = "hidden";
+
+    let usedParams = {
+      phraseLen: phraseLenDropdown.value,
+      minSentLen: sentLenDropdown.value,
+      year: yearDropdown.value,
+    };
+
+    toURLParams(usedParams);
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -67,12 +100,20 @@ const frontmatter = { title: "Rank by Frequency" };
       "yearDropdown",
     )! as HTMLInputElement;
 
+    const loader = document.getElementById("loader")! as HTMLSpanElement;
+
+    let initialParams = getRanksParams();
+    sentLenDropdown.value = initialParams.minSentLen;
+    phraseLenDropdown.value = initialParams.phraseLen;
+    yearDropdown.value = initialParams.year;
+
     const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
     await updatePage(
       ranksDiv,
       phraseLenDropdown,
       sentLenDropdown,
       yearDropdown,
+      loader,
     );
 
     const form = document.getElementById("ranksForm")! as HTMLFormElement;
@@ -82,6 +123,7 @@ const frontmatter = { title: "Rank by Frequency" };
         phraseLenDropdown,
         sentLenDropdown,
         yearDropdown,
+        loader,
       );
     });
   });
@@ -105,6 +147,7 @@ const frontmatter = { title: "Rank by Frequency" };
             pluralText=" words"
             id="phraseLenDropdown"
           />
+          <Loader id="loader" />
         </div>
         <!-- TODO: all time picker -->
 
@@ -130,3 +173,47 @@ const frontmatter = { title: "Rank by Frequency" };
 
   <div id="errorBin"></div>
 </Layout>
+
+<style is:global>
+  #ranksDiv > * {
+    margin-bottom: 4px;
+    padding-left: 4px;
+  }
+  .rankItem {
+    display: flex;
+  }
+  .rankBar {
+    justify-self: right;
+    margin-left: auto;
+    border: 2px solid black;
+    background-color: gray;
+  }
+  .core {
+    background-color: palegoldenrod;
+  }
+  .common {
+    background-color: skyblue;
+  }
+  .uncommon {
+    background-color: palevioletred;
+  }
+  .obscure {
+    background-color: mediumpurple;
+  }
+  .sandbox {
+    background-color: lightgray;
+  }
+  .ucsur {
+    background-color: lightgreen;
+  }
+
+  /* .pu { */
+  /*   background-color: lightyellow; */
+  /* } */
+  /* .ku-suli { */
+  /*   background-color: lightgreen; */
+  /* } */
+  /* .ku-lili { */
+  /*   background-color: lightgray; */
+  /* } */
+</style>
