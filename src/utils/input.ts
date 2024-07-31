@@ -80,24 +80,29 @@ function splitOnDelim(input: string, delimiter: string): string[] {
     .filter((item) => item !== "");
 }
 
+function toQueryTokens(query: string): string[] {
+  const result = query.trim().split(/\s+|(?<=[+-])|(?=[+-])/);
+  return result.filter((token) => token.length > 0);
+}
+
 function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
-  const phraseRegex = /^[a-zA-Z0-9* ]+(?:_\d)?$/; // star is for future wildcard
   const phrases: Phrase[] = [];
   let separator: Separator = null;
   let currentPhrase: string[] = [];
 
-  const tokens = query.trim().split(/\s+/);
+  const tokens = toQueryTokens(query);
 
   tokens.forEach((token) => {
     if (token === "+" || token === "-") {
       if (currentPhrase.length > 0) {
+        // throws out trailing operators
         phrases.push(
           createPhrase(currentPhrase.join(" "), separator, givenMinSentLen),
         );
         currentPhrase = [];
       }
       separator = token as Separator;
-    } else if (PHRASE_RE) {
+    } else if (PHRASE_RE.test(token)) {
       currentPhrase.push(token);
     }
   });
