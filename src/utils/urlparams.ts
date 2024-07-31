@@ -107,7 +107,7 @@ function isValidTimestamp(timestamp: string | null): boolean {
 }
 
 export function coalesceSmoothing(
-  maybeSmoothing: string,
+  maybeSmoothing: string | null,
   defaultSmoothing: SmoothingParam = "2",
 ): SmoothingParam {
   let smoothing: SmoothingParam = defaultSmoothing;
@@ -118,7 +118,7 @@ export function coalesceSmoothing(
 }
 
 export function coalesceScale(
-  maybeScale: string,
+  maybeScale: string | null,
   defaultScale: ScaleParam = "2",
 ): ScaleParam {
   let scale: ScaleParam = defaultScale;
