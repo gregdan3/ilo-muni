@@ -9,146 +9,12 @@ const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type {
-    Length,
-    SearchURLParams,
-    MinSentLen,
-    Scale,
-    Smoothing,
-  } from "@utils/input";
+  import type { Length } from "@utils/input";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
-  import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
 
-  const SAMPLE_SEARCHES = [
-    // duh
-    "toki, pona, toki pona",
-    // phrase trends
-    "tomo tawa, ilo tawa",
-    "sina seme, sina pilin seme, sina pali e seme",
-    // isolating phrases
-    "toki_1 - toki_2, pona_1 - pona_2",
-    // synonyms
-    "lukin, oko, lukin + oko",
-    "ale, ali, ale + ali",
-    "ala, x, ala + x",
-    "anu, y, anu + y",
-    // word groups
-    "laso, loje, walo, jelo, pimeja",
-    "soweli, waso, kala, akesi, pipi",
-    "sewi, poka, anpa, sinpin, monsi",
-    "meli, mije, tonsi",
-    "pu, ku, su",
-    "sin, lukin, kin, namako, oko",
-    "selo, sijelo",
-    // modifier usage
-    "wawa a, wawa mute, wawa suli, wawa sewi",
-    "tenpo ni, tenpo pini, tenpo kama, tenpo mute, tenpo suli, tenpo poka",
-    // grammatical things
-    "kepeken ilo, kepeken e ilo",
-    "kin la, poka la, sama la, namako la",
-    "ale la, ala la",
-    "pali e, lon e, mama e, kama e",
-    // names
-    "kekan, kekan san, jan kekan, mun kekan",
-    "sonja, jan sonja",
-    // disambiguation
-    "san - kekan san",
-    "toki - toki pona",
-  ];
-
-  const SCALE_OPTS = ["absolute", "relative"];
-
-  function randomElem(arr: any[]) {
-    return arr[Math.floor(Math.random() * arr.length)];
-  }
-
-  function isValidTimestamp(timestamp: number): boolean {
-    if (!timestamp) {
-      return false;
-    }
-    if (timestamp < EARLIEST_TIMESTAMP) {
-      return false;
-    }
-    if (timestamp > LATEST_TIMESTAMP) {
-      return false;
-    }
-    return true;
-  }
-
-  function getInitialParams(): SearchURLParams {
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const queryParam = urlParams.get("query");
-    let query: string;
-    if (queryParam) {
-      query = queryParam;
-    } else {
-      query = randomElem(SAMPLE_SEARCHES);
-    }
-
-    const minLenParam = urlParams.get("minSentLen") || "";
-    const minLenParsed = parseInt(minLenParam, 10);
-    let minSentLen: MinSentLen;
-    if (minLenParsed && 1 <= minLenParsed && minLenParsed <= 6) {
-      minSentLen = minLenParam as MinSentLen;
-    } else {
-      minSentLen = "1";
-    }
-
-    const scaleParam = urlParams.get("scale");
-    let scale: Scale;
-    if (scaleParam && SCALE_OPTS.includes(scaleParam)) {
-      scale = scaleParam as Scale;
-    } else {
-      scale = "relative";
-    }
-
-    const smoothingParam = urlParams.get("smoothing") || "";
-    const smoothingParsed = parseInt(smoothingParam, 10);
-    let smoothing: Smoothing;
-    if (smoothingParam && smoothingParsed >= 0) {
-      smoothing = smoothingParam as Smoothing;
-    } else {
-      smoothing = "2";
-    }
-
-    const startParam = urlParams.get("start") || "";
-    const startParsed = parseInt(startParam, 10);
-    let start: string;
-    if (isValidTimestamp(startParsed)) {
-      start = startParam;
-    } else {
-      start = EARLIEST_TIMESTAMP.toString();
-    }
-
-    const endParam = urlParams.get("end") || "";
-    const endParsed = parseInt(endParam, 10);
-    let end: string;
-    if (isValidTimestamp(endParsed)) {
-      end = endParam;
-    } else {
-      end = LATEST_TIMESTAMP.toString();
-    }
-
-    return { query, minSentLen, scale, smoothing, start, end };
-  }
-
-  function toUrlParams(params: SearchURLParams) {
-    const urlParams = new URLSearchParams();
-
-    for (const key in params) {
-      // @ts-ignore
-      if (params[key]) {
-        //@ts-ignore
-        urlParams.append(key, params[key]);
-      }
-    }
-
-    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
-    window.history.replaceState({}, "", newUrl);
-  }
+  import { getSearchParams, toURLParams } from "@utils/urlparams";
 
   async function updatePage(
     canvas: HTMLCanvasElement,
@@ -187,35 +53,39 @@ const frontmatter = { title: "ilo Muni" };
     );
     loader.style.visibility = "hidden";
     if (!queries) {
-      return;
+      return; // TODO: inform user they failed to query
     }
 
     // rewrite urlParams with query repr so we don't copy user input error
     let queryReprs = queries.map((query) => query.repr);
     let query = queryReprs.join(", ");
+    // the space is technically wasteful but looks better
 
-    let urlParams: SearchURLParams = {
+    let usedParams = {
       query: query,
-      minSentLen: sentLenDropdown.value as MinSentLen,
-      scale: scaleDropdown.value as Scale,
-      smoothing: smoothingDropdown.value as Smoothing,
+      minSentLen: sentLenDropdown.value,
+      scale: scaleDropdown.value,
       start: startDropdown.value,
       end: endDropdown.value,
     };
 
-    toUrlParams(urlParams);
+    if (relative) {
+      usedParams.smoothing = smoothingDropdown.value;
+    }
+
+    toURLParams(usedParams);
   }
 
   async function updateChart(
     canvas: HTMLCanvasElement,
     input: string,
-    min_sent_len: Length,
+    minSentLen: Length,
     relative: boolean,
     smoothing: number,
     start: number,
     end: number,
   ) {
-    const queries = inputToQueries(input, min_sent_len);
+    const queries = inputToQueries(input, minSentLen);
     if (queries.length === 0) {
       return;
     }
@@ -259,7 +129,7 @@ const frontmatter = { title: "ilo Muni" };
 
     const loader = document.getElementById("loader")! as HTMLSpanElement;
 
-    let initialParams = getInitialParams();
+    let initialParams = getSearchParams();
     searchBox.value = initialParams.query;
     sentLenDropdown.value = initialParams.minSentLen;
     scaleDropdown.value = initialParams.scale;

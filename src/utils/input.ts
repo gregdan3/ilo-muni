@@ -2,34 +2,6 @@ import { PHRASE_RE } from "@utils/constants";
 
 export type Separator = "+" | "-" | null;
 export type Length = 1 | 2 | 3 | 4 | 5 | 6;
-// yes this is kinda silly
-
-export type Scale = "relative" | "absolute";
-export type MinSentLen = "1" | "2" | "3" | "4" | "5" | "6";
-export type Smoothing =
-  | "1"
-  | "2"
-  | "3"
-  | "4"
-  | "5"
-  | "6"
-  | "7"
-  | "8"
-  | "9"
-  | "10"
-  | "20"
-  | "30"
-  | "40"
-  | "50";
-
-export interface SearchURLParams {
-  query: string;
-  minSentLen: MinSentLen;
-  scale: Scale;
-  smoothing: Smoothing;
-  start: string;
-  end: string;
-}
 
 // searchable words/phrases after split by separator and stripped of whitespace
 export interface Phrase {
