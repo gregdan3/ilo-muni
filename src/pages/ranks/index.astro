@@ -169,16 +169,21 @@ const frontmatter = { title: "Rank by Frequency" };
           />
         </div>
       </form>
-    </div>
-    <div style="position: relative">
-      <div id="ranksDiv"></div>
 
-      <canvas id="ranks"></canvas>
-      <div id="ranksLegend"></div>
+      <div class="legend">
+        <div class="core">Core</div>
+        <div class="common">Common</div>
+        <div class="uncommon">Uncommon</div>
+        <div class="obscure">Obscure</div>
+        <div class="ucsur">UCSUR</div>
+        <div class="sandbox">Sandbox</div>
+        <!-- <div class="pu">pu</div> -->
+        <!-- <div class="ku-suli">ku suli</div> -->
+        <!-- <div class="ku-lili">ku lili</div> -->
+      </div>
     </div>
+    <div id="ranksDiv"></div>
   </div>
-
-  <div id="errorBin"></div>
 </Layout>
 
 <style is:global>
