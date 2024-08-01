@@ -34,6 +34,8 @@ export async function getLinkuCategories(word: string) {
     const book = data[word].book.replace(/\s+/g, "-");
     const category = data[word].usage_category;
     classes.push(book, category);
+  } else {
+    classes.push("unknown");
   }
 
   return classes;
