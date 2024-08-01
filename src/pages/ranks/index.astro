@@ -66,14 +66,19 @@ const frontmatter = { title: "Rank by Frequency" };
     sentLenDropdown: HTMLInputElement,
     yearDropdown: HTMLInputElement,
     loader: HTMLSpanElement,
+    event: Event | null,
   ) {
-    const phraseLen = Number(phraseLenDropdown.value) as Length;
+    let phraseLen = Number(phraseLenDropdown.value) as Length;
     let sentLen = Number(sentLenDropdown.value) as Length;
     const year = Number(yearDropdown.value);
 
-    if (sentLen < phraseLen) {
+    if (event?.target === phraseLenDropdown && sentLen < phraseLen) {
       sentLenDropdown.value = phraseLenDropdown.value;
       sentLen = phraseLen;
+    }
+    if (event?.target === sentLenDropdown && phraseLen > sentLen) {
+      phraseLenDropdown.value = sentLenDropdown.value;
+      phraseLen = sentLen;
     }
 
     loader.style.visibility = "visible";
@@ -114,16 +119,18 @@ const frontmatter = { title: "Rank by Frequency" };
       sentLenDropdown,
       yearDropdown,
       loader,
+      null,
     );
 
     const form = document.getElementById("ranksForm")! as HTMLFormElement;
-    form.addEventListener("change", async () => {
+    form.addEventListener("change", async (event) => {
       await updatePage(
         ranksDiv,
         phraseLenDropdown,
         sentLenDropdown,
         yearDropdown,
         loader,
+        event,
       );
     });
   });
