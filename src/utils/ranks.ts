@@ -1,6 +1,17 @@
 import type { Rank } from "@utils/sqlite";
 import { isUCSUR } from "@utils/other";
 import { getLinkuCategories } from "@utils/linku";
+import { consoleLogAsync } from "./debug";
+
+const colorMap: { [key: string]: string } = {
+  core: "palegoldenrod",
+  common: "skyblue",
+  uncommon: "palevioletred",
+  obscure: "mediumpurple",
+  sandbox: "lightgray",
+  ucsur: "lightgreen",
+  unknown: "white",
+};
 
 function calcWidth(maxOccurrences: number, thisOccurrences: number): number {
   // neither value can be 0
@@ -17,6 +28,33 @@ function truncateWord(word: string, maxLength: number = 40): string {
   }
 
   return word;
+}
+
+async function makeGradient(phrase: string) {
+  // make a linear gradient with sharp cutoffs out of a list of words
+  const words = phrase.split(/\s+/);
+  const gradientStops: string[] = [];
+  const totalWords = words.length;
+
+  for (let i = 0; i < totalWords; i++) {
+    const word = words[i];
+    const classes = await getLinkuCategories(word);
+    let colorClass = classes.find((cls) =>
+      Object.prototype.hasOwnProperty.call(colorMap, cls),
+    )!;
+    if (isUCSUR(word)) {
+      colorClass = "ucsur";
+    }
+
+    const color = colorMap[colorClass];
+
+    const startPercent = (i / totalWords) * 100;
+    const endPercent = ((i + 1) / totalWords) * 100;
+    gradientStops.push(`${color} ${startPercent}%, ${color} ${endPercent}%`);
+  }
+
+  const gradient = `linear-gradient(to right, ${gradientStops.join(", ")})`;
+  return gradient;
 }
 
 async function assignWordClasses(
@@ -77,20 +115,16 @@ async function makeTableEntry(
   tableRow.appendChild(occurrenceData);
   occurrenceData.classList.add("occurrenceData");
 
-  // const wordData = document.createElement("td");
   const word = truncateWord(item.term);
-  // wordData.textContent = word;
-  // tableRow.appendChild(wordData);
-  // wordData.classList.add("wordData");
 
   const barData = document.createElement("td");
   const barDiv = document.createElement("div");
   barDiv.textContent = word;
   barDiv.style.width = `${calcWidth(maxOccurrences, item.occurrences) * 100}%`;
   barData.classList.add("barData");
+  barDiv.style.background = await makeGradient(item.term);
 
   await assignWordClasses(item, phraseLen, barDiv);
-  // await assignWordClasses(item, phraseLen, wordData);
   barData.appendChild(barDiv);
   tableRow.appendChild(barData);
 
