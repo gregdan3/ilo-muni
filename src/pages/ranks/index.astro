@@ -10,19 +10,9 @@ const frontmatter = { title: "Rank by Frequency" };
 
 <script>
   import type { Length } from "@utils/input";
-  import { getLinkuCategories } from "@utils/linku";
-  import { isUCSUR } from "@utils/other";
   import { fetchRanks } from "@utils/sqlite";
+  import { reloadBarChart } from "@utils/ranks";
   import { getRanksParams, toURLParams } from "@utils/urlparams";
-
-  function calcWidth(maxOccurrences: number, thisOccurrences: number): number {
-    // neither value can be 0
-    const adjustedThisOccurrences = Math.log(thisOccurrences);
-    const adjustedMaxOccurrences = Math.log(maxOccurrences);
-
-    return adjustedThisOccurrences / adjustedMaxOccurrences;
-    // return thisOccurrences / maxOccurrences;
-  }
 
   async function updateChart(
     ranksDiv: HTMLDivElement,
@@ -32,32 +22,7 @@ const frontmatter = { title: "Rank by Frequency" };
   ) {
     let data = await fetchRanks(phraseLen, minSentLen, year);
 
-    ranksDiv.innerHTML = "";
-    const maxOccurrences = data[0].occurrences;
-    data.forEach(async (item, index: number) => {
-      const rankItem = document.createElement("div");
-      rankItem.classList.add("rankItem");
-
-      const rankText = document.createElement("span");
-      rankText.textContent = `${index + 1}. ${item.term.slice(0, 30)}: ${item.occurrences}`;
-
-      const rankBar = document.createElement("span");
-      rankBar.style.width = `${calcWidth(maxOccurrences, item.occurrences) * 60}%`;
-      rankBar.classList.add("rankBar");
-
-      if (phraseLen === 1) {
-        const classes = await getLinkuCategories(item.term);
-        rankBar.classList.add(...classes);
-      }
-
-      if (isUCSUR(item.term)) {
-        rankBar.classList.add("ucsur");
-      }
-
-      rankItem.appendChild(rankText);
-      rankItem.appendChild(rankBar);
-      ranksDiv.appendChild(rankItem);
-    });
+    await reloadBarChart(ranksDiv, data, phraseLen);
   }
 
   async function updatePage(
@@ -139,6 +104,15 @@ const frontmatter = { title: "Rank by Frequency" };
 <Layout frontmatter={frontmatter}>
   <div>
     <div>
+      <form id="filterForm" onsubmit="return false;" autocomplete="off">
+        <input
+          type="text"
+          id="searchBox"
+          spellcheck="false"
+          style="width: 65%; height: 1.6em; font-size: 18px; margin-right: 0.4em;"
+        />
+      </form>
+
       <form id="ranksForm" onsubmit="return false;" autocomplete="off">
         <div>
           <LenDropdown
@@ -193,6 +167,30 @@ const frontmatter = { title: "Rank by Frequency" };
   }
   .rankItem {
     display: flex;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1em;
+  }
+  .legend > div {
+    border: 2px solid black;
+    margin: 0.2em;
+    padding: 0.3em;
+    font-weight: bold;
+  }
+
+  .barData {
+    width: 100%;
+  }
+  .barData div {
+    /* height: 1.5em; */
+    border: 2px solid black;
+    border-right: 0;
+    font-weight: bold;
+    padding-left: 4px;
+    white-space: nowrap;
   }
   .rankBar {
     justify-self: right;
