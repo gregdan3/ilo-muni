@@ -9,7 +9,7 @@ const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type { Length } from "@utils/input";
+  import type { Length, Query } from "@utils/input";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
@@ -57,7 +57,7 @@ const frontmatter = { title: "ilo Muni" };
     }
 
     // rewrite urlParams with query repr so we don't copy user input error
-    let queryReprs = queries.map((query) => query.repr);
+    let queryReprs = queries.map((query: Query) => query.repr);
     let query = queryReprs.join(", ");
     // the space is technically wasteful but looks better
 
