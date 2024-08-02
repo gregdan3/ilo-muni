@@ -111,6 +111,7 @@ const frontmatter = { title: "Rank by Frequency" };
           spellcheck="false"
           style="width: 65%; height: 1.6em; font-size: 18px; margin-right: 0.4em;"
         />
+        <Loader id="loader" />
       </form>
 
       <form id="ranksForm" onsubmit="return false;" autocomplete="off">
@@ -128,7 +129,6 @@ const frontmatter = { title: "Rank by Frequency" };
             pluralText=" words"
             id="phraseLenDropdown"
           />
-          <Loader id="loader" />
         </div>
         <!-- TODO: all time picker -->
 
