@@ -85,7 +85,7 @@ const frontmatter = { title: "ilo Muni" };
     start: number,
     end: number,
   ) {
-    const queries = inputToQueries(input, minSentLen);
+    const { queries, errors } = inputToQueries(input, minSentLen);
     if (queries.length === 0) {
       return;
     }

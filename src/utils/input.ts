@@ -22,6 +22,16 @@ export interface Query {
   // error: string[];
 }
 
+export interface QueryError {
+  query: Query;
+  error: string;
+}
+
+export interface ProcessedQueries {
+  queries: Query[];
+  errors: QueryError[];
+}
+
 function queryRepr(phrases: Phrase[]): string {
   return phrases
     .map((phrase) => {
@@ -117,33 +127,44 @@ function createPhrase(
   };
 }
 
-function toQueries(input: string, givenMinSentLen: Length): Query[] {
+function toQueries(input: string, givenMinSentLen: Length): ProcessedQueries {
   const rawPhrases = splitOnDelim(input, ",");
   const queries = rawPhrases.map((query: string): Query => {
     const phrases = toPhrases(query, givenMinSentLen);
     return { raw: query, repr: queryRepr(phrases), phrases: phrases };
   });
-  return queries;
+  return { queries, errors: [] };
 }
 
-function dedupeQueries(queries: Query[]) {
+function dedupeQueries(queries: Query[]): ProcessedQueries {
   const seen = new Set<string>();
-  return queries.filter((query) => {
+  const errors: QueryError[] = [];
+  queries = queries.filter((query) => {
     if (seen.has(query.repr)) {
+      errors.push({ query: query, error: "Duplicate query" });
       return false;
     } else {
       seen.add(query.repr);
       return true;
     }
   });
+
+  return { queries, errors };
 }
 
 export function inputToQueries(
   input: string,
   givenMinSentLen: Length,
-): Query[] {
+): ProcessedQueries {
   input = cleanInput(input);
-  let queries = toQueries(input, givenMinSentLen);
-  queries = dedupeQueries(queries);
-  return queries;
+
+  const { queries, errors: initErrors } = toQueries(input, givenMinSentLen);
+
+  const { queries: dedupedQueries, errors: dupeErrors } =
+    dedupeQueries(queries);
+
+  return {
+    queries: dedupedQueries,
+    errors: initErrors.concat(dupeErrors),
+  };
 }
