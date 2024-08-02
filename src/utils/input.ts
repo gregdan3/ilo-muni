@@ -1,4 +1,4 @@
-import { PHRASE_RE } from "@utils/constants";
+import { PHRASE_RE, PHRASE_DELIMS_RE } from "@utils/constants";
 
 export type Separator = "+" | "-" | null;
 export type Length = 1 | 2 | 3 | 4 | 5 | 6;
@@ -34,13 +34,14 @@ function queryRepr(phrases: Phrase[]): string {
 }
 
 function countWords(phrase: string): number {
+  // NOTE: this would fail to count UCSUR, but it is only used after split
   return phrase.split(/\s+/).length;
-  // TODO: allow UCSUR to be entered without spaces
 }
 
 function cleanInput(input: string): string {
   input = input.toLowerCase();
   input = input.replace(/(.)\1+/g, "$1");
+  // NOTE: UCSUR text is not replaced because I don't provide the unicode flag
   input = input.trim();
   return input;
 }
@@ -53,7 +54,7 @@ function splitOnDelim(input: string, delimiter: string): string[] {
 }
 
 function toQueryTokens(query: string): string[] {
-  const result = query.trim().split(/\s+|(?<=[+-])|(?=[+-])/);
+  const result = query.trim().split(PHRASE_DELIMS_RE);
   return result.filter((token) => token.length > 0);
 }
 
