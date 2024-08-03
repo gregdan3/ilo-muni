@@ -126,6 +126,17 @@ function makeRelative(phrase_occs: Row[], total_occs: Row[]): Row[] {
   return phrase_occs;
 }
 
+function makeLogarithmic(phrase_occs: Row[], total_occs: Row[]): Row[] {
+  for (let i = 0; i < phrase_occs.length; i++) {
+    const total = total_occs[i].occurrences;
+    const occurrences = phrase_occs[i].occurrences;
+    phrase_occs[i].occurrences =
+      Math.log(occurrences + 1) / Math.log(total + 1);
+    // +1 avoids log(1) = 0 and log(0) = undef
+  }
+  return phrase_occs;
+}
+
 async function fetchOneOccurrenceSet(
   params: QueryParams,
 ): Promise<Row[] | null> {
@@ -177,6 +188,9 @@ async function fetchOneOccurrenceSet(
 
   if (params.scale === "relative") {
     result = makeRelative(result, totals);
+  }
+  if (params.scale === "logarithmic") {
+    result = makeLogarithmic(result, totals);
   }
   if (params.smoothing > 0 && params.scale !== "absolute") {
     result = makeSmooth(result, params.smoothing);
