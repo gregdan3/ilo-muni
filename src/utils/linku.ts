@@ -11,11 +11,20 @@ function loadLinkuJSON(jsonObj: string): Words {
 }
 
 async function fetchLinku() {
-  const linkuData = await fetch(LINKU);
-  const linkuWords = loadLinkuJSON(await linkuData.text());
+  let linkuWords, sandboxWords;
+  try {
+    const linkuData = await fetch(LINKU);
+    linkuWords = loadLinkuJSON(await linkuData.text());
+  } catch {
+    linkuWords = {} as Words;
+  }
 
-  const sandboxData = await fetch(SANDBOX);
-  const sandboxWords = loadLinkuJSON(await sandboxData.text());
+  try {
+    const sandboxData = await fetch(SANDBOX);
+    sandboxWords = loadLinkuJSON(await sandboxData.text());
+  } catch {
+    sandboxWords = {} as Words;
+  }
 
   const merged = { ...linkuWords, ...sandboxWords };
   return merged;
