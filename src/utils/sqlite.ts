@@ -1,8 +1,8 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
-import { consoleLogAsync } from "./debug";
 import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
+import { consoleLogAsync } from "@utils/debug";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
