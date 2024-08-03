@@ -1,4 +1,12 @@
 import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
+import type {
+  LengthParam,
+  SmoothingParam,
+  Scale,
+  SearchURLParams,
+  RanksURLParams,
+} from "@utils/types";
+import { lengthParams, smoothingParams, scales } from "@utils/types";
 
 const SAMPLE_SEARCHES = [
   // duh
@@ -36,45 +44,6 @@ const SAMPLE_SEARCHES = [
   "san - kekan san",
   "toki - toki pona",
 ];
-
-const scaleParams = ["relative", "absolute"];
-const lengthParams = ["1", "2", "3", "4", "5", "6"];
-const smoothingParams = [
-  "0",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "20",
-  "30",
-  "40",
-  "50",
-];
-
-export type ScaleParam = (typeof scaleParams)[number];
-export type LengthParam = (typeof lengthParams)[number];
-export type SmoothingParam = (typeof smoothingParams)[number];
-
-export interface SearchURLParams {
-  query: string;
-  minSentLen: LengthParam;
-  scale: ScaleParam;
-  smoothing: SmoothingParam;
-  start: string;
-  end: string;
-}
-
-export interface RanksURLParams {
-  phraseLen: LengthParam;
-  minSentLen: LengthParam;
-  year: string;
-}
 
 export function coalesceLength(
   maybeLen: string,
@@ -119,11 +88,11 @@ export function coalesceSmoothing(
 
 export function coalesceScale(
   maybeScale: string | null,
-  defaultScale: ScaleParam = "2",
-): ScaleParam {
-  let scale: ScaleParam = defaultScale;
-  if (maybeScale && scaleParams.includes(maybeScale)) {
-    scale = maybeScale as ScaleParam;
+  defaultScale: Scale = "2",
+): Scale {
+  let scale: Scale = defaultScale;
+  if (maybeScale && scales.includes(maybeScale)) {
+    scale = maybeScale as Scale;
   }
   return scale;
 }

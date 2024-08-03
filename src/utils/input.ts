@@ -1,36 +1,13 @@
 import { PHRASE_RE, PHRASE_DELIMS_RE } from "@utils/constants";
 
-export type Separator = "+" | "-" | null;
-export type Length = 1 | 2 | 3 | 4 | 5 | 6;
-
-// searchable words/phrases after split by separator and stripped of whitespace
-export interface Phrase {
-  raw: string; // the user's given input for the phrase
-  repr: string; // the way we will print the input on the legend
-
-  term: string; // a single word or phrase, no separators or annotations
-  length: Length; // how many words are in the phrase
-  minSentLen: Length; // specified by user or overridden
-  separator: Separator; // how the current phrase connects to the previous phrase
-}
-
-// searches after split by , and stripped of whitespace
-export interface Query {
-  raw: string; // unaltered user input, per-phrase
-  repr: string; // to be printed later
-  phrases: Phrase[];
-  // error: string[];
-}
-
-export interface QueryError {
-  query: Query;
-  error: string;
-}
-
-export interface ProcessedQueries {
-  queries: Query[];
-  errors: QueryError[];
-}
+import type {
+  Separator,
+  Length,
+  Phrase,
+  Query,
+  QueryError,
+  ProcessedQueries,
+} from "@utils/types";
 
 function queryRepr(phrases: Phrase[]): string {
   return phrases

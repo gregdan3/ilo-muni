@@ -9,7 +9,7 @@ const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type { Length, Query } from "@utils/input";
+  import type { Length, Scale, Query } from "@utils/types";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
@@ -28,17 +28,17 @@ const frontmatter = { title: "ilo Muni" };
   ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
-    const relative = scaleDropdown.value === "relative";
+    const scale = scaleDropdown.value as Scale;
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
     const end = Number(endDropdown.value);
 
-    // disable smoothness if relative if set
+    // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
-    if (relative) {
-      smoothingDropdown.disabled = false;
-    } else {
+    if (scale === "absolute") {
       smoothingDropdown.disabled = true;
+    } else {
+      smoothingDropdown.disabled = false;
     }
 
     loader.style.visibility = "visible";
@@ -46,7 +46,7 @@ const frontmatter = { title: "ilo Muni" };
       canvas,
       queryText,
       sentLen,
-      relative,
+      scale,
       smoothing,
       start,
       end,
@@ -69,7 +69,7 @@ const frontmatter = { title: "ilo Muni" };
       end: endDropdown.value,
     };
 
-    if (relative) {
+    if (scale !== "absolute") {
       usedParams.smoothing = smoothingDropdown.value;
     }
 
@@ -80,7 +80,7 @@ const frontmatter = { title: "ilo Muni" };
     canvas: HTMLCanvasElement,
     input: string,
     minSentLen: Length,
-    relative: boolean,
+    scale: Scale,
     smoothing: number,
     start: number,
     end: number,
@@ -92,7 +92,7 @@ const frontmatter = { title: "ilo Muni" };
 
     const results = await fetchManyOccurrenceSet(
       queries,
-      relative,
+      scale,
       smoothing,
       start,
       end,

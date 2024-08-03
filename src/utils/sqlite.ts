@@ -1,8 +1,8 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
-import type { Length, Phrase, Query, Separator } from "@utils/input";
 import { consoleLogAsync } from "./debug";
+import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -60,7 +60,7 @@ export interface Rank {
 export interface QueryParams {
   // TODO: is date or number a better interface?
   phrase: Phrase;
-  relative: boolean;
+  scale: Scale;
   smoothing: number;
   start: number;
   end: number;
@@ -175,11 +175,10 @@ async function fetchOneOccurrenceSet(
     }
   }
 
-  if (params.relative) {
+  if (params.scale === "relative") {
     result = makeRelative(result, totals);
   }
-
-  if (params.smoothing > 0 && params.relative) {
+  if (params.smoothing > 0 && params.scale !== "absolute") {
     result = makeSmooth(result, params.smoothing);
   }
 
@@ -188,7 +187,7 @@ async function fetchOneOccurrenceSet(
 
 export async function fetchManyOccurrenceSet(
   queries: Query[],
-  relative: boolean,
+  scale: Scale,
   smoothing: number,
   start: number,
   end: number,
@@ -202,7 +201,7 @@ export async function fetchManyOccurrenceSet(
       async (phrase: Phrase) => {
         const rows = await fetchOneOccurrenceSet({
           phrase,
-          relative,
+          scale,
           smoothing,
           start,
           end,
@@ -235,8 +234,8 @@ export async function fetchManyOccurrenceSet(
 
 async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
   let minSentLen = params.phrase.minSentLen;
-  if (params.relative) {
-    // Override minimum sentence length when relative is set for fetching totals.
+  if (params.scale !== "absolute") {
+    // Override minimum sentence length when non-absolute scale is set for totals.
     // This creates more comparable percentages,
     // because the percentages are made against the total number of words,
     // rather than among the words in sentences of a specific length.
