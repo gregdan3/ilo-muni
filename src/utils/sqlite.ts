@@ -37,10 +37,47 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
 }
 
 // inclusive on both ends makes sense for the graph
-const USAGE_QUERY = `SELECT day, occurrences FROM frequency JOIN phrase ON frequency.phrase_id = phrase.id WHERE phrase.text = ? AND min_sent_len = ? AND day >= ? AND day <= ? ORDER BY day`;
-const TOTAL_QUERY = `SELECT day, occurrences FROM total WHERE phrase_len = ? AND min_sent_len = ? AND day >= ? AND day <= ? ORDER BY day`;
-const RANKS_QUERY = `SELECT p.text AS term, r.occurrences FROM ranks r JOIN phrase p ON r.phrase_id = p.id WHERE p.len = ? AND r.min_sent_len = ? AND r.day = ? ORDER BY occurrences DESC;`;
+const USAGE_QUERY = `SELECT
+  day,
+  occurrences
+FROM
+  frequency
+  JOIN phrase ON frequency.phrase_id = phrase.id
+WHERE
+  phrase.text = ?
+  AND min_sent_len = ?
+  AND day >= ?
+  AND day <= ?
+ORDER BY
+  day`;
+
+const TOTAL_QUERY = `SELECT
+  day,
+  occurrences
+FROM
+  total
+WHERE
+  phrase_len = ?
+  AND min_sent_len = ?
+  AND day >= ?
+  AND day <= ?
+ORDER BY
+  day`;
+
 // but for ranks, we've queried ahead data which is exclusive on the right
+const RANKS_QUERY = `SELECT
+  p.text AS term,
+  r.occurrences
+FROM
+  ranks r
+  JOIN phrase p ON r.phrase_id = p.id
+WHERE
+  p.len = ?
+  AND r.min_sent_len = ?
+  AND r.day = ?
+ORDER BY
+  occurrences DESC`;
+
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
