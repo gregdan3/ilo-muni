@@ -49,27 +49,49 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
   const phrases: Phrase[] = [];
   let separator: Separator = null;
   let currentPhrase: string[] = [];
+  let hasWildcard = false;
 
   const tokens = toQueryTokens(query);
+  // TODO: stack based operator resolution?
+  // separate resolver?
 
+  // TODO: finally on for loop?
   tokens.forEach((token) => {
     if (token === "+" || token === "-") {
       if (currentPhrase.length > 0) {
         // throws out trailing operators
         phrases.push(
-          createPhrase(currentPhrase.join(" "), separator, givenMinSentLen),
+          createPhrase(
+            currentPhrase.join(" "),
+            separator,
+            givenMinSentLen,
+            hasWildcard,
+          ),
         );
+        // reset
         currentPhrase = [];
+        hasWildcard = false;
       }
       separator = token as Separator;
-    } else if (PHRASE_RE.test(token)) {
+    } else if (token === "*") {
+      hasWildcard = true;
+      currentPhrase.push(token);
+      // TODO: check for multiple wildcards
+    }
+    if (PHRASE_RE.test(token)) {
+      // TODO: what if this fails
       currentPhrase.push(token);
     }
   });
 
   if (currentPhrase.length > 0) {
     phrases.push(
-      createPhrase(currentPhrase.join(" "), separator, givenMinSentLen),
+      createPhrase(
+        currentPhrase.join(" "),
+        separator,
+        givenMinSentLen,
+        hasWildcard,
+      ),
     );
   }
 
@@ -80,6 +102,7 @@ function createPhrase(
   combinedPhrase: string,
   separator: Separator,
   givenMinSentLen: Length,
+  hasWildcard: boolean,
 ): Phrase {
   const [termWithMin, minLen] = combinedPhrase.split("_");
   const term = termWithMin.trim();
@@ -101,6 +124,7 @@ function createPhrase(
     length,
     minSentLen,
     separator,
+    hasWildcard,
   };
 }
 
