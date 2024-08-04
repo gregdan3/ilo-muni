@@ -78,6 +78,23 @@ WHERE
 ORDER BY
   occurrences DESC`;
 
+// NOTE: this query is inefficient because i have to order by occurrences, which means reading the entire table to process the query
+const WILDCARD_QUERY = `SELECT
+  p.text AS term
+FROM
+  phrase p
+  JOIN ranks r ON p.id = r.phrase_id
+WHERE
+  p.len = ?
+  AND r.min_sent_len = ?
+  AND r.day = 0
+  AND p.text GLOB ?
+ORDER BY
+  r.occurrences DESC
+LIMIT
+  10`;
+// day=0 is all time in ranks table
+//
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
@@ -393,6 +410,17 @@ async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
     }),
   );
   return result as Row[];
+}
+
+export async function fetchTopPhrases(phrase: Phrase): Promise<string[]> {
+  // phrase which has an attached wildcard
+  const result = await queryDb(WILDCARD_QUERY, [
+    phrase.length,
+    phrase.minSentLen,
+    phrase.term,
+  ]);
+  return result.map((term: { term: string }) => term.term);
+  // yes this is silly
 }
 
 export async function fetchRanks(
