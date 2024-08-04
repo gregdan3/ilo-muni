@@ -15,6 +15,7 @@ const frontmatter = { title: "ilo Muni" };
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
 
   import { getSearchParams, toURLParams } from "@utils/urlparams";
+  import { CANNOT_SMOOTH } from "@utils/constants";
 
   async function updatePage(
     canvas: HTMLCanvasElement,
@@ -35,7 +36,7 @@ const frontmatter = { title: "ilo Muni" };
 
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
-    if (scale === "abs" || scale === "cmsum") {
+    if (CANNOT_SMOOTH.includes(scale)) {
       smoothingDropdown.disabled = true;
     } else {
       smoothingDropdown.disabled = false;

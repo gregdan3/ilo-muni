@@ -3,6 +3,7 @@ import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
 import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
+import { CANNOT_SMOOTH } from "./constants";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -318,11 +319,7 @@ async function fetchOneOccurrenceSet(
   // TODO: move scale functions to *after* many occurrence math
   result = scaleFunctions[params.scale](result, totals);
 
-  if (
-    params.smoothing > 0 &&
-    params.scale !== "absolute" &&
-    params.scale !== "cmsum"
-  ) {
+  if (params.smoothing > 0 && !CANNOT_SMOOTH.includes(params.scale)) {
     result = makeSmooth(result, params.smoothing);
   }
 
