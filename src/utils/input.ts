@@ -77,8 +77,7 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
       hasWildcard = true;
       currentPhrase.push(token);
       // TODO: check for multiple wildcards
-    }
-    if (PHRASE_RE.test(token)) {
+    } else if (PHRASE_RE.test(token)) {
       // TODO: what if this fails
       currentPhrase.push(token);
     }
