@@ -215,6 +215,20 @@ function makeEntropy(rows: Row[]): Row[] {
   });
 }
 
+function makeZScore(phrases: Row[]): Row[] {
+  const mean =
+    phrases.reduce((sum, row) => sum + row.occurrences, 0) / phrases.length;
+  const stdDev = Math.sqrt(
+    phrases.reduce((sum, row) => sum + Math.pow(row.occurrences - mean, 2), 0) /
+      phrases.length,
+  );
+
+  return phrases.map((row) => ({
+    ...row,
+    occurrences: (row.occurrences - mean) / stdDev,
+  }));
+}
+
 const scaleFunctions: {
   [key: string]: (rows: Row[], totals?: Row[]) => Row[];
 } = {
@@ -232,6 +246,7 @@ const scaleFunctions: {
   cmsum: (rows) => makeCumulativeSum(rows),
   entropy: (rows) => makeEntropy(rows),
   relentropy: (rows, totals) => makeEntropy(makeRel(rows, totals!)),
+  zscore: (rows, totals) => makeZScore(makeRel(rows, totals!)),
 };
 
 async function fetchOneOccurrenceSet(

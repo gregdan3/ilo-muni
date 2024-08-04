@@ -7,12 +7,13 @@ export const scales = [
   "normrel",
   "normabs",
   "deriv1",
-  "deriv2",
-  // "relderiv1",
+  // "deriv2",
+  "relderiv1",
   // "relderiv2",
   "cmsum",
   "entropy",
   "relentropy",
+  "zscore",
 ];
 export const lengthParams = ["1", "2", "3", "4", "5", "6"];
 export const lengths = lengthParams.map((n: string) => {
