@@ -16,8 +16,8 @@ export const scales = [
   "zscore",
 ];
 export const lengthParams = ["1", "2", "3", "4", "5", "6"];
-export const lengths = lengthParams.map((n: string) => {
-  parseInt(n, 10);
+export const lengths = lengthParams.map((n: string): number => {
+  return parseInt(n, 10);
 });
 export const smoothingParams = [
   "0",
