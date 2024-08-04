@@ -107,22 +107,22 @@ function graphableDate(timestamp: number): Date {
   return new Date(timestamp * 1000 + DAY_IN_MS);
 }
 
-function mergeOccurrences(rows: Row[][], separators: Separator[]): Row[] {
-  if (rows.length === 0 || rows[0].length === 0) {
+function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
+  if (series.length === 0 || series[0].length === 0) {
     return [];
   }
 
   const result: Row[] = [];
 
-  for (let i = 0; i < rows[0].length; i++) {
-    const day = rows[0][i].day;
+  for (let i = 0; i < series[0].length; i++) {
+    const day = series[0][i].day;
     let totalOccurrences = 0;
 
-    for (let j = 0; j < rows.length; j++) {
+    for (let j = 0; j < series.length; j++) {
       if (separators[j] === "-") {
-        totalOccurrences -= rows[j][i].occurrences;
+        totalOccurrences -= series[j][i].occurrences;
       } else {
-        totalOccurrences += rows[j][i].occurrences;
+        totalOccurrences += series[j][i].occurrences;
       }
     }
     result.push({ day, occurrences: totalOccurrences });
@@ -130,9 +130,9 @@ function mergeOccurrences(rows: Row[][], separators: Separator[]): Row[] {
   return result;
 }
 
-function makeSmooth(phraseOccs: Row[], smoothing: number): Row[] {
-  const smoothed: Row[] = phraseOccs.map((row) => ({ ...row }));
-  const len = phraseOccs.length;
+function makeSmooth(rows: Row[], smoothing: number): Row[] {
+  const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
+  const len = rows.length;
 
   for (let i = 0; i < len; i++) {
     let sum = 0;
@@ -143,7 +143,7 @@ function makeSmooth(phraseOccs: Row[], smoothing: number): Row[] {
       j <= Math.min(len - 1, i + smoothing);
       j++
     ) {
-      sum += phraseOccs[j].occurrences;
+      sum += rows[j].occurrences;
       count++;
     }
 
@@ -153,26 +153,86 @@ function makeSmooth(phraseOccs: Row[], smoothing: number): Row[] {
   return smoothed;
 }
 
-function makeRelative(phrase_occs: Row[], total_occs: Row[]): Row[] {
-  for (let i = 0; i < phrase_occs.length; i++) {
-    const total = total_occs[i].occurrences;
-    total
-      ? (phrase_occs[i].occurrences /= total)
-      : (phrase_occs[i].occurrences = 0);
+function makeRel(rows: Row[], totals: Row[]): Row[] {
+  for (let i = 0; i < rows.length; i++) {
+    const total = totals[i].occurrences;
+    total ? (rows[i].occurrences /= total) : (rows[i].occurrences = 0);
   }
-  return phrase_occs;
+  return rows;
 }
 
-function makeLogarithmic(phrase_occs: Row[], total_occs: Row[]): Row[] {
-  for (let i = 0; i < phrase_occs.length; i++) {
-    const total = total_occs[i].occurrences;
-    const occurrences = phrase_occs[i].occurrences;
-    phrase_occs[i].occurrences =
-      Math.log(occurrences + 1) / Math.log(total + 1);
+function makeLogAbs(rows: Row[]): Row[] {
+  for (let i = 0; i < rows.length; i++) {
+    const occurrences = rows[i].occurrences;
+    rows[i].occurrences = Math.log(occurrences + 1);
+  }
+  return rows;
+}
+
+function makeLogRel(rows: Row[], totals: Row[]): Row[] {
+  for (let i = 0; i < rows.length; i++) {
+    const total = totals[i].occurrences;
+    const occurrences = rows[i].occurrences;
+    rows[i].occurrences = Math.log(occurrences + 1) / Math.log(total + 1);
     // +1 avoids log(1) = 0 and log(0) = undef
   }
-  return phrase_occs;
+  return rows;
 }
+
+function makeNormal(rows: Row[]): Row[] {
+  const min = Math.min(...rows.map((row) => row.occurrences));
+  const max = Math.max(...rows.map((row) => row.occurrences));
+
+  return rows.map(
+    (row: Row): Row => ({
+      ...row,
+      occurrences: (row.occurrences - min) / (max - min),
+    }),
+  );
+}
+
+function makeDerivative(rows: Row[]): Row[] {
+  return rows.map((row, i) => {
+    if (i === 0) return { ...row, occurrences: 0 };
+    const diff = row.occurrences - rows[i - 1].occurrences;
+    return { ...row, occurrences: diff };
+  });
+}
+function makeCumulativeSum(rows: Row[]): Row[] {
+  let cumulative = 0;
+  return rows.map((row) => {
+    cumulative += row.occurrences;
+    return { ...row, occurrences: cumulative };
+  });
+}
+
+function makeEntropy(rows: Row[]): Row[] {
+  const totalOccurrences = rows.reduce((sum, row) => sum + row.occurrences, 0);
+  return rows.map((row) => {
+    const probability = row.occurrences / totalOccurrences;
+    const entropy = probability ? -probability * Math.log2(probability) : 0;
+    return { ...row, occurrences: entropy };
+  });
+}
+
+const scaleFunctions: {
+  [key: string]: (rows: Row[], totals?: Row[]) => Row[];
+} = {
+  abs: (rows) => rows,
+  rel: (rows, totals) => makeRel(rows, totals!),
+  logabs: (rows) => makeLogAbs(rows),
+  logrel: (rows, totals) => makeLogRel(rows, totals!),
+  normabs: (rows) => makeNormal(rows),
+  normrel: (rows, totals) => makeNormal(makeRel(rows, totals!)),
+  deriv1: (rows) => makeDerivative(rows),
+  deriv2: (rows) => makeDerivative(makeDerivative(rows)),
+  relderiv1: (rows, totals) => makeDerivative(makeRel(rows, totals!)),
+  relderiv2: (rows, totals) =>
+    makeDerivative(makeDerivative(makeRel(rows, totals!))),
+  cmsum: (rows) => makeCumulativeSum(rows),
+  entropy: (rows) => makeEntropy(rows),
+  relentropy: (rows, totals) => makeEntropy(makeRel(rows, totals!)),
+};
 
 async function fetchOneOccurrenceSet(
   params: QueryParams,
@@ -223,13 +283,14 @@ async function fetchOneOccurrenceSet(
     }
   }
 
-  if (params.scale === "relative") {
-    result = makeRelative(result, totals);
-  }
-  if (params.scale === "logarithmic") {
-    result = makeLogarithmic(result, totals);
-  }
-  if (params.smoothing > 0 && params.scale !== "absolute") {
+  // TODO: move scale functions to *after* many occurrence math
+  result = scaleFunctions[params.scale](result, totals);
+
+  if (
+    params.smoothing > 0 &&
+    params.scale !== "absolute" &&
+    params.scale !== "cmsum"
+  ) {
     result = makeSmooth(result, params.smoothing);
   }
 

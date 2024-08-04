@@ -35,7 +35,7 @@ const frontmatter = { title: "ilo Muni" };
 
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
-    if (scale === "absolute") {
+    if (scale === "abs" || scale === "cmsum") {
       smoothingDropdown.disabled = true;
     } else {
       smoothingDropdown.disabled = false;
@@ -187,9 +187,25 @@ const frontmatter = { title: "ilo Muni" };
         />
 
         <select id="scaleDropdown">
-          <option value="absolute">Absolute</option>
-          <option value="relative" selected={true}>Relative</option>
-          <option value="logarithmic">Logarithmic</option>
+          <optgroup label="simple">
+            <option value="cmsum">Cumulative Sum</option>
+            <option value="abs">Absolute</option>
+            <option value="rel" selected={true}>Relative</option>
+          </optgroup>
+          <optgroup label="useful">
+            <option value="logrel">Relative Log</option>
+            <option value="normrel">Relative Minmax</option>
+            <option value="normabs">Absolute Minmax</option>
+          </optgroup>
+          <optgroup label="weird or dupe">
+            <option value="logabs">Absolute Log</option>
+            <option value="relentropy">Relative Entropy</option>
+            <option value="entropy">Absolute Entropy</option>
+            <option value="relderiv1">1st Deriv Relative</option>
+            <!-- <option value="relderiv2">2nd Deriv Relative</option> -->
+            <option value="deriv1">1st Deriv Absolute</option>
+            <!-- <option value="deriv2">2nd Deriv Absolute</option> -->
+          </optgroup>
         </select>
 
         <select id="smoothingDropdown">

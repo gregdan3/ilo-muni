@@ -88,7 +88,7 @@ export function coalesceSmoothing(
 
 export function coalesceScale(
   maybeScale: string | null,
-  defaultScale: Scale = "2",
+  defaultScale: Scale = "rel",
 ): Scale {
   let scale: Scale = defaultScale;
   if (maybeScale && scales.includes(maybeScale)) {
@@ -131,7 +131,7 @@ export function getSearchParams(): SearchURLParams {
   const minSentLen = coalesceLength(minLenParam, "1");
 
   const scaleParam = urlParams.get("scale");
-  const scale = coalesceScale(scaleParam, "relative");
+  const scale = coalesceScale(scaleParam, "rel");
 
   const smoothingParam = urlParams.get("smoothing") || "";
   const smoothing = coalesceSmoothing(smoothingParam, "2");

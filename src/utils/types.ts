@@ -1,5 +1,19 @@
 // URL params
-export const scales = ["relative", "absolute", "logarithmic"];
+export const scales = [
+  "rel",
+  "abs",
+  "logrel",
+  "logabs",
+  "normrel",
+  "normabs",
+  "deriv1",
+  "deriv2",
+  // "relderiv1",
+  // "relderiv2",
+  "cmsum",
+  "entropy",
+  "relentropy",
+];
 export const lengthParams = ["1", "2", "3", "4", "5", "6"];
 export const lengths = lengthParams.map((n: string) => {
   parseInt(n, 10);
