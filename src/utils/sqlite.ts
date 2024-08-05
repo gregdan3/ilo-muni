@@ -50,7 +50,7 @@ WHERE
   AND day >= ?
   AND day <= ?
 ORDER BY
-  day`;
+  day;`;
 
 const TOTAL_QUERY = `SELECT
   day,
@@ -63,7 +63,7 @@ WHERE
   AND day >= ?
   AND day <= ?
 ORDER BY
-  day`;
+  day;`;
 
 // but for ranks, we've queried ahead data which is exclusive on the right
 const RANKS_QUERY = `SELECT
@@ -77,7 +77,7 @@ WHERE
   AND r.min_sent_len = ?
   AND r.day = ?
 ORDER BY
-  occurrences DESC`;
+  occurrences DESC;`;
 
 // NOTE: this query is inefficient because i have to order by occurrences, which means reading the entire table to process the query
 const WILDCARD_QUERY = `SELECT
@@ -93,7 +93,7 @@ WHERE
 ORDER BY
   r.occurrences DESC
 LIMIT
-  10`;
+  10;`;
 // day=0 is all time in ranks table
 //
 
