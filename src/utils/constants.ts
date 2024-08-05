@@ -6,6 +6,7 @@ export const DB_URL = `${BASE_URL}/db/2024-07-30-trimmed.sqlite`;
 export const CANNOT_SMOOTH = [
   "abs",
   "cmsum",
+  "normabs",
   "deriv1",
   "deriv2",
   "relderiv1",
