@@ -31,6 +31,7 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
     options: {
       responsive: true,
       animation: false,
+      // animation: { duration: 200, easing: "easeInOutCubic" },
       line: {
         datasets: { normalized: true },
       },
@@ -74,6 +75,20 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
         htmlLegend: {
           containerID: "usageLegend",
         },
+        // annotation: {
+        //   annotations: {
+        //     label1: {
+        //       type: "label",
+        //       xValue: 1675256400,
+        //       yValue: "50%",
+        //       backgroundColor: "rgba(245,245,245)",
+        //       content: ["This is my text", "This is my text, second line"],
+        //       font: {
+        //         size: 18,
+        //       },
+        //     },
+        //   },
+        // },
         tooltip: {
           mode: "nearest",
           axis: "x",
