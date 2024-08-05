@@ -1,4 +1,5 @@
 import { PHRASE_RE, PHRASE_DELIMS_RE } from "@utils/constants";
+import { fetchTopPhrases } from "@utils/sqlite";
 
 import type {
   Separator,
@@ -80,6 +81,8 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
     } else if (PHRASE_RE.test(token)) {
       // TODO: what if this fails
       currentPhrase.push(token);
+    } else {
+      console.log("phrase is borked; query must die");
     }
   });
 
@@ -152,10 +155,53 @@ function dedupeQueries(queries: Query[]): ProcessedQueries {
   return { queries, errors };
 }
 
-export function inputToQueries(
+async function expandWildcards(queries: Query[]): Promise<ProcessedQueries> {
+  const expandedQueries: Query[] = [];
+  const errors: QueryError[] = [];
+
+  for (const query of queries) {
+    // Find all phrases with wildcards
+    const wildcardPhrases = query.phrases.filter(
+      (phrase) => phrase.hasWildcard,
+    );
+
+    if (wildcardPhrases.length === 0) {
+      expandedQueries.push(query);
+    } else if (wildcardPhrases.length === 1) {
+      const wildcardPhrase = wildcardPhrases[0];
+      const topPhrases = await fetchTopPhrases(wildcardPhrase);
+
+      for (const topPhrase of topPhrases) {
+        await consoleLogAsync(topPhrase);
+        const newQuery = {
+          ...query,
+          phrases: query.phrases.map(
+            (phrase: Phrase): Phrase =>
+              phrase === wildcardPhrase
+                ? { ...phrase, term: topPhrase, repr: topPhrase }
+                : phrase,
+          ),
+        };
+        // TODO: kinda a mixed responsibility thing right
+        newQuery.repr = queryRepr(newQuery.phrases);
+        expandedQueries.push(newQuery);
+      }
+    } else {
+      // cannot have more than one wildcard per query
+      errors.push({
+        query: query,
+        error: "Only one wildcard allowed per query",
+      });
+    }
+  }
+
+  return { queries: expandedQueries, errors };
+}
+
+export async function inputToQueries(
   input: string,
   givenMinSentLen: Length,
-): ProcessedQueries {
+): Promise<ProcessedQueries> {
   input = cleanInput(input);
 
   const { queries, errors: initErrors } = toQueries(input, givenMinSentLen);
@@ -163,8 +209,11 @@ export function inputToQueries(
   const { queries: dedupedQueries, errors: dupeErrors } =
     dedupeQueries(queries);
 
+  const { queries: expandedQueries, errors: wildcardErrors } =
+    await expandWildcards(dedupedQueries);
+
   return {
-    queries: dedupedQueries,
-    errors: initErrors.concat(dupeErrors),
+    queries: expandedQueries,
+    errors: initErrors.concat(dupeErrors, wildcardErrors),
   };
 }
