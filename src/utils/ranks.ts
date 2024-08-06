@@ -1,7 +1,6 @@
 import type { Rank } from "@utils/sqlite";
 import { isUCSUR } from "@utils/other";
 import { getLinkuCategories } from "@utils/linku";
-import { consoleLogAsync } from "./debug";
 
 const colorMap: { [key: string]: string } = {
   core: "palegoldenrod",
