@@ -3,7 +3,7 @@ import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
 import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
-import { CANNOT_SMOOTH } from "./constants";
+import { SMOOTHABLE } from "./constants";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -287,11 +287,16 @@ async function fetchOneOccurrenceSet(
     }),
   );
 
-  let result: Row[] = [];
+  const result: Row[] = [];
   let iResult = 0;
   let iCompare = 0;
 
-  const totals = await fetchTotalOccurrences(params);
+  const totals = await fetchTotalOccurrences(
+    params.phrase.length,
+    params.phrase.minSentLen,
+    params.start,
+    params.end,
+  );
 
   while (iCompare < totals.length) {
     const comparisonDay = totals[iCompare].day;
@@ -316,12 +321,12 @@ async function fetchOneOccurrenceSet(
     }
   }
 
-  // TODO: move scale functions to *after* many occurrence math
-  result = scaleFunctions[params.scale](result, totals);
-
-  if (params.smoothing > 0 && !CANNOT_SMOOTH.includes(params.scale)) {
-    result = makeSmooth(result, params.smoothing);
-  }
+  // // TODO: move scale functions to *after* many occurrence math
+  // result = scaleFunctions[params.scale](result, totals);
+  //
+  // if (params.smoothing > 0 && SMOOTHABLE.includes(params.scale)) {
+  //   result = makeSmooth(result, params.smoothing);
+  // }
 
   return result;
 }
@@ -357,10 +362,16 @@ export async function fetchManyOccurrenceSet(
       return null;
     }
 
-    const mergedRows = mergeOccurrences(
+    let mergedRows = mergeOccurrences(
       phraseOccurrences.map((occurrence): Row[] => occurrence!.rows),
       phraseOccurrences.map((occurrence): Separator => occurrence!.separator),
     );
+
+    const totals = await fetchTotalOccurrences(1, 1, start, end);
+    mergedRows = scaleFunctions[scale](mergedRows, totals);
+    if (smoothing > 0 && SMOOTHABLE.includes(scale)) {
+      mergedRows = makeSmooth(mergedRows, smoothing);
+    }
 
     return {
       term: query.repr,
@@ -373,16 +384,26 @@ export async function fetchManyOccurrenceSet(
   return resolvedResults.filter((result) => result !== null) as Result[];
 }
 
-async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
-  let minSentLen = params.phrase.minSentLen;
-  if (params.scale !== "absolute") {
-    // Override minimum sentence length when non-absolute scale is set for totals.
-    // This creates more comparable percentages,
-    // because the percentages are made against the total number of words,
-    // rather than among the words in sentences of a specific length.
-    // Critically, searches like "toki_2 - toki_1" cannot produce negative values.
-    minSentLen = params.phrase.length;
-  }
+async function fetchTotalOccurrences(
+  phraseLen: Length,
+  minSentLen: Length,
+  start: number,
+  end: number,
+): Promise<Row[]> {
+  // const minSentLen = 1; // params.phrase.minSentLen;
+  // const phraseLen = 1; // params.phrase.length;
+  // NOTE:
+  // if (!CANNOT_SMOOTH.includes(params.scale)) {
+  // Override minimum sentence length when non-absolute scale is set for totals.
+  // This creates more comparable percentages,
+  // because the percentages are made against the total number of words,
+  // rather than among the words in sentences of a specific length.
+  // Critically, searches like "toki_2 - toki_1" cannot produce negative values.
+  // minSentLen = params.phrase.length;
+  // phraseLen = params.phrase.length;
+  // minSentLen = 1;
+  // phraseLen = 1;
+  // }
 
   // NOTE: Why not override phraseLen too?
   // Google measures percentages by their number of occurrences among same-length ngrams
@@ -394,12 +415,7 @@ async function fetchTotalOccurrences(params: QueryParams): Promise<Row[]> {
   // And this could be useful because in the above search, the resultant line would be "Percentage prevalence of 'tenpo ni' without the prevalence of 'tenpo ni la' or 'lon tenpo ni'"
   // Which right now you can only get in absolute mode
 
-  let result = await queryDb(TOTAL_QUERY, [
-    params.phrase.length,
-    minSentLen,
-    params.start,
-    params.end,
-  ]);
+  let result = await queryDb(TOTAL_QUERY, [phraseLen, minSentLen, start, end]);
   result = result.map(
     (row: { day: number; occurrences: number }): Row => ({
       day: graphableDate(row.day),

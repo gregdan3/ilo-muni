@@ -15,7 +15,7 @@ const frontmatter = { title: "ilo Muni" };
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
 
   import { getSearchParams, toURLParams } from "@utils/urlparams";
-  import { CANNOT_SMOOTH } from "@utils/constants";
+  import { SMOOTHABLE } from "@utils/constants";
 
   async function updatePage(
     canvas: HTMLCanvasElement,
@@ -36,10 +36,10 @@ const frontmatter = { title: "ilo Muni" };
 
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
-    if (CANNOT_SMOOTH.includes(scale)) {
-      smoothingDropdown.disabled = true;
-    } else {
+    if (SMOOTHABLE.includes(scale)) {
       smoothingDropdown.disabled = false;
+    } else {
+      smoothingDropdown.disabled = true;
     }
 
     loader.style.visibility = "visible";
@@ -203,10 +203,10 @@ const frontmatter = { title: "ilo Muni" };
             <option value="relentropy">Relative Entropy</option>
             <option value="entropy">Absolute Entropy</option>
             <option value="zscore">Relative Z-Score</option>
-            <option value="relderiv1">Relative 1st Deriv</option>
-            <!-- <option value="relderiv2">2nd Deriv Relative</option> -->
             <option value="deriv1">Absolute 1st Deriv</option>
             <!-- <option value="deriv2">2nd Deriv Absolute</option> -->
+            <option value="relderiv1">Relative 1st Deriv</option>
+            <!-- <option value="relderiv2">2nd Deriv Relative</option> -->
           </optgroup>
         </select>
 

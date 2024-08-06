@@ -3,14 +3,17 @@ import { makeAugust } from "@utils/other";
 export const BASE_URL = "/ilo-muni";
 export const DB_URL = `${BASE_URL}/db/2024-07-30-trimmed.sqlite`;
 
-export const CANNOT_SMOOTH = [
-  "abs",
-  "cmsum",
-  "normabs",
-  "deriv1",
-  "deriv2",
-  "relderiv1",
-  "relderiv2",
+export const SMOOTHABLE = [
+  // absolutes should be preserved
+  // derivatives are impervious to smoothing
+  "rel",
+  "logrel",
+  // "logabs",
+  "normrel",
+  // "normabs",
+  "entropy",
+  "relentropy",
+  "zscore",
 ];
 
 // these consts are just to build the important regexes
