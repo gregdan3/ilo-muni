@@ -172,7 +172,6 @@ async function expandWildcards(queries: Query[]): Promise<ProcessedQueries> {
       const topPhrases = await fetchTopPhrases(wildcardPhrase);
 
       for (const topPhrase of topPhrases) {
-        await consoleLogAsync(topPhrase);
         const newQuery = {
           ...query,
           phrases: query.phrases.map(
