@@ -1,5 +1,4 @@
 import { Words } from "@kulupu-linku/sona";
-import { consoleLogAsync } from "./debug";
 
 const LINKU = "https://api.linku.la/v1/words?lang=en";
 const SANDBOX = "https://api.linku.la/v1/sandbox?lang=en";
