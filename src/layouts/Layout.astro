@@ -86,6 +86,10 @@ import { BASE_URL } from "@utils/constants";
 
     --sec-fg: #333333;
     --sec-bg: #d3d3d3;
+
+    --spoil-fg: #443231;
+    --spoil-bg: #e2c49c;
+
     --url: #3366cc;
     --urlvisited: #7755bb;
 
@@ -152,6 +156,31 @@ import { BASE_URL } from "@utils/constants";
   }
   p + p {
     margin-top: 10px;
+  }
+
+  article summary {
+    cursor: pointer;
+    padding: var(--indent);
+  }
+  article summary > * {
+    display: inline-block;
+  }
+
+  article details {
+    display: block;
+    color: var(--spoil-fg);
+    background: var(--spoil-bg);
+    border-left: var(--block-mark) solid var(--spoil-fg);
+    margin: var(--indent);
+  }
+  article details > p {
+    padding: var(--indent);
+  }
+  article details[open] {
+    padding-bottom: 0.25em;
+  }
+  article details[open] > summary {
+    border-bottom: var(--block-mark) solid var(--spoil-fg);
   }
 
   article {
