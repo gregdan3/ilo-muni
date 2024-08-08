@@ -43,17 +43,17 @@ export type SmoothingParam = (typeof smoothingParams)[number];
 
 export interface SearchURLParams {
   query: string;
-  minSentLen: LengthParam;
-  scale: Scale;
-  smoothing: SmoothingParam;
-  start: string;
-  end: string;
+  minSentLen: LengthParam | null;
+  scale: Scale | null;
+  smoothing: SmoothingParam | null;
+  start: string | null;
+  end: string | null;
 }
 
 export interface RanksURLParams {
-  phraseLen: LengthParam;
-  minSentLen: LengthParam;
-  year: string;
+  phraseLen: LengthParam | null;
+  minSentLen: LengthParam | null;
+  year: string | null;
 }
 
 // user input
