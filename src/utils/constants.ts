@@ -33,7 +33,7 @@ export const PHRASE_RE = new RegExp(
 export const UCSUR_RE = new RegExp(`^[${ucsurRanges}]$`, "u");
 
 // TODO: fetch from db at init? would make it not so much a constant
-export const EARLIEST_YEAR = 2015;
+export const EARLIEST_YEAR = 2010;
 // NOTE: the data goes back to 2010 but there is almost nothing there
 // export const EARLIEST_YEAR = 2010;
 export const LATEST_YEAR = 2024;
