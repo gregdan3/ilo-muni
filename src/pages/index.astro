@@ -131,12 +131,23 @@ const frontmatter = { title: "ilo Muni" };
     const loader = document.getElementById("loader")! as HTMLSpanElement;
 
     let initialParams = getSearchParams();
+    // aside from query which starts empty, allow defaults of form
     searchBox.value = initialParams.query;
-    sentLenDropdown.value = initialParams.minSentLen;
-    scaleDropdown.value = initialParams.scale;
-    smoothingDropdown.value = initialParams.smoothing;
-    startDropdown.value = initialParams.start;
-    endDropdown.value = initialParams.end;
+    if (initialParams.minSentLen) {
+      sentLenDropdown.value = initialParams.minSentLen;
+    }
+    if (initialParams.scale) {
+      scaleDropdown.value = initialParams.scale;
+    }
+    if (initialParams.smoothing) {
+      smoothingDropdown.value = initialParams.smoothing;
+    }
+    if (initialParams.start) {
+      startDropdown.value = initialParams.start;
+    }
+    if (initialParams.end) {
+      endDropdown.value = initialParams.end;
+    }
 
     const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
     await updatePage(

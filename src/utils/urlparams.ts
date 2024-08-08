@@ -45,22 +45,12 @@ const SAMPLE_SEARCHES = [
   "toki - toki pona",
 ];
 
-export function coalesceLength(
-  maybeLen: string,
-  defaultLen: LengthParam = "1",
-): LengthParam {
-  let len: LengthParam = defaultLen;
-  if (maybeLen && lengthParams.includes(maybeLen)) {
-    len = maybeLen as LengthParam;
-  }
-  return len;
-}
-
 function randomElem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
 function isValidTimestamp(timestamp: string | null): boolean {
+  // TODO: it also needs to be one of the selectable timestamps, not just any in range
   if (!timestamp) {
     return false;
   }
@@ -75,22 +65,26 @@ function isValidTimestamp(timestamp: string | null): boolean {
   return true;
 }
 
+export function coalesceLength(maybeLen: string): LengthParam | null {
+  let len: LengthParam | null = null;
+  if (maybeLen && lengthParams.includes(maybeLen)) {
+    len = maybeLen as LengthParam;
+  }
+  return len;
+}
+
 export function coalesceSmoothing(
   maybeSmoothing: string | null,
-  defaultSmoothing: SmoothingParam = "2",
-): SmoothingParam {
-  let smoothing: SmoothingParam = defaultSmoothing;
+): SmoothingParam | null {
+  let smoothing: SmoothingParam | null = null;
   if (maybeSmoothing && smoothingParams.includes(maybeSmoothing)) {
     smoothing = maybeSmoothing as SmoothingParam;
   }
   return smoothing;
 }
 
-export function coalesceScale(
-  maybeScale: string | null,
-  defaultScale: Scale = "rel",
-): Scale {
-  let scale: Scale = defaultScale;
+export function coalesceScale(maybeScale: string | null): Scale | null {
+  let scale: Scale | null = null;
   if (maybeScale && scales.includes(maybeScale)) {
     scale = maybeScale as Scale;
   }
@@ -99,13 +93,11 @@ export function coalesceScale(
 
 export function coalesceTimestamp(
   maybeTimestamp: string | null,
-  defaultTimestamp: string,
-): string {
-  let timestamp = defaultTimestamp;
+): string | null {
+  let timestamp = null;
   if (isValidTimestamp(maybeTimestamp)) {
     timestamp = maybeTimestamp as string;
   }
-
   return timestamp;
 }
 
@@ -128,19 +120,19 @@ export function getSearchParams(): SearchURLParams {
   const query = coalesceRandomly(queryParam, SAMPLE_SEARCHES);
 
   const minLenParam = urlParams.get("minSentLen") || "";
-  const minSentLen = coalesceLength(minLenParam, "1");
+  const minSentLen = coalesceLength(minLenParam);
 
   const scaleParam = urlParams.get("scale");
-  const scale = coalesceScale(scaleParam, "rel");
+  const scale = coalesceScale(scaleParam);
 
   const smoothingParam = urlParams.get("smoothing") || "";
-  const smoothing = coalesceSmoothing(smoothingParam, "2");
+  const smoothing = coalesceSmoothing(smoothingParam);
 
   const startParam = urlParams.get("start") || "";
-  const start = coalesceTimestamp(startParam, EARLIEST_TIMESTAMP.toString());
+  const start = coalesceTimestamp(startParam);
 
   const endParam = urlParams.get("end") || "";
-  const end = coalesceTimestamp(endParam, LATEST_TIMESTAMP.toString());
+  const end = coalesceTimestamp(endParam);
 
   return { query, minSentLen, scale, smoothing, start, end };
 }
