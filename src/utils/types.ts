@@ -82,7 +82,7 @@ export interface Query {
 }
 
 export interface QueryError {
-  query: Query;
+  query: string; // raw of the query
   error: string;
 }
 

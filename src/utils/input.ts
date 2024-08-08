@@ -74,15 +74,23 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
         hasWildcard = false;
       }
       separator = token as Separator;
-    } else if (token === "*") {
+    } else if (token.startsWith("*")) {
+      if (currentPhrase.length == 0) {
+        const error = `phrase "${token}" may not begin with a wildcard`;
+        console.log(error);
+      }
+      if (hasWildcard) {
+        const error = `phrase "${token}" may not have more than one wildcard`;
+        console.log(error);
+      }
+
       hasWildcard = true;
       currentPhrase.push(token);
-      // TODO: check for multiple wildcards
     } else if (PHRASE_RE.test(token)) {
-      // TODO: what if this fails
       currentPhrase.push(token);
     } else {
-      console.log("phrase is borked; query must die");
+      const error = `phrase "${token}" must be letters, numbers, or UCSUR text`;
+      console.log(error);
     }
   });
 
@@ -132,11 +140,13 @@ function createPhrase(
 
 function toQueries(input: string, givenMinSentLen: Length): ProcessedQueries {
   const rawPhrases = splitOnDelim(input, ",");
-  const queries = rawPhrases.map((query: string): Query => {
+  let queries: Query[] = [];
+  const errors: QueryError[] = [];
+  queries = rawPhrases.map((query: string): Query => {
     const phrases = toPhrases(query, givenMinSentLen);
     return { raw: query, repr: queryRepr(phrases), phrases: phrases };
   });
-  return { queries, errors: [] };
+  return { queries, errors };
 }
 
 function dedupeQueries(queries: Query[]): ProcessedQueries {
@@ -144,7 +154,7 @@ function dedupeQueries(queries: Query[]): ProcessedQueries {
   const errors: QueryError[] = [];
   queries = queries.filter((query) => {
     if (seen.has(query.repr)) {
-      errors.push({ query: query, error: "Duplicate query" });
+      errors.push({ query: query.raw, error: "Duplicate query" });
       return false;
     } else {
       seen.add(query.repr);
@@ -188,7 +198,7 @@ async function expandWildcards(queries: Query[]): Promise<ProcessedQueries> {
     } else {
       // cannot have more than one wildcard per query
       errors.push({
-        query: query,
+        query: query.raw,
         error: "Only one wildcard allowed per query",
       });
     }
