@@ -1,13 +1,18 @@
 import { defineConfig } from "astro/config";
-
 import mdx from "@astrojs/mdx";
+
+import sitemap from "@astrojs/sitemap";
+import remarkToc from "remark-toc";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://gregdan3.github.io/ilo-muni/",
   base: "/ilo-muni",
   publicDir: "./static",
-  integrations: [mdx()],
+  integrations: [mdx(), sitemap()],
+  markdown: {
+    remarkPlugins: [[remarkToc, { heading: "Table of Contents", maxDepth: 4 }]],
+  },
   server: {
     headers: {
       "Cross-Origin-Embedder-Policy": "require-corp",
@@ -16,5 +21,5 @@ export default defineConfig({
   },
   devToolbar: {
     enabled: false,
-  }
+  },
 });
