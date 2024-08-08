@@ -11,23 +11,25 @@ import { lengthParams, smoothingParams, scales } from "@utils/types";
 const SAMPLE_SEARCHES = [
   // duh
   "toki, pona, toki pona",
+  "sitelen, pona, sitelen pona",
   // phrase trends
   "tomo tawa, ilo tawa",
   "sina seme, sina pilin seme, sina pali e seme",
   // isolating phrases
-  "toki_1 - toki_2, pona_1 - pona_2",
+  "toki_1 - toki_2",
   // synonyms
-  "lukin, oko, lukin + oko",
   "ale, ali, ale + ali",
   "ala, x, ala + x",
   "anu, y, anu + y",
   // word groups
   "laso, loje, walo, jelo, pimeja",
   "soweli, waso, kala, akesi, pipi",
-  "sewi, poka, anpa, sinpin, monsi",
+  "sewi, anpa",
+  "sinpin, monsi",
   "meli, mije, tonsi",
   "pu, ku, su",
-  "sin, lukin, kin, namako, oko",
+  "lukin, oko",
+  "sin, namako",
   "selo, sijelo",
   // modifier usage
   "wawa a, wawa mute, wawa suli, wawa sewi",
@@ -35,14 +37,21 @@ const SAMPLE_SEARCHES = [
   // grammatical things
   "kepeken ilo, kepeken e ilo",
   "kin la, poka la, sama la, namako la",
-  "ale la, ala la",
   "pali e, lon e, mama e, kama e",
   // names
-  "kekan, kekan san, jan kekan, mun kekan",
+  "jan kekan, mun kekan",
   "sonja, jan sonja",
+  "inli, toki inli",
   // disambiguation
   "san - kekan san",
-  "toki - toki pona",
+  // periodic phrases
+  "suno pi toki pona",
+  "tenpo monsuta",
+  "tenpo pana",
+  "tenpo lete",
+  "tenpo seli",
+  // funney
+  "sona kiwen",
 ];
 
 function randomElem<T>(arr: T[]): T {
