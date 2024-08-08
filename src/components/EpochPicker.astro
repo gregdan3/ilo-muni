@@ -18,7 +18,7 @@ const {
   renderAs,
   allTime = false,
   id,
-} = Astro.props;
+} = Astro.props as EpochPickerConfig;
 const dates = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
   makeAugust(startYear + i),
 );

@@ -4,28 +4,45 @@ import EpochPicker from "@components/EpochPicker.astro";
 export interface EpochRangePickerConfig {
   startYear: number;
   endYear: number;
+  startValueYear: number | null;
+  endValueYear: number | null;
   renderAs: "date" | "age";
   startId: string;
   endId: string;
 }
 
-const { startYear, endYear, renderAs, startId, endId } = Astro.props;
+let {
+  startYear,
+  endYear,
+  startValueYear,
+  endValueYear,
+  renderAs,
+  startId,
+  endId,
+} = Astro.props as EpochRangePickerConfig;
+
+if (!startValueYear) {
+  startValueYear = startYear;
+}
+if (!endValueYear) {
+  endValueYear = endYear;
+}
 ---
 
 <div>
   <EpochPicker
     startYear={startYear}
     endYear={endYear}
+    valueYear={startValueYear}
     renderAs={renderAs}
-    valueYear={startYear}
     id={startId}
   />
   -
   <EpochPicker
     startYear={startYear}
     endYear={endYear}
+    valueYear={endValueYear}
     renderAs={renderAs}
-    valueYear={endYear}
     id={endId}
   />
 </div>
