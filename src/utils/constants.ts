@@ -1,7 +1,7 @@
 import { makeAugust } from "@utils/other";
 
 export const BASE_URL = "/ilo-muni";
-export const DB_URL = `${BASE_URL}/db/2024-07-30-trimmed.sqlite`;
+export const DB_URL = `${BASE_URL}/db/2024-08-08-trimmed.sqlite`;
 
 export const SMOOTHABLE = [
   // absolutes should be preserved
@@ -44,4 +44,4 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 // start of june 1 in epoch time
 // avoids the fact that july is incomplete in my dataset
 // no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
-export const LATEST_ALLOWED_TIMESTAMP = 1717200000;
+export const LATEST_ALLOWED_TIMESTAMP = 1719792000;
