@@ -591,6 +591,16 @@ There are two ways the
 
 ## Frequently Asked Questions
 
+### Why does it take so long to get a graph?
+
+Searching for one or a few specific terms should only take a few seconds, but to
+be real: You're reading a big SQLite blob over the network, making requests to
+it one by one. I can only speed this up so much.
+
+If I had a database hosting solution, nearly all of the queries would be as
+instant as the network itself. If you have any suggestions for one,
+[let me know!](https://github.com/gregdan3/ilo-muni/issues/new)
+
 ### Why is the graph empty?
 
 This is an error handling issue. You made a search with a malformed term and I
