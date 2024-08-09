@@ -29,7 +29,7 @@ import { BASE_URL } from "@utils/constants";
     <meta property="og:site_name" content="ilo Muni" />
     <meta
       property="og:description"
-      content="Graphing Toki Pona Ngrams, because it's fun and free!"
+      content="Watch toki pona grow and change- now with graphs!"
     />
 
     <title>{title}</title>
@@ -72,30 +72,48 @@ import { BASE_URL } from "@utils/constants";
         <img src=`${BASE_URL}/favicon.svg` />
         <h3>{title}</h3>
       </header>
+
       <slot />
-      <footer style="margin-top: 2em">
-        <div style="display: flex; justify-content: space-evenly">
-          <a href="https://github.com/gregdan3">
+
+      <footer style="margin-top: 1em">
+        <div style="display: flex; justify-content: center; ">
+          <a href="https://github.com/gregdan3" style="margin:0.5em;">
             <img
               src=`${BASE_URL}/buttons/code_s.gif`
               alt="@gregdan3 on GitHub"
               class="social"
             />
           </a>
-          <a href="https://mun.la/sona">
+          <a href="https://mun.la/sona" style="margin:0.5em;">
             <img
               src=`${BASE_URL}/buttons/lessons_s.gif`
               alt="@gregdan3d on YouTube"
               class="social"
             />
           </a>
-          <a href="https://youtube.com/@gregdan3d">
+          <a href="https://youtube.com/@gregdan3d" style="margin:0.5em;">
             <img
               src=`${BASE_URL}/buttons/youtube.gif`
               alt="@gregdan3d on YouTube"
               class="social"
             />
           </a>
+        </div>
+
+        <div style="margin-top: 1em; text-align: center; line-height: 1.5em">
+          <div>
+            <a href="https://github.com/gregdan3/ilo-muni">Code on GitHub</a>
+            -
+            <a href="https://github.com/gregdan3/ilo-muni/issues"
+              >Report an issue</a
+            >
+          </div>
+          <div>
+            Licensed under
+            <a href="https://github.com/gregdan3/ilo-muni/blob/main/LICENSE"
+              >AGPL-3.0-or-later</a
+            >
+          </div>
         </div>
       </footer>
     </article>

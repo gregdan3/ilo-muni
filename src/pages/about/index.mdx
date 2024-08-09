@@ -3,6 +3,13 @@ layout: "@layouts/Layout.astro"
 title: About ilo Muni
 ---
 
+This page is about **how and why ilo Muni exists**, plus future plans, how to
+contribute, and thanks for everyone who helped me along the way. If you want to
+know how to use ilo Muni, [check the help page!](/ilo-muni/help/)
+
+Feel free to skip around. If you don't care about a section, that's totally
+okay!
+
 ## Table of Contents
 
 ## Why did you make ilo Muni?
@@ -101,12 +108,12 @@ search function and asking around in other communities,
 [then collected them here after I was done](https://sona.pona.la/wiki/Communities#Telegram).
 
 After that, jan Pensa (@spencjo) helped me out by exporting two particular chats
-for me, which had data I couldn't get:
+for me:
 
-- "mi tok e toki pona," a workgroup attemping to get toki pona an ISO-639 code.
-  This chat is functionally archived since they succeeded-
+- **mi tok e toki pona**: a workgroup attemping to get toki pona an ISO-639
+  code. This chat is functionally archived since they succeeded-
   [toki pona has had an ISO code for over two years!](https://iso639-3.sil.org/code/tok)
-- "kulupu pi toki pona-" This chat is public, but up until April 2017 it was
+- **kulupu pi toki pona**: This chat is public, but up until April 2017 it was
   configured to only show messages since you joined. Fortunately, jan Pensa had
   been in this group since March 2016!
 
@@ -123,14 +130,16 @@ unofficial scraping would have to be done live in order to be sure you fetched
 everything. I obviously wasn't doing my own live scraping of Reddit, but thanks
 to
 [the incredible work of Pushshift, /u/raiderbdev, and /u/Watchful1](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/),
-I was able to fetch at least [/r/tokipona](https://reddit.com/r/tokipona).
+I was able to fetch at least [/r/tokipona](https://reddit.com/r/tokipona)
+through the end of 2023.
 
 On that note: If you have or can create a complete archive of
 [/r/mi_lon](https://reddit.com/r/mi_lon),
 [/r/tokiponataso](https://reddit.com/r/tokiponataso),
 [/r/tokiponaunpa](https://reddit.com/r/tokiponaunpa),
 [/r/liputenpo](https://reddit.com/r/liputenpo), or any other toki pona
-communities on Reddit, please let me know!
+communities on Reddit, please
+[let me know](https://github.com/gregdan3/ilo-muni)!
 
 ## Will you add more communities?
 
@@ -157,7 +166,7 @@ because I used
 frankly, it's not very good. I have thus far not needed to make my own scrapers
 for any of the data I've collected, but this one may be different. If you know
 of a better phpBB scraper, or have a cleaner capture of this data,
-[please reach out](https://github.com/gregdan3/ilo-muni/issues)!
+[please reach out](https://github.com/gregdan3/ilo-muni/issues/new)!
 
 ### Yahoo group
 
@@ -190,9 +199,10 @@ variously inconsistent, low quality, or unsupported.
 There are at least two LiveJournal blogs that focused on toki pona,
 [here](https://tokipona.livejournal.com/) and
 [here](https://ru-tp.livejournal.com/), which were active in a similar time
-period to the forum or yahoo group. They're both small, but anything counts.
-Unfortunately, all the LiveJournal archiving tools I can find are for improving
-the personal data export feature, not for scraping the site.
+period to the forum or yahoo group. They're both small, but anything counts,
+especially for the history of toki pona before 2016. Unfortunately, all the
+LiveJournal archiving tools I can find are for improving the personal data
+export feature, not for scraping the site.
 
 ### toki.social (Mastodon)
 
@@ -215,6 +225,10 @@ three times isn't out of the question. Collecting, parsing, and counting up all
 of the data is not labor intensive- writing the code to do all that was, but
 most of that is done.
 
+That said, there isn't much value in updating more than once per year. Google
+Ngrams only updates about every three years. Trends in language don't generally
+happen in weeks or months- even at the community's current size
+
 ## Why "ilo Muni?"
 
 Several reasons! I was originally going to name this project "lipu mute",
@@ -223,26 +237,39 @@ tool had a name, I would be able to search its name in this tool! This was too
 cool to pass up.
 
 From there, choosing a name was easy. I wanted to name it in toki pona, and have
-the name be a phrase which also describes itself. This tool shows how many words
-there are, and also the frequency of words, which are respectively "mute nimi"
-and "nimi mute".
+the sitelen pona of the name be a phrase which also describes itself. This tool
+shows how many words there are, and also the frequency of words, which are
+respectively "mute nimi" and "nimi mute". Taking the first syllables of each
+word, you get "Muni" and "Nimu."
 
-## Thanks
+I ran a poll with both, and the results were very close (with a slight
+preference for Muni!), so I decided to search both names in the version of ilo
+Muni that existed at that time- "Nimu" had just over 40 results, but "Muni"
+didn't come up, so I went with it. Here we are!
 
-- Thanks to ilo Nija for the logo! It's a stylized version of the sitelen pona
-  name for ilo Muni- the three bars are "mute" and the rectangle is "nimi".
-- Thanks to jan Lepeka, jan Tepo, ijo Alison, and many others of the Unicode
-  proposal workgroup for convicing me to start on this project. It's been
-  incredibly rewarding, and I hope it helps ~~and doesn't cause lots of future
-  arguments~~
-- Thanks to waso Keli, ijo Stella,
-- Thanks to kala Asi for listening and helping me iterate on the early versions
-  of the graph and search tool.
-- Thanks to kala Asi, jan Asiku, ilo Tani, pan Pake, and waso Ete for helping me
-  work through the set theory reasoning necessary to display the data
-  "correctly!"
-- Thanks to [phiresky](https://github.com/phiresky/sql.js-httpvfs) for the
-  _excellent_ `sql.js-httpvfs` library, without which this project would have
-  taken _much_ longer and been much more stressful.
-- Thanks to [jordemort](https://jordemort.dev/blog/client-side-search/) for
-  figuring out how to use that library in Astro!
+## I'm doing research! How do I cite you?
+
+Uh, I don't know yet! Please [email me](mailto:gregdan3+ilomuni@protonmail.com)
+and we can talk about it.
+
+## Thank you to...
+
+- **ilo Nija** for the logo! It's a stylized version of the sitelen pona name
+  for ilo Muni- the three bars are "mute" and the rectangle is "nimi". It's so
+  sick.
+- **jan Lepeka, jan Juwan, akesi Jan, jan Tepo, ijo Alison, and many others of
+  the Unicode proposal workgroup** for convicing me to start on this project.
+  It's been incredibly rewarding, and I hope it helps ~~and doesn't cause lots
+  of future arguments~~.
+- **jan Telesi** and **ilo Tani** for a bit of technical direction along the
+  way!
+- waso Keli for
+- **kala Asi** for listening and helping me iterate on the early versions of the
+  graph and search tool.
+- **kala Asi, jan Asiku, ilo Tani, pan Pake, and waso Ete** for helping me work
+  through the set theory reasoning necessary to display the data "correctly!"
+- [**phiresky**](https://github.com/phiresky/sql.js-httpvfs) for the _excellent_
+  `sql.js-httpvfs` library, without which this project would have taken _much_
+  longer and been much more stressful.
+- [**jordemort**](https://jordemort.dev/blog/client-side-search/) for figuring
+  out how to use that library in Astro!
