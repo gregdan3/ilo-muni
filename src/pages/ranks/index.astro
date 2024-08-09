@@ -73,9 +73,15 @@ const frontmatter = { title: "Rank by Frequency" };
     const loader = document.getElementById("loader")! as HTMLSpanElement;
 
     let initialParams = getRanksParams();
-    sentLenDropdown.value = initialParams.minSentLen;
-    phraseLenDropdown.value = initialParams.phraseLen;
-    yearDropdown.value = initialParams.year;
+    if (initialParams.minSentLen) {
+      sentLenDropdown.value = initialParams.minSentLen;
+    }
+    if (initialParams.phraseLen) {
+      phraseLenDropdown.value = initialParams.phraseLen;
+    }
+    if (initialParams.year) {
+      yearDropdown.value = initialParams.year;
+    }
 
     const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
     await updatePage(
