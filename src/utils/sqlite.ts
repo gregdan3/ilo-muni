@@ -113,7 +113,6 @@ export interface Rank {
 }
 
 export interface QueryParams {
-  // TODO: is date or number a better interface?
   phrase: Phrase;
   scale: Scale;
   smoothing: number;
