@@ -150,13 +150,13 @@ export function getRanksParams(): RanksURLParams {
   const urlParams = new URLSearchParams(window.location.search);
 
   const phraseLenParam = urlParams.get("phraseLen") || "";
-  const phraseLen = coalesceLength(phraseLenParam, "1");
+  const phraseLen = coalesceLength(phraseLenParam);
 
   const minLenParam = urlParams.get("minSentLen") || "";
-  const minSentLen = coalesceLength(minLenParam, "1");
+  const minSentLen = coalesceLength(minLenParam);
 
   const yearParam = urlParams.get("year") || "";
-  const year = coalesceTimestamp(yearParam, "0");
+  const year = coalesceTimestamp(yearParam);
 
   return { phraseLen, minSentLen, year };
 }
