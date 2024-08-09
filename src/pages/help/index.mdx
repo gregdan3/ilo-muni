@@ -256,19 +256,19 @@ Sorry- these aren't filled out yet, because I ran out of time while preparing fo
 
 I discussed ways that [smoothing](#smoothing) and [dates](#dates) can create misleading graphs, but these are not the only forms of bias possible. Most of the remaining bias is in where and how the data is collected.
 
-### Bot Messages
+### Bots
 
-Every platform has some kind of bot messages, but not every platform is gracious enough to inform you that a given user is a bot. Fortunately, almost no bots are sending messages in toki pona, but there are a handful worth being aware of, as they artificially increase the use of any word or phrase they use if counted.
+Every platform has bots which send messages, but not every platform is gracious enough to inform you that a given message is from a bot. Fortunately, almost no bots are sending messages in toki pona, but there are a handful worth being aware of because they artificially increase the use of any word or phrase they use if counted.
 
 #### Discord
 
-Discord does an excellent job of informing you that a given user is a bot, but things get mixed up when it comes to webhooks because of [PluralKit](https://pluralkit.me/). Normally, webhooks are a kind of bot message which is sent automatically but is not attached to any specific user. They tend to be notifications for things happening on other platforms, like commits on Github or posts on Reddit. However, PluralKit messages are from users, despite being webhooks. Right now, I can't distinguish between PluralKit messages and any other type of webhook, so I'm forced to count both or neither- and I chose to count both. This means there is some uncertain amount of bot data in the Discord data. Fortunately, only 4.6% of the data is from webhooks, so the impact of this cannot be _too_ large.
+Discord does an excellent job of informing you that a given user is a bot, but things get mixed up when it comes to webhooks because of [PluralKit](https://pluralkit.me/). Normally, webhooks are a kind of bot message which is sent automatically but is not attached to any user. They tend to be notifications for things happening on other platforms, like commits on Github or posts on Reddit. However, PluralKit messages are from users, despite being webhooks. Right now, I can't distinguish between PluralKit messages and any other type of webhook, so I'm forced to count both or neither- and I chose to count both. This means there is some uncertain amount of bot data in the Discord data. Fortunately, only 4.6% of the data is from webhooks, so the impact of this cannot be _too_ large.
 
 In the future, I plan to grab all the webhook messages I have and ask the PluralKit API whether those messages are PluralKit messages. Then I would be able to map those messages back to the host account which originally sent the message, and I could then count only user messages.
 
 #### Telegram
 
-I have no way to know if a given user is a bot on Telegram. Telegram's JSON export format does not include that information. I do have one hard-coded exception, the IRC forwarding bot, because I needed to cut the names out of its messages to represent them as intended. Otherwise, all Telegram bots are invisible to me. That said, all of the ones I've seen speak English, so they shouldn't have any counted sentences at all.
+I have no way to know if a given user is a bot on Telegram. Telegram's JSON export format does not include that information. I do have one hard-coded exception, the IRC forwarding bot, because I needed to cut the names out of its messages to represent them as intended. Otherwise, all Telegram bots are invisible to me. That said, all of the ones I've seen speak English, so they shouldn't have any counted sentences.
 
 #### Reddit
 
@@ -276,7 +276,7 @@ Reddit does not tell you if a given user is a bot as far as I'm aware. Can't fix
 
 ### Herbevitistoj
 
-Herbevitistoj is "Many people who professionally avoid grass." It's fairly recent and silly way that [Esperanto](https://en.wikipedia.org/wiki/Esperanto) speakers refer to the "terminally online," or termed more kindly, people who are on the internet a lot.
+Herbevitistoj is "Many people who professionally avoid grass." It's a fairly recent and silly way that [Esperanto speakers](https://en.wikipedia.org/wiki/Esperanto) refer to the "terminally online," or termed more kindly, people who are on the internet a lot. While it is true that most toki pona is spoken on the internet, there is still a subset of the community which makes up an outsized portion of messages written in toki pona because they are much more active in online spaces. There isn't anything to be done about this- it's just a fact to be aware of.
 
 ### Platform specific oddities
 
