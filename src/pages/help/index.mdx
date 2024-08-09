@@ -166,13 +166,18 @@ First, the graph ends in June 2024. This is because I collected this data during
 
 Second, the default start date is **August 2016** because the data prior to that is extremely sparse. I have left in the option to query for that data, but understand that the relative graphs will be noisy, the absolute graphs will be flat, minmax graphs will become nonsense, and log graphs will have gaps (which is on my TODO list).
 
-There are also some important things to know about the relationship of dates to the data.
+Lastly, it is important to note that the way I store the data is a potential source of bias. If you're curious, read the following:
+
+<details>
+<summary>**Discussion**</summary>
 
 In the database, I count words in monthly "buckets." You can see this on the graph, where each point aligns with a specific month and is labeled as such. This is a straight-forward way to graph and read the data, but it has some disadvantages for interpretability.
 
 Some months are shorter than others, so [the absolute scale](#absolute) may be misleading for those periods, implying they were less active than neighboring months. Similarly, weeks are not evenly distributed over months, so some months will have more weekends and therefore more active periods than others. Fortunately, this doesn't change [the relative scale](#relative), since that is measured as a percentage of words said.
 
 Still, in the future I would like to change the size of the time "buckets" to be 4-weekly, to reduce or eliminate the above described biases.
+
+</details>
 
 ---
 
@@ -276,7 +281,9 @@ Reddit does not tell you if a given user is a bot as far as I'm aware. Can't fix
 
 ### Herbevitistoj
 
-Herbevitistoj is "Many people who professionally avoid grass." It's a fairly recent and silly way that [Esperanto speakers](https://en.wikipedia.org/wiki/Esperanto) refer to the "terminally online," or termed more kindly, people who are on the internet a lot. While it is true that most toki pona is spoken on the internet, there is still a subset of the community which makes up an outsized portion of messages written in toki pona because they are much more active in online spaces. There isn't anything to be done about this- it's just a fact to be aware of.
+Herbevitistoj is "Many people who professionally avoid grass." It's a fairly recent and silly way that [Esperanto speakers](https://en.wikipedia.org/wiki/Esperanto) refer to the "terminally online," or termed more kindly, people who are on the internet a lot. Most toki pona is spoken on the internet in the first place, but there is still a subset of the community which makes up an outsized portion of messages written in toki pona because they are much more active in online spaces. There isn't anything to be done about this- it's just a fact to be aware of.
+
+That said, I am personally curious to see what the data would look like if the top 20% most active users were removed from it- maybe something to do in the future.
 
 ### Platform specific oddities
 
@@ -298,25 +305,22 @@ Unfortunately, [the pricing for Reddit's API was changed drastically in summer 2
 
 ## Frequently Asked Questions
 
-### Why didn't the graph change?
-
-If you search for a word with no data, I don't update the graph.
-
-Uh, I don't have any error handling yet! If you search for a word with no data, I just don't do anything. You probably searched for a word that doesn't have any data.
-
 ### Why is the graph empty?
 
-This is also an error handling issue, but a different one. You made a search with a malformed term and I didn't catch and throw it out. Oops.
+This is an error handling issue. You made a search with a malformed term and I didn't catch and throw it out. Oops. I definitely already know why this is happening, but I'm going to fix this later. Feel free to [open an issue](https://github.com/gregdan3/ilo-muni/issues) though!
 
 ### Why is my subtraction negative?
 
 That's allowed! If you do [**tawa pona - kama pona**](ilo-muni/?query=tawa+pona+-+kama+pona), you'll get a graph which is mostly negative. This means the phrase "kama pona" is more common than the phrase "tawa pona", probably because the community is very welcoming!
 
-It's _probably_ possible to get floating point silliness when subtracting, but I haven't seen that happen personally- [please reach out if you spot it!](https://github.com/gregdan3/ilo-muni/issues)
+It's _probably_ possible to get floating point silliness when subtracting, but I haven't seen that happen personally- [please reach out if you spot it](https://github.com/gregdan3/ilo-muni/issues)!
+
+Note: the y-axis scale may sometimes display in scientific notation instead of integers or rationals. This is not an error! That's just ChartJS!
 
 ### Why is the data so noisy before 2020?
 
-In short, there is much less data to examine from before 2020. [if you download the database](TODO), the data I track goes back to 2010, but I limit queries to August 2015 and later in the frontend, so the graphs aren't as messy.
+In short, there is much less data to examine from before 2020. This is why I set the.
+default start date to August 2016, rather than August 2010 where my date starts
 
 So the next question is, why 2020? Although I probably don't need to answer that, I'll go ahead and do so:
 
@@ -324,5 +328,4 @@ When everyone was trapped indoors for some two years during the COVID-19 pandemi
 
 ### Why is there a huge spike on [date] for [word]?
 
-This data isn't from **professional** sources, unlike Google Ngrams which is sourced entirely from published books. In **professional** sources, you wouldn't expect an editor to let a paragraph like **woo yeah! woo yeah! woo yeah! woo yeah! woo yeah! woo yeah!** remain in the final product. But in Discord and any other social media platform, there is no editorial oversight- silly goofy abounds. This affects mu, wan, tu, luka, mute, ale, and probably others, which you can see [here](/?query=mu,+wan,+tu,+luka,+mute,+ale&minSentLen=1&scale=absolute&smoothing=0)
-).
+This data isn't from **professional** sources, unlike Google Ngrams which is sourced entirely from published books. In **professional** sources, you wouldn't expect an editor to let a paragraph like **woo yeah! woo yeah! woo yeah! woo yeah! woo yeah! woo yeah!** remain in the final product. But in Discord and any other social media platform, there is no editorial oversight- silly goofy abounds. This affects mu, wan, tu, luka, mute, ale, and probably others, which you can see [here](/ilo-muni/?query=mu,+wan,+tu,+luka,+mute,+ale&minSentLen=1&scale=absolute&smoothing=0)
