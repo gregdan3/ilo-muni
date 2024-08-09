@@ -323,7 +323,6 @@ async function fetchOneOccurrenceSet(
     }
   }
 
-  // // TODO: move scale functions to *after* many occurrence math
   // result = scaleFunctions[params.scale](result, totals);
   //
   // if (params.smoothing > 0 && SMOOTHABLE.includes(params.scale)) {
