@@ -1,16 +1,18 @@
 ---
 layout: "@layouts/Layout.astro"
-title: Help! for Search
+title: Help! for ilo Muni
 ---
 
-Follow the tutorial by starting from [search](#search), or use the [cheatsheet](#cheatsheet) below!
+Follow the tutorial by starting from [search](#search), or use the
+[cheatsheet](#cheatsheet) below!
 
 ## Cheatsheet
 
 - Search words or phrases up to **6 words long**
 - Search **multiple phrases** by splitting them with comma `,`
 - **Add** phrases with `+`, **subtract** with `-`
-- Add `_` and a number from 1-6 on a phrase to set its **minimum sentence length**, or use the dropdown to set it for everything at once
+- Add `_` and a number from 1-6 on a phrase to set its **minimum sentence
+  length**, or use the dropdown to set it for everything at once
 - Higher smoothing makes noisy graphs easier to read
 - Absolute scales show or use the number of times a word appeared
 - Relative scales show or use the percentage of times a word appeared
@@ -23,88 +25,151 @@ Follow the tutorial by starting from [search](#search), or use the [cheatsheet](
 
 ### Words
 
-Search for a **[toki pona word](https://linku.la/)** such as [**pona**](/ilo-muni/?query=pona). If it appeared at least 40 times across all the places and times I checked, you'll get a graph showing how that word has been used over time! By default, you'll see what percentage of all words were the searched word, with monthly datapoints.
+Search for a **[toki pona word](https://linku.la/)** such as
+[**pona**](/ilo-muni/?query=pona). If it appeared at least 40 times across all
+the places and times I checked, you'll get a graph showing how that word has
+been used over time! By default, you'll see what percentage of all words were
+the searched word with monthly datapoints.
 
-You can also search for proper names like [**Sonko**](/ilo-muni/?query=sonko), [**Inli**](/ilo-muni/?query=inli), or [**Siko**](/ilo-muni/?query=Siko). There are lots of very rare words in the database too. You might be surprised by what you find, so try lots of things!
+You can also search for proper names like [**Sonko**](/ilo-muni/?query=sonko),
+[**Inli**](/ilo-muni/?query=inli), or [**Siko**](/ilo-muni/?query=Siko). There
+are lots of very rare words in the database too. You might be surprised by what
+you find, so try lots of things!
 
 <details>
   <summary>**Examples**</summary>
 
-- See the start and growth of words coined only a few years ago like [**tonsi**](/ilo-muni/?query=tonsi) or [**misikeke**](/ilo-muni/?query=misikeke)
-- Explore the use of rarer words like [**majuna**](/ilo-muni/?query=majuna), [**linluwi**](/ilo-muni/?query=linluwi), or [**kiki**](/ilo-muni/?query=kiki)
+- See the start and growth of words coined only a few years ago like
+  [**tonsi**](/ilo-muni/?query=tonsi) or
+  [**misikeke**](/ilo-muni/?query=misikeke)
+- Explore the use of rarer words like [**majuna**](/ilo-muni/?query=majuna),
+  [**linluwi**](/ilo-muni/?query=linluwi), or [**kiki**](/ilo-muni/?query=kiki)
 
 </details>
 
 ### Phrases
 
-You can search for **up to 6 words in one phrase**, such as [**mi kama sona e toki pona**](/ilo-muni/?query=mi+kama+sona+e+toki+pona). Note that the more words are in a phrase, the fewer times it is likely to appear- so don't be surprised if you don't get a result. Try searching for shorter phrases, like [**kama pona**](/ilo-muni/?query=kama+pona) or [**anu seme**](/ilo-muni/?query=anu+seme).
+You can search for **up to 6 words in one phrase**, such as
+[**mi kama sona e toki pona**](/ilo-muni/?query=mi+kama+sona+e+toki+pona). Note
+that the more words are in a phrase, the fewer times it is likely to appear- so
+don't be surprised if you don't get a result. Try searching for shorter phrases,
+like [**kama pona**](/ilo-muni/?query=kama+pona) or
+[**anu seme**](/ilo-muni/?query=anu+seme).
 
 <details>
   <summary>**Examples**</summary>
 
-- Watch the rising popularity of phrases like [**kin la**](/ilo-muni/?query=kin+la)
-- Watch phrases come and go over time as the things they reference do, like [**tenpo pana**](/ilo-muni/?query=tenpo+pana&smoothing=0), [**tenpo monsuta**](/ilo-muni/?query=tenpo+monsuta&smoothing=0), or [**suno pi toki pona**](/ilo-muni/?query=suno+pi+toki+pona&smoothing=0)
-- Examine the use of grammatical features like [**kepeken e**](/ilo-muni/?query=kepeken+e)
+- Watch the rising popularity of phrases like
+  [**kin la**](/ilo-muni/?query=kin+la)
+- Watch phrases come and go over time as the things they reference do, like
+  [**tenpo pana**](/ilo-muni/?query=tenpo+pana&smoothing=0),
+  [**tenpo monsuta**](/ilo-muni/?query=tenpo+monsuta&smoothing=0), or
+  [**suno pi toki pona**](/ilo-muni/?query=suno+pi+toki+pona&smoothing=0)
+- Examine the use of grammatical features like
+  [**kepeken e**](/ilo-muni/?query=kepeken+e)
 
 </details>
 
 ### Multiple Searches
 
-You can graph **multiple phrases at once** by separating them with commas, even mixing words and phrases: [**toki, pona, toki pona**](/ilo-muni?query=toki,+pona,+toki+pona). Often, different words or phrases will have very different amounts of use, resulting in it being hard to read more than the top one or two graphs. You can address that with [alternate scales](#scales) later in this tutorial.
+You can graph **multiple phrases at once** by separating them with commas, even
+mixing words and phrases:
+[**toki, pona, toki pona**](/ilo-muni?query=toki,+pona,+toki+pona). Often,
+different words or phrases will have very different amounts of use, resulting in
+it being hard to read more than the top one or two graphs. You can address that
+with [alternate scales](#scales) later in this tutorial.
 
 <details>
   <summary>**Examples**</summary>
 
 - Compare former synonyms like [**lukin, oko**](/ilo-muni/?query=lukin,+oko)
-- See the close relationship between similar words like [**pan, kili**](/ilo-muni/?query=pan,+kili) or [**laso, loje, jelo, walo, pimeja**](/ilo-muni/?query=laso,+loje,+jelo,+walo,+pimeja)
-- Compare the modifiers that appear after specific words, like [**wawa a, wawa mute, wawa lili, wawa suli, wawa sewi**](/ilo-muni/?query=wawa+a,+wawa+mute,+wawa+lili,+wawa+suli,+wawa+sewi)
-- Examine how people talk about their skill in toki pona with [**sona toki pona, sona e toki pona, sona pi toki pona**](/ilo-muni/?query=sona+toki+pona,+sona+e+toki+pona,+sona+pi+toki+pona)
-- Compare greetings over time, like [**sina seme, sina pali e seme**](/ilo-muni/?query=sina+seme,+sina+pali+e+seme)
-- See how popular Sonja's books are with [**pu, ku, su**](/ilo-muni/?query=pu,+ku,+su)
+- See the close relationship between similar words like
+  [**pan, kili**](/ilo-muni/?query=pan,+kili) or
+  [**laso, loje, jelo, walo, pimeja**](/ilo-muni/?query=laso,+loje,+jelo,+walo,+pimeja)
+- Compare the modifiers that appear after specific words, like
+  [**wawa a, wawa mute, wawa lili, wawa suli, wawa sewi**](/ilo-muni/?query=wawa+a,+wawa+mute,+wawa+lili,+wawa+suli,+wawa+sewi)
+- Examine how people talk about their skill in toki pona with
+  [**sona toki pona, sona e toki pona, sona pi toki pona**](/ilo-muni/?query=sona+toki+pona,+sona+e+toki+pona,+sona+pi+toki+pona)
+- Compare greetings over time, like
+  [**sina seme, sina pali e seme**](/ilo-muni/?query=sina+seme,+sina+pali+e+seme)
+- See how popular Sonja's books are with
+  [**pu, ku, su**](/ilo-muni/?query=pu,+ku,+su)
 
 </details>
 
 ### Adding phrases
 
-You can **add two or more phrases together** by putting a `+` between them. This is helpful for combining synonyms, like [**ale + ali**](/ilo-muni/?query=ale+%2B+ali). You can also use it to compare multiple related words to another one, like [**pan + kili, moku**](/ilo-muni/?query=pan+%2B+kili,+moku).
+You can **add two or more phrases together** by putting a `+` between them. This
+is helpful for combining synonyms, like
+[**ale + ali**](/ilo-muni/?query=ale+%2B+ali). You can also use it to compare
+multiple related words to another one, like
+[**pan + kili, moku**](/ilo-muni/?query=pan+%2B+kili,+moku).
 
-It often helps to graph some or all of the summed phrases with the independent phrases so you can see how much the graph has shifted, such as in [**pan + kili, moku, pan, kili**](/ilo-muni/?query=pan+%2B+kili,+moku,+pan,+kili)
+It often helps to graph some or all of the summed phrases with the independent
+phrases so you can see how much the graph has shifted, such as in
+[**pan + kili, moku, pan, kili**](/ilo-muni/?query=pan+%2B+kili,+moku,+pan,+kili)
 
 <details>
   <summary>**Examples**</summary>
 
-- See what portion of toki pona is pure particles: [**li, e, la, pi, o, en, anu**](/ilo-muni/?query=li+%2B+e+%2B+la+%2B+pi+%2B+o+%2B+en+%2B+anu)
-- Combine multiple ways to write the same word, like [**ala + x**](/ilo-muni/?query=ala+%2B+x) or [**anu + y, anu, y**](/ilo-muni/?query=anu+%2B+y,+anu,+y)
-- Do that with UCSUR text specifically: [**toki + 󱥬**](/ilo-muni/?query=toki+%2B+󱥬)
-- Combine related words to compare to others: [**a + n, pona**](/ilo-muni/?query=a+%2B+n,+pona)
+- See what portion of toki pona is pure particles:
+  [**li, e, la, pi, o, en, anu**](/ilo-muni/?query=li+%2B+e+%2B+la+%2B+pi+%2B+o+%2B+en+%2B+anu)
+- Combine multiple ways to write the same word, like
+  [**ala + x**](/ilo-muni/?query=ala+%2B+x) or
+  [**anu + y, anu, y**](/ilo-muni/?query=anu+%2B+y,+anu,+y)
+- Do that with UCSUR text specifically:
+  [**toki + 󱥬**](/ilo-muni/?query=toki+%2B+󱥬)
+- Combine related words to compare to others:
+  [**a + n, pona**](/ilo-muni/?query=a+%2B+n,+pona)
 
 </details>
 
 ### Subtracting phrases
 
-You can **subtract one or more phrases from another** by putting a `-` between them. This is helpful when you'd like to omit a specific use of a word, such as in [**toki - toki pona**](/ilo-muni/?query=toki+-+toki+pona). This gives you all the uses of the word "toki" which are not in the phrase "toki pona".
+You can **subtract one or more phrases from another** by putting a `-` between
+them. This is helpful when you'd like to omit a specific use of a word, such as
+in [**toki - toki pona**](/ilo-muni/?query=toki+-+toki+pona). This gives you all
+the uses of the word "toki" which are not in the phrase "toki pona".
 
 <details>
   <summary>**Examples**</summary>
 
-- Determine what grammatical positions a phrase is most common in: [**tenpo ni - tenpo ni la - lon tenpo ni, tenpo ni**](/ilo-muni/?query=tenpo+ni+-+tenpo+ni+la+-+lon+tenpo+ni,+tenpo+ni)
-- Examine the use of a word without other conflicting terms, like in [**san - kekan san**](/ilo-muni/?query=san+-+kekan+san)
+- Determine what grammatical positions a phrase is most common in:
+  [**tenpo ni - tenpo ni la - lon tenpo ni, tenpo ni**](/ilo-muni/?query=tenpo+ni+-+tenpo+ni+la+-+lon+tenpo+ni,+tenpo+ni)
+- Examine the use of a word without other conflicting terms, like in
+  [**san - kekan san**](/ilo-muni/?query=san+-+kekan+san)
 
 </details>
 
 ### Set Minimum Sentence Length
 
-You can **set a minimum sentence length** for one term by adding an underscore `_` and a number from 1 to 6 **to the end of that term**. For example, [**toki_1, toki_6**](/ilo-muni/?query=toki,+toki_6) will show you the percentage of times toki appeared in any sentence, versus the smaller percentage of times that it was in specifically sentences of length 6. You can do this with phrases too: [**ona li, ona li_6**](/ilo-muni/?query=ona+li,+ona+li_6)
+You can **set a minimum sentence length** for one term by adding an underscore
+`_` and a number from 1 to 6 **to the end of that term**. For example,
+[**toki_1, toki_6**](/ilo-muni/?query=toki,+toki_6) will show you the percentage
+of times toki appeared in any sentence, versus the smaller percentage of times
+that it was in specifically sentences of length 6. You can do this with phrases
+too: [**ona li, ona li_6**](/ilo-muni/?query=ona+li,+ona+li_6)
 
-You can use this with subtraction to isolate a word or phrase: The search [**toki - toki_2**](/ilo-muni/?query=toki+-+toki_2) will show you every time "toki" appeared, minus the times it appeared in sentences with 2 or more words- which means you have all the times "toki" was the only word in the sentence. Or, put another way, all the times toki meant "hello"! (except for the times it was an answer to a question, of course!)
+You can use this with subtraction to isolate a word or phrase: The search
+[**toki - toki_2**](/ilo-muni/?query=toki+-+toki_2) will show you every time
+"toki" appeared, minus the times it appeared in sentences with 2 or more words-
+which means you have all the times "toki" was the only word in the sentence. Or,
+put another way, all the times toki meant "hello"! (except for the times it was
+an answer to a question, of course!)
 
-Read ahead to [the options section on Minimum Sentence Length](#minimum-sentence-length) for more details!
+Read ahead to
+[the options section on Minimum Sentence Length](#minimum-sentence-length) for
+more details!
 
 <details>
   <summary>**Examples**</summary>
 
-- Get even more accurate information about greetings: [**sina seme - sina seme_3, sina pali e seme - sina pali e seme_5**](/ilo-muni/?query=sina+seme+-+sina+seme_3,+sina+pali+e+seme+-+sina+pali+e+seme_5)
-  - See if there is a difference in relative use of words: [**toki, pona, toki_6, pona_6**](/ilo-muni/?query=toki,+pona,+toki_6,+pona_6). (there is! "pona" is more common in short sentences; "toki" is more common in long sentences!)
+- Get even more accurate information about greetings:
+  [**sina seme - sina seme_3, sina pali e seme - sina pali e seme_5**](/ilo-muni/?query=sina+seme+-+sina+seme_3,+sina+pali+e+seme+-+sina+pali+e+seme_5)
+  - See if there is a difference in relative use of words:
+    [**toki, pona, toki_6, pona_6**](/ilo-muni/?query=toki,+pona,+toki_6,+pona_6).
+    (there is! "pona" is more common in short sentences; "toki" is more common
+    in long sentences!)
 
 </details>
 
@@ -112,19 +177,38 @@ Read ahead to [the options section on Minimum Sentence Length](#minimum-sentence
 
 ## Options
 
-Note: [Scale has its own section](#scales), because it's much more complicated than the other options.
+Note: [Scale has its own section](#scales), because it's much more complicated
+than the other options.
 
 ### Minimum Sentence Length
 
-By default, **All sentences** is set, meaning you will see how words or phrases appear in any length of sentence. If you set this option to **3+ words per sentence**, you'll see how words or phrases appear in sentences which have **at least 3 words**. This can be helpful if you want to study more "substantial" uses of words, i.e. those that appear in longer sentences.
+By default, **All sentences** is set, meaning you will see how words or phrases
+appear in any length of sentence. If you set this option to **3+ words per
+sentence**, you'll see how words or phrases appear in sentences which have **at
+least 3 words**. This can be helpful if you want to study more "substantial"
+uses of words, i.e. those that appear in longer sentences.
 
-If one of your searches [sets the minimum sentence length for a term](#set-minimum-sentence-length), pay attention to the legend: If the legend shows the term without an underscore, it means the length you chose was already being searched for anyway. This can happen with a search like [**toki pona_2**](/ilo-muni/?query=toki+pona_2) normally, or [**wawa_3**](/ilo-muni/?query=wawa_3&minSentLen=3) while the minimum sentence length is set to 3.
+If one of your searches
+[sets the minimum sentence length for a term](#set-minimum-sentence-length), pay
+attention to the legend: If the legend shows the term without an underscore, it
+means the length you chose was already being searched for anyway. This can
+happen with a search like [**toki pona_2**](/ilo-muni/?query=toki+pona_2)
+normally, or [**wawa_3**](/ilo-muni/?query=wawa_3&minSentLen=3) while the
+minimum sentence length is set to 3.
 
-This happens to the phrase **toki pona** with a minimum sentence length of 2 because phrases have a minimum sentence length equal to how many words are in them. That is, "toki pona" can only appear in sentences with at least two words- which I hope makes sense! Because of this, the minimum sentence length is always implicitly set to at least the length of the phrase. You can always set it to be higher, of course.
+This happens to the phrase **toki pona** with a minimum sentence length of 2
+because phrases have a minimum sentence length equal to how many words are in
+them. That is, "toki pona" can only appear in sentences with at least two words-
+which I hope makes sense! Because of this, the minimum sentence length is always
+implicitly set to at least the length of the phrase. You can always set it to be
+higher, of course.
 
-Note that when graphing on any **relative scale**, the percentage is derived by dividing the number of occurrences for the search term by the total number of words in the same time period.
+Note that when graphing on any **relative scale**, the percentage is derived by
+dividing the number of occurrences for the search term by the total number of
+words in the same time period.
 
-If you're curious why this is done instead of dividing by the number of words in sentences of the appropriate minimum length, here's a simplified example:
+If you're curious why this is done instead of dividing by the number of words in
+sentences of the appropriate minimum length, here's a simplified example:
 
 <details>
 <summary>**Demonstration**</summary>
@@ -136,46 +220,98 @@ Imagine the following scenario:
 - 100 of the words are **toki**
 - 90 of those **toki** are in sentences with at least 2 words
 
-With this data, asking "What percentage of words are toki?" means we get 1% (100 / 10,000), which makes sense, and this is the only reasonable question to measure toki on its own.
+With this data, asking "What percentage of words are toki?" means we get 1% (100
+/ 10,000), which makes sense, and this is the only reasonable question to
+measure toki on its own.
 
-However, there are two ways to measure toki in sentences with at least 2 words (**toki_2**): You could measure it as a portion of all words, or as a portion of words from sentences with at least 2 words. These two different choices have different results: **toki_2** is **0.9%** (90 / 10,000) of all words, but **1%** (90 / 9,000) of the words in sentences with at least 2 words.
+However, there are two ways to measure toki in sentences with at least 2 words
+(**toki_2**): You could measure it as a portion of all words, or as a portion of
+words from sentences with at least 2 words. These two different choices have
+different results: **toki_2** is **0.9%** (90 / 10,000) of all words, but **1%**
+(90 / 9,000) of the words in sentences with at least 2 words.
 
-We can use this information to determine which answer is best for this graphing tool by exploring what happens when you search **toki - toki_2**.
+We can use this information to determine which answer is best for this graphing
+tool by exploring what happens when you search **toki - toki_2**.
 
-In the sample data, graphing **toki - toki_2** with toki_2 measured as a portion of all words means we get **0.1%**: ((100 - 90) / 10,000). That is, toki appears exactly 10 times on its own in this data. Graphing instead with **toki_2** measured as a portion of words in sentences with 2 or more words means we get **0%**: ((100 / 10,000) - (90 / 9,000)). In other words, we get a misleading outcome because we're subtracting two incomparable percentages.
+In the sample data, graphing **toki - toki_2** with toki_2 measured as a portion
+of all words means we get **0.1%**: ((100 - 90) / 10,000). That is, toki appears
+exactly 10 times on its own in this data. Graphing instead with **toki_2**
+measured as a portion of words in sentences with 2 or more words means we get
+**0%**: ((100 / 10,000) - (90 / 9,000)). In other words, we get a misleading
+outcome because we're subtracting two incomparable percentages.
 
-There is value in knowing what portion of sentences with at least 2 words are some specific word. This graphing tool does not offer that information because doing so would produce misleading graphs for both side-by-side comparison and for adding or subtracting specific results. If you're interested in that alternate data, [download the database!](TODO)
+There is value in knowing what portion of sentences with at least 2 words are
+some specific word. This graphing tool does not offer that information because
+doing so would produce misleading graphs for both side-by-side comparison and
+for adding or subtracting specific results. If you're interested in that
+alternate data, [download the database!](TODO)
 
 </details>
 
 ### Smoothing
 
-By default, **2 smoothing** is set. The number is how many neighbors **on both sides** of a given data point will be averaged with that point. For example, if you set **5 smoothing**, it means a given point will be set to the average of the 5 points before, 5 points after, and itself.
+By default, **2 smoothing** is set. The number is how many neighbors **on both
+sides** of a given data point will be averaged with that point. For example, if
+you set **5 smoothing**, it means a given point will be set to the average of
+the 5 points before, 5 points after, and itself.
 
-Smoothing is helpful for making noisy graphs more readable while preserving the trend line of the original graph. Compare the graphs of **wawa, nasa, suwi, sewi, suli** with [**0 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=0) and [**5 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=5).
+Smoothing is helpful for making noisy graphs more readable while preserving the
+trend line of the original graph. Compare the graphs of **wawa, nasa, suwi,
+sewi, suli** with
+[**0 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=0) and
+[**5 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=5).
 
-Note that smoothing can produce misleading graphs with respect to the time axis, such as [**implying that misikeke was used before November 2019**](/ilo-muni/?query=misikeke&smoothing=10) or [**smearing periodic phrases over too much time**](/ilo-muni/?query=tenpo+pana&smoothing=10). Sometimes, **0 smoothing** is better!
+Note that smoothing can produce misleading graphs with respect to the time axis,
+such as
+[**implying that misikeke was used before November 2019**](/ilo-muni/?query=misikeke&smoothing=10)
+or
+[**smearing periodic phrases over too much time**](/ilo-muni/?query=tenpo+pana&smoothing=10).
+Sometimes, **0 smoothing** is better!
 
-Some [scales](#scales) will have smoothing disabled, usually because it wouldn't make sense to average their values. This applies to the **absolute** scale, for example, because it is meant to show you the exact number of times a given word or phrase appeared! This also applies to both offered **derivatives**, because they are completely impervious to localized averaging.
+Some [scales](#scales) will have smoothing disabled, usually because it wouldn't
+make sense to average their values. This applies to the **absolute** scale, for
+example, because it is meant to show you the exact number of times a given word
+or phrase appeared! This also applies to both offered **derivatives**, because
+they are completely impervious to localized averaging.
 
 ### Dates
 
-By default, the date range for the graph is set from **August 2016** to **August 2024**. You can select any start or end you want, but there are some caveats to warn you about:
+By default, the date range for the graph is set from **August 2016** to **August
+2024**. You can select any start or end you want, but there are some caveats to
+warn you about:
 
-First, the graph ends in July 2024. This is because I collected this data during August, so it is incomplete after July. For that matter, it is differently incomplete depending on the platform and specific community, because I cannot collect them all simultaneously. The August data is in the database, but it produces misleading graphs to include, so I have omitted it from display.
+First, the graph ends in July 2024. This is because I collected this data during
+August, so it is incomplete after July. For that matter, it is differently
+incomplete depending on the platform and specific community, because I cannot
+collect them all simultaneously. The August data is in the database, but it
+produces misleading graphs to include, so I have omitted it from display.
 
-Second, the default start date is **August 2016** because the data prior to that is extremely sparse. I have left in the option to query for that data, but understand that the relative graphs will be noisy, the absolute graphs will be flat, minmax graphs will become nonsense, and log graphs will have gaps (which is on my TODO list).
+Second, the default start date is **August 2016** because the data prior to that
+is extremely sparse. I have left in the option to query for that data, but
+understand that the relative graphs will be noisy, the absolute graphs will be
+flat, minmax graphs will become nonsense, and log graphs will have gaps (which
+is on my TODO list).
 
-Lastly, it is important to note that the way I store the data is a potential source of bias. If you're curious, read the following:
+Lastly, it is important to note that the way I store the data is a potential
+source of bias. If you're curious, read the following:
 
 <details>
 <summary>**Discussion**</summary>
 
-In the database, I count words in monthly "buckets." You can see this on the graph, where each point aligns with a specific month and is labeled as such. This is a straight-forward way to graph and read the data, but it has some disadvantages for interpretability.
+In the database, I count words in monthly "buckets." You can see this on the
+graph, where each point aligns with a specific month and is labeled as such.
+This is a straight-forward way to graph and read the data, but it has some
+disadvantages for interpretability.
 
-Some months are shorter than others, so [the absolute scale](#absolute) may be misleading for those periods, implying they were less active than neighboring months. Similarly, weeks are not evenly distributed over months, so some months will have more weekends and therefore more active periods than others. Fortunately, this doesn't change [the relative scale](#relative), since that is measured as a percentage of words said.
+Some months are shorter than others, so [the absolute scale](#absolute) may be
+misleading for those periods, implying they were less active than neighboring
+months. Similarly, weeks are not evenly distributed over months, so some months
+will have more weekends and therefore more active periods than others.
+Fortunately, this doesn't change [the relative scale](#relative), since that is
+measured as a percentage of words said.
 
-Still, in the future I would like to change the size of the time "buckets" to be 4-weekly, to reduce or eliminate the above described biases.
+Still, in the future I would like to change the size of the time "buckets" to be
+4-weekly, to reduce or eliminate the above described biases.
 
 </details>
 
@@ -185,121 +321,271 @@ Still, in the future I would like to change the size of the time "buckets" to be
 
 ### Absolute
 
-The **Absolute scale** shows the exact number of times a given word or phrase was said in each time period. This is useful for observing [trends in the activity of the community](/ilo-muni/?query=li+%2B+mi+%2B+e+%2B+ni+%2B+la+%2B+toki+%2B+pona+%2B+lon+%2B+ala+%2B+sina&scale=abs), but can make it difficult to compare words which are [of very different magnitude](/ilo-muni/?query=a,+kin&scale=abs), or to study the use of toki pona [before March 2020](/ilo-muni/?query=toki,+pona,+toki+pona&scale=abs&start=1438387200&end=1564617600).
+The **Absolute scale** shows the exact number of times a given word or phrase
+was said in each time period. This is useful for observing
+[trends in the activity of the community](/ilo-muni/?query=li+%2B+mi+%2B+e+%2B+ni+%2B+la+%2B+toki+%2B+pona+%2B+lon+%2B+ala+%2B+sina&scale=abs),
+but can make it difficult to compare words which are
+[of very different magnitude](/ilo-muni/?query=a,+kin&scale=abs), or to study
+the use of toki pona
+[before March 2020](/ilo-muni/?query=toki,+pona,+toki+pona&scale=abs&start=1438387200&end=1564617600).
 
-If you're interested in comparing two or more absolute graphs, but one word is vastly more popular than the others, check again using the [Absolute Minmax scale](#absolute-minmax).
+If you're interested in comparing two or more absolute graphs, but one word is
+vastly more popular than the others, check again using the
+[Absolute Minmax scale](#absolute-minmax).
 
 ### Relative
 
-The **Relative scale** is the default scale, and shows you what **percentage of all words** are the searched term in each time period on the graph. This also applies to phrases, for which you would interpret as follows: "What portion of all words are **any one word** from this phrase?"
+The **Relative scale** is the default scale, and shows you what **percentage of
+all words** are the searched term in each time period on the graph. This also
+applies to phrases, for which you would interpret as follows: "What portion of
+all words are **any one word** from this phrase?"
 
-The justification for doing the math this way is similar to that for [minimum sentence length](#minimum-sentence-length), which you can read about below. Spoiler: I dunk on Google.
+The justification for doing the math this way is similar to that for
+[minimum sentence length](#minimum-sentence-length), which you can read about
+below. Spoiler: I dunk on Google.
 
 <details>
 <summary>**Discussion**</summary>
 
-As with minimum sentence length, there is more than one meaningful question that could be asked about phrases. In this case, there are three:
+As with minimum sentence length, there is more than one meaningful question that
+could be asked about phrases. In this case, there are three:
 
 #### What percentage of all same-length phrases are this phrase?
 
-This method has the same problem of incomparable percentages as seen in minimum sentence lengths: There isn't a way to compare "toki" and "toki pona" if their percentages are measured against unrelated totals- and "percentage of all words" is not comparable to "percentage of all bigrams". Strangely, [Google Ngrams does this intentionally according to their info page](https://books.google.com/ngrams/info), in spite of the fact that they allow you to add and subtract n-grams of different length. Direct quote, with bold added by me:
+This method has the same problem of incomparable percentages as seen in minimum
+sentence lengths: There isn't a way to compare "toki" and "toki pona" if their
+percentages are measured against unrelated totals- and "percentage of all words"
+is not comparable to "percentage of all bigrams". Strangely,
+[Google Ngrams does this intentionally according to their info page](https://books.google.com/ngrams/info),
+in spite of the fact that they allow you to add and subtract n-grams of
+different length. Direct quote, with bold added by me:
 
-> What the y-axis shows is this: **of all the bigrams** contained in our sample of books written in English and published in the United States, **what percentage of them** are "nursery school" or "child care"?
+> What the y-axis shows is this: **of all the bigrams** contained in our sample
+> of books written in English and published in the United States, **what
+> percentage of them** are "nursery school" or "child care"?
 
 #### What percentage of all words are this phrase?
 
-For graphing a single bi-gram, you can get interesting results from this question. To do this, we would multiply the number of times the phrase occurred by the length of the phrase, then divide by the total number of words. This means that, percentage-wise, each phrase counts for all of its words.
+For graphing a single bi-gram, you can get interesting results from this
+question. To do this, we would multiply the number of times the phrase occurred
+by the length of the phrase, then divide by the total number of words. This
+means that, percentage-wise, each phrase counts for all of its words.
 
-This is a problem, which we can see with a search such as **toki - toki pona**. This math implies we would remove some occurrences of "pona" from occurrences of "toki," because the phrase "toki pona" accounts for both of its words. There were never any occurrences of "pona" in the occurrences of "toki," so we would get a lower result than expected.
+This is a problem, which we can see with a search such as **toki - toki pona**.
+This math implies we would remove some occurrences of "pona" from occurrences of
+"toki," because the phrase "toki pona" accounts for both of its words. There
+were never any occurrences of "pona" in the occurrences of "toki," so we would
+get a lower result than expected.
 
 #### What percentage of all words are any word in this phrase?
 
-In this method, the search **toki - toki pona** means to remove all occurrences of "toki pona" from "toki". Since the phrase "toki pona" is only counted for how many times it appeared, and not for its number of words, the math works out: we are only removing the occurrences of any one word in the phrase "toki pona" from the word "toki". This method treats phrases as a form of context, so you could that search as follows: Remove all occurrences of "toki" that were in the phrase "toki pona" from occurrences of the word "toki."
+In this method, the search **toki - toki pona** means to remove all occurrences
+of "toki pona" from "toki". Since the phrase "toki pona" is only counted for how
+many times it appeared, and not for its number of words, the math works out: we
+are only removing the occurrences of any one word in the phrase "toki pona" from
+the word "toki". This method treats phrases as a form of context, so you could
+that search as follows: Remove all occurrences of "toki" that were in the phrase
+"toki pona" from occurrences of the word "toki."
 
-Because the search is now interpretable contextually, we get an unexpected and powerful new capability: The phrase can stand in for any of its words. For example, we could search for **pona - toki pona**, and the result makes sense: Remove all occurrences of "pona" that appear in "toki pona" from occurrences of "pona."
+Because the search is now interpretable contextually, we get an unexpected and
+powerful new capability: The phrase can stand in for any of its words. For
+example, we could search for **pona - toki pona**, and the result makes sense:
+Remove all occurrences of "pona" that appear in "toki pona" from occurrences of
+"pona."
 
-Even better, you can replicate the previous method by subtracting a phrase once for each word in it. If we did want to remove every word in 'toki pona' from 'toki', as in the second method, we can search **toki - toki pona - toki pona** to get that result.
+Even better, you can replicate the previous method by subtracting a phrase once
+for each word in it. If we did want to remove every word in 'toki pona' from
+'toki', as in the second method, we can search **toki - toki pona - toki pona**
+to get that result.
 
-Last note: If you're a math academic reading this, I am terribly, terribly sorry for not using real notation to demonstrate the above. I assure you, these plain language explanations are much less embarassing than any attempt I would make to use set notation.
+Last note: If you're a math academic reading this, I am terribly, terribly sorry
+for not using real notation to demonstrate the above. I assure you, these plain
+language explanations are much less embarassing than any attempt I would make to
+use set notation.
 
 </details>
 
-The relative scale is the most generally useful scale, as it implicitly tells you the relationship of your search term to all other terms by showing a percentage instead of a raw number. For example, you can compare [**the grammatical particles**](/ilo-muni/?query=li,+e,+la,+o,+a&scale=rel) or [**the colors**](/ilo-muni/?query=laso%2C+loje%2C+jelo%2C+walo%2C+pimeja&scale=rel).
+The relative scale is the most generally useful scale, as it implicitly tells
+you the relationship of your search term to all other terms by showing a
+percentage instead of a raw number. For example, you can compare
+[**the grammatical particles**](/ilo-muni/?query=li,+e,+la,+o,+a&scale=rel) or
+[**the colors**](/ilo-muni/?query=laso%2C+loje%2C+jelo%2C+walo%2C+pimeja&scale=rel).
 
-It can be difficult to compare relative graphs for words which are in different magnitudes, such as [**kijetesantakalu, soweli**](/ilo-muni/?query=kijetesantakalu%2C+soweli&scale=rel). I recommend the [Relative Minmax scale](#relative-minmax) for cases like these, which can help to identify words which trend in the same way no matter their magnitude.
+It can be difficult to compare relative graphs for words which are in different
+magnitudes, such as
+[**kijetesantakalu, soweli**](/ilo-muni/?query=kijetesantakalu%2C+soweli&scale=rel).
+I recommend the [Relative Minmax scale](#relative-minmax) for cases like these,
+which can help to identify words which trend in the same way no matter their
+magnitude.
 
 ### Cumulative
 
-The **Cumulative scale** shows you how many times a given word has been said up to a point in time, increasing to the total number of times the word has been said by the present. This is handy for [**observing the point where a word or phrase becomes more spoken than another**](/ilo-muni/?query=sina+seme,+sina+pali+e+seme&scale=cmsum), or [**differently examining periodic phrases**](/ilo-muni/?query=suno+pi+toki+pona&minSentLen=1&scale=cmsum). It can also help to clarify the fact that, while one word has become more popular than another in the recent past, [**it may not have done so all-time**](/ilo-muni/?query=kokosila,+penpo&scale=cmsum)
+The **Cumulative scale** shows you how many times a given word has been said up
+to a point in time, increasing to the total number of times the word has been
+said by the present. This is handy for
+[**observing the point where a word or phrase becomes more spoken than another**](/ilo-muni/?query=sina+seme,+sina+pali+e+seme&scale=cmsum),
+or
+[**differently examining periodic phrases**](/ilo-muni/?query=suno+pi+toki+pona&minSentLen=1&scale=cmsum).
+It can also help to clarify the fact that, while one word has become more
+popular than another in the recent past,
+[**it may not have done so all-time**](/ilo-muni/?query=kokosila,+penpo&scale=cmsum)
 
 ### Relative Log
 
-The **Relative Log scale** is the natural logarithm of the [relative scale](#relative), and it is useful for comparing trends in words of different magnitudes while preserving their popularity order. For example, [kijetesantakalu, soweli](/ilo-muni/?query=kijetesantakalu,+soweli&scale=logrel) are now much closer in scale while not errantly implying that kijetesantakalu exceeded soweli in popularity as [Relative Minmax](relative-minmax) would.
+The **Relative Log scale** is the natural logarithm of the
+[relative scale](#relative), and it is useful for comparing trends in words of
+different magnitudes while preserving their popularity order. For example,
+[kijetesantakalu, soweli](/ilo-muni/?query=kijetesantakalu,+soweli&scale=logrel)
+are now much closer in scale while not errantly implying that kijetesantakalu
+exceeded soweli in popularity as [Relative Minmax](relative-minmax) would.
 
 ### Relative Minmax
 
-The **Relative Minmax scale** normalizes all the points in the **relative** graph to be between 0 and 1 while preserving the original curve of the graph. This is excellent for demonstrating that words like [**ona, li**](/ilo-muni/?query=ona%2C+li&scale=normrel) trend similarly with use while being in different magnitudes.
+The **Relative Minmax scale** normalizes all the points in the **relative**
+graph to be between 0 and 1 while preserving the original curve of the graph.
+This is excellent for demonstrating that words like
+[**ona, li**](/ilo-muni/?query=ona%2C+li&scale=normrel) trend similarly with use
+while being in different magnitudes.
 
 ### Absolute Minmax
 
-The **Absolute Minmax scale** normalizes all the points in the **absolute** graph to be between 0 and 1 while preserving the original curve of the graph. This makes it helpful for demonstrating that [**toki, meli**](ilo-muni/?query=toki,+meli&scale=normabs) trend similarly with community activity while being in different mangitudes. This even applies [when comparing words and phrases](/ilo-muni/?query=toki,+pona,+wawa+mute&scale=normabs).
+The **Absolute Minmax scale** normalizes all the points in the **absolute**
+graph to be between 0 and 1 while preserving the original curve of the graph.
+This makes it helpful for demonstrating that
+[**toki, meli**](ilo-muni/?query=toki,+meli&scale=normabs) trend similarly with
+community activity while being in different mangitudes. This even applies
+[when comparing words and phrases](/ilo-muni/?query=toki,+pona,+wawa+mute&scale=normabs).
 
 ---
 
 ## Weird Scales
 
-Sorry- these aren't filled out yet, because I ran out of time while preparing for [suno pi toki pona](https://suno.pona.la/2024/). I'll come back for them! Rest assured that I do not have anything useful to say about them yet.
+Sorry- these aren't filled out yet, because I ran out of time while preparing
+for [suno pi toki pona](https://suno.pona.la/2024/). I'll come back for them!
+Rest assured that I do not have anything useful to say about them yet.
 
-{/* ### Absolute Log */}
-{/* ### Relative Entropy */}
-{/* ### Absolute Entropy */}
-{/* ### Relative Z-Score */}
-{/* ### Absolute 1st Derivative */}
-{/* ### Relative 1st Derivative */}
+{/* ### Absolute Log */} {/* ### Relative Entropy */}
+{/* ### Absolute Entropy */} {/* ### Relative Z-Score */}
+{/* ### Absolute 1st Derivative */} {/* ### Relative 1st Derivative */}
 
 ## Potential Bias
 
-I discussed ways that [smoothing](#smoothing) and [dates](#dates) can create misleading graphs, but these are not the only forms of bias possible. Most of the remaining bias is in where and how the data is collected.
+I discussed ways that [smoothing](#smoothing) and [dates](#dates) can create
+misleading graphs, but these are not the only forms of bias possible. Most of
+the remaining bias is in where and how the data is collected.
 
 ### Bots
 
-Every platform has bots which send messages, but not every platform is gracious enough to inform you that a given message is from a bot. Fortunately, almost no bots are sending messages in toki pona, but there are a handful worth being aware of because they artificially increase the use of any word or phrase they use if counted.
+Every platform has bots which send messages, but not every platform is gracious
+enough to inform you that a given message is from a bot. Fortunately, almost no
+bots are sending messages in toki pona, but there are a handful worth being
+aware of because they artificially increase the use of any word or phrase they
+use if counted.
 
 #### Discord
 
-Discord does an excellent job of informing you that a given user is a bot, but things get mixed up when it comes to webhooks because of [PluralKit](https://pluralkit.me/). Normally, webhooks are a kind of bot message which is sent automatically but is not attached to any user. They tend to be notifications for things happening on other platforms, like commits on Github or posts on Reddit. However, PluralKit messages are from users, despite being webhooks. Right now, I can't distinguish between PluralKit messages and any other type of webhook, so I'm forced to count both or neither- and I chose to count both. This means there is some uncertain amount of bot data in the Discord data. Fortunately, only 4.6% of the data is from webhooks, so the impact of this cannot be _too_ large.
+Discord does an excellent job of informing you that a given user is a bot, but
+things get mixed up when it comes to webhooks because of
+[PluralKit](https://pluralkit.me/). Normally, webhooks are a kind of bot message
+which is sent automatically but is not attached to any user. They tend to be
+notifications for things happening on other platforms, like commits on Github or
+posts on Reddit. However, PluralKit messages are webhook messages from users.
+Right now, I can't distinguish between PluralKit messages and any other type of
+webhook, so I'm forced to count both or neither- and I chose to count both. This
+means there is some uncertain amount of bot data in the Discord data.
+Fortunately, only 4.6% of the data is from webhooks, so the impact of this
+cannot be _too_ large.
 
-In the future, I plan to grab all the webhook messages I have and ask the PluralKit API whether those messages are PluralKit messages. Then I would be able to map those messages back to the host account which originally sent the message, and I could then count only user messages.
+In the future, I plan to grab all the webhook messages I have and ask the
+PluralKit API whether those messages are PluralKit messages. Then I would be
+able to map those messages back to the host account which originally sent the
+message, and I could then count only user messages.
 
 #### Telegram
 
-I have no way to know if a given user is a bot on Telegram. Telegram's JSON export format does not include that information. I do have one hard-coded exception, the IRC forwarding bot, because I needed to cut the names out of its messages to represent them as intended. Otherwise, all Telegram bots are invisible to me. That said, all of the ones I've seen speak English, so they shouldn't have any counted sentences.
+On Telegram, I have no way to know if a given user is a bot. Telegram's JSON
+export format does not include that information. I do have one hard-coded
+exception, the IRC forwarding bot, because I needed to cut the names out of its
+messages to represent them as intended. Otherwise, all Telegram bots are
+invisible to me. That said, all of the ones I've seen speak English, so they
+shouldn't have any counted sentences.
 
 #### Reddit
 
-Reddit does not tell you if a given user is a bot as far as I'm aware. Can't fix it, but like Telegram, none of the bots on Reddit seem to speak Toki Pona- so no harm done!
+Reddit does not tell you if a given user is a bot as far as I'm aware. Can't fix
+it, but like Telegram, none of the bots on Reddit seem to speak toki pona- so no
+harm done!
 
 ### Herbevitistoj
 
-Herbevitistoj is "Many people who professionally avoid grass." It's a fairly recent and silly way that [Esperanto speakers](https://en.wikipedia.org/wiki/Esperanto) refer to the "terminally online," or termed more kindly, people who are on the internet a lot. Most toki pona is spoken on the internet in the first place, but there is still a subset of the community which makes up an outsized portion of messages written in toki pona because they are much more active in online spaces. There isn't anything to be done about this- it's just a fact to be aware of.
+Herbevitistoj is "Many people who professionally avoid grass." It's a fairly
+recent and silly way that
+[Esperanto speakers](https://en.wikipedia.org/wiki/Esperanto) refer to the
+"terminally online," or termed more kindly, people who are on the internet a
+lot. Most toki pona is spoken on the internet in the first place, but there is
+still a subset of the community which makes up an outsized portion of messages
+written in toki pona because they are much more active in online spaces. There
+isn't anything to be done about this- it's just a fact to be aware of.
 
-That said, I am personally curious to see what the data would look like if the top 20% most active users were removed from it- maybe something to do in the future.
+That said, I am personally curious to see what the data would look like if the
+most active 20% of users were removed from it- maybe something to do in the
+future.
 
-### Platform specific oddities
+### Platform Notes
 
 #### Discord
 
-Right now, the data for ilo Muni is collected from Discord, Telegram, and Reddit. Of these, Discord is about 80% of all of the data, and [ma pona pi toki pona](https://discord.gg/mapona) in particular is about 80% of the data from Discord. You can see the impact of that one server from sections of the graph [like this](/ilo-muni/?query=toki,+pona&minSentLen=1&scale=abs&start=1627776000&end=1722470400), where a small number of archived channels caused a nearly 50% decline in use of Toki Pona.
+Right now, the data for ilo Muni is collected from Discord, Telegram, and
+Reddit. Of these, Discord is about 80% of all of the data, and
+[ma pona pi toki pona](https://discord.gg/mapona) in particular is about 80% of
+the data from Discord. You can see the impact of that one server from sections
+of the graph
+[like this](/ilo-muni/?query=toki,+pona&minSentLen=1&scale=abs&start=1627776000&end=1722470400),
+where a small number of archived channels caused a nearly 50% decline in use of
+toki pona.
 
-In a sense, Discord is "over-represented" in the data, because it is such a large portion of the data in the first place.
+In a sense, Discord is "over-represented" in the data, because it is such a
+large portion of the data in the first place. For the time being, I have chosen
+to weight all messages equally, but I would like to produce alternate databases
+and analyses in the future.
 
 #### Telegram
 
-As far as I'm aware, I found and successfully exported the entire history of every public toki pona channel on Telegram. No notes.
+As far as I'm aware, I found and successfully exported the entire history of
+every public toki pona channel on Telegram. No notes.
 
 #### Reddit
 
-Unfortunately, [the pricing for Reddit's API was changed drastically in summer 2023](https://en.wikipedia.org/wiki/2023_Reddit_API_controversy). This means it is now either difficult or expensive to collect data from the platform, and the user API only allows scrolling back as much as 1000 posts. Fortunately, [/u/raiderbdev has done the archival work and /u/Watchful1 has sorted it](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/), so there is Reddit data available, but that data only goes to the end of 2023. As such, there is no Reddit data during 2024. Additionally, the linked archive data only covers the top 40,000 subreddits, which means it only covers [/r/tokipona](https://www.reddit.com/r/tokipona/) and not any of the other toki pona subreddits such as [/r/mi_lon](https://www.reddit.com/r/mi_lon/) or [/r/tokiponataso](https://www.reddit.com/r/tokiponataso/).
+Unfortunately,
+[the pricing for Reddit's API was changed drastically in summer 2023](https://en.wikipedia.org/wiki/2023_Reddit_API_controversy).
+This means it is now either difficult or expensive to collect data from the
+platform, and the user API only allows scrolling back as much as 1000 posts.
+Fortunately,
+[/u/raiderbdev has done the archival work and /u/Watchful1 has sorted it](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/),
+so there is Reddit data available, but that data only goes to the end of 2023.
+As such, there is no Reddit data during 2024. Additionally, the linked archive
+data only covers the top 40,000 subreddits, which means it only covers
+[/r/tokipona](https://www.reddit.com/r/tokipona/) and not any of the other toki
+pona subreddits such as [/r/mi_lon](https://www.reddit.com/r/mi_lon/) or
+[/r/tokiponataso](https://www.reddit.com/r/tokiponataso/).
+
+### Identifying toki pona
+
+This data would not exist without first being able to detect whether a message
+is "in toki pona". I wrote [a library](https://github.com/gregdan3/sona-toki) to
+do this, but it has its own collection of complexities which can impact how you
+interpret the data.
+
+#### Dictionary
+
+I chose to use the dictionary from [lipu Linku](https://linku.la), including its
+[sandbox](https://linku.la/sandbox), in order to to identify
+
+There are two ways the
+
+#### Short words
+
+####
 
 ---
 
@@ -307,25 +593,64 @@ Unfortunately, [the pricing for Reddit's API was changed drastically in summer 2
 
 ### Why is the graph empty?
 
-This is an error handling issue. You made a search with a malformed term and I didn't catch and throw it out. Oops. I definitely already know why this is happening, but I'm going to fix this later. Feel free to [open an issue](https://github.com/gregdan3/ilo-muni/issues) though!
+This is an error handling issue. You made a search with a malformed term and I
+didn't catch and throw it out. Oops. I already know why this is happening, but
+I'm going to fix this later. Feel free to
+[open an issue](https://github.com/gregdan3/ilo-muni/issues) though!
 
 ### Why is my subtraction negative?
 
-That's allowed! If you do [**tawa pona - kama pona**](ilo-muni/?query=tawa+pona+-+kama+pona), you'll get a graph which is mostly negative. This means the phrase "kama pona" is more common than the phrase "tawa pona", probably because the community is very welcoming!
+That's allowed! If you do
+[**tawa pona - kama pona**](ilo-muni/?query=tawa+pona+-+kama+pona), you'll get a
+graph which is mostly negative. This means the phrase "kama pona" is more common
+than the phrase "tawa pona", probably because the community is very welcoming!
 
-It's _probably_ possible to get floating point silliness when subtracting, but I haven't seen that happen personally- [please reach out if you spot it](https://github.com/gregdan3/ilo-muni/issues)!
+It's _probably_ possible to get floating point silliness when subtracting, but I
+haven't seen that happen personally-
+[please reach out if you spot it](https://github.com/gregdan3/ilo-muni/issues)!
 
-Note: the y-axis scale may sometimes display in scientific notation instead of integers or rationals. This is not an error! That's just ChartJS!
+Note: the y-axis scale may sometimes display in scientific notation instead of
+integers or rationals. This is not an error! That's just ChartJS!
 
 ### Why is the data so noisy before 2020?
 
-In short, there is much less data to examine from before 2020. This is why I set the.
-default start date to August 2016, rather than August 2010 where my date starts
+In short, there is much less data to examine from before 2020. This is why I set
+the default start date to August 2016, rather than the actual start of my data
+in August 2010.
 
-So the next question is, why 2020? Although I probably don't need to answer that, I'll go ahead and do so:
+So the next question is, why 2020? Although I probably don't need to answer
+that, I'll go ahead and do so:
 
-When everyone was trapped indoors for some two years during the COVID-19 pandemic, toki pona saw a huge spike in popularity. You can see the climb in activity in every word when the scale is set to "absolute". This also affects the relative graph though- before 2020, each word written is a much larger portion of all the words for that time period! To help, you can add smoothing to relative mode, which will average out
+When everyone was trapped indoors for some two years during the COVID-19
+pandemic, toki pona saw a huge spike in popularity. You can see the climb in
+activity in every word when the scale is set to "absolute". This also affects
+the relative graph though- before 2020, each word written is a much larger
+portion of all the words for that time period! To help, you can add smoothing to
+relative mode, which will average out
 
 ### Why is there a huge spike on [date] for [word]?
 
-This data isn't from **professional** sources, unlike Google Ngrams which is sourced entirely from published books. In **professional** sources, you wouldn't expect an editor to let a paragraph like **woo yeah! woo yeah! woo yeah! woo yeah! woo yeah! woo yeah!** remain in the final product. But in Discord and any other social media platform, there is no editorial oversight- silly goofy abounds. This affects mu, wan, tu, luka, mute, ale, and probably others, which you can see [here](/ilo-muni/?query=mu,+wan,+tu,+luka,+mute,+ale&minSentLen=1&scale=absolute&smoothing=0)
+This data isn't from **_professional_** sources, unlike Google Ngrams which is
+sourced entirely from published books. In **_professional_** sources, you
+wouldn't expect an editor to let a paragraph like **woo yeah! woo yeah! woo
+yeah! woo yeah! woo yeah! woo yeah!** remain in the final product. But in
+Discord and any other social media platform, there is no editorial oversight-
+silly goofy abounds. This affects mu, wan, tu, luka, mute, ale, and probably
+others, which you can see
+[here](/ilo-muni/?query=mu,+wan,+tu,+luka,+mute,+ale&minSentLen=1&scale=absolute&smoothing=0).
+If you spot others, [let me know!]()
+
+Relatedly, there was a time during development where "mu" had a spike to **over
+40,000 uses** because of a day in which a handful of messages were nothing but
+"mu" to the text limit of Discord. Because of this, I added a nonsense filter to
+skip sentences before they get counted, which works like so: If a sentence is
+more than 10x the **average sentence length (4.13557)** and more than 50% a
+single word, it gets thrown out. Similarly, if a sentence is more than 100x the
+average sentence length, it gets thrown out immediately. This filter isn't
+perfect though, because somebody can say "mu. mu. mu." to similar effect, and
+each of those will be counted as individual sentences. Working on it!
+
+Ultimately, I would like this data to reflect how toki pona is actually used-
+and, granted, somebody sending hundreds of "mu" is using toki pona. But I think
+most people would agree that those messages are not reflective of how toki pona
+is used, and they otherwise make it difficult to examine the rest of the data.

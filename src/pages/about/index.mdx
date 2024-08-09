@@ -1,51 +1,248 @@
 ---
 layout: "@layouts/Layout.astro"
-title: About This Project
+title: About ilo Muni
 ---
 
-## Search
+## Table of Contents
 
-## Ranks
+## Why did you make ilo Muni?
 
-## Frequently Asked Questions
+Back in January 2024, several members of the toki pona community came together
+with the same idea all at once: We should write a proposal to get
+[sitelen pona](https://en.wikipedia.org/wiki/Sitelen_Pona) included in
+[Unicode](https://en.wikipedia.org/wiki/Unicode)! From there, it turned out that
+[jan Lepeka](https://github.com/RebeccaRGB) had experience writing proposals for
+Unicode and had already written a massive portion of a sitelen pona proposal.
+Many others signed on to help, so we all got to work right away.
 
-### Where is all the data from?
+~~This has made a lot of people very angry and been widely regarded as a bad
+move~~ This turned out to be challenging for many reasons beyond the
+documentation of how toki pona and sitelen pona are used.
 
-Tons of places- anywhere Toki Pona is spoken (written), so long as there is an associated
+First, many of the members of the workgroup did not agree on what words should
+be encoded or why. We examined the
+[Linku usage data](https://sona.pona.la/wiki/Usage_categories) to get a
+reasonable answer for what words to encode- that took a while and had its own
+complexities, but it did work out at the time.
 
-#### Discord
+Unfortunately, there was no comparable data for sitelen pona glyphs. While many
+were obvious because most words only have one glyph, over a dozen words have
+multiple glyphs with different levels of use- especially when the words
+themselves are low use. We tried running an ad-hoc survey to study glyph usage,
+but this simultaneously revealed how limited our perspective was and how
+difficult it would be to answer our original question.
 
-Discord makes up the majority of all written Toki Pona. For that matter, [ma pona pi toki pona](https://discord.gg/mapona) makes up the majority of all written Toki Pona on its own. As such, this data is the most important to have a look at- but unfortunately, it is also among the more locked-down platforms on this list. Discord does not offer any native functionality to export messages
+While examining the survey data, we found we had failed to offer at least one
+glyph as an option, resulting in a large number of write-ins for a version of
+"olin" where the hearts overlap rather than stack. Then we observed that the
+results for some glyphs were _far_ higher than expected or anecdotally observed,
+particularly a variant of "linluwi" where the three circles of "kulupu" are
+connected with lines.
 
-#### Facebook
+This, coupled with a later survey about whether certain glyphs are "distinct",
+led us down a brand new rabbit hole: A large number of survey respondents seemed
+to answer how they would _like_ to use toki pona, or how they think they will
+use it in the future, rather than how they do so now. Several members of the
+workgroup, including myself, could not reconcile the reported usage from the
+surveys with our observations.
 
-#### Telegram
+By March, we hadn't come to any agreement about what glyphs to use for some
+words, and the prior agreement about what words to encode in the first place had
+fallen apart _because_ of the observed issues with the two glyph surveys. At
+that point, we chose to pivot: What if we directly studied usage?
 
-Conveniently, Telegram offers an "export chat" function directly in its desktop UI, and this dumps every message in the chat that you can see from the start of the chat's existence forward. I found all the communities I could by Telegram's search function and asking around in other communities, [then collected them here after I was done](https://sona.pona.la/wiki/Communities#Telegram).
+We submitted a preliminary proposal with the only set of words we could all
+agree _must_ be in the proposal, that being the
+[nimi pu](https://sona.pona.la/wiki/nimi_pu) plus
+[tonsi](https://sona.pona.la/wiki/tonsi). It has not been added to the
+[Unicode document register](https://www.unicode.org/L2/L-curdoc.htm) as of
+writing, but Unicode has acknowledged it!
 
-After that, jan Pensa (@spencjo) helped me out by exporting two particular chats for me, which had data I couldn't get:
+After this, the new work to be done was much more open-ended. I started
+improving upon my Discord bot,
+[ilo pi toki pona taso](https://github.com/gregdan3/ilo-pi-toki-pona-taso). At
+the time, it had a simple way to detect whether or not you were speaking toki
+pona, so that it could remind you to speak toki pona if you didn't. But when I
+say simple, I do mean simple- it could be evaded by capitalizing the first word
+of every sentence, or carefully dodged by using only the 14 letters in Toki
+Pona's alphabet, or ignored entirely by quoting your text. This wouldn't do,
+since my goal was to fetch all the data I could from as many communities as I
+could and examine only the messages that are "in toki pona."
 
-- "mi tok e toki pona," a workgroup attemping to get Toki Pona an ISO-639 code. This chat is functionally archived since they succeeded- [toki pona has had an ISO code for over two years!](https://iso639-3.sil.org/code/tok)
-- "kulupu pi toki pona-" This chat is public, but up until April 2017 it was configured to only show messages since you joined. Fortunately, jan Pensa had been in this group since March 2016!
+From there, I created a parsing library called
+[sona toki](https://github.com/gregdan3/sona-toki), a script called
+[sona mute](https://github.com/gregdan3/sona-mute) for counting all the words in
+toki pona sentences and stuffing it into a database, and this tool,
+[ilo Muni](https://github.com/gregdan3/ilo-muni). The work you're reading now
+has been five months in the making!
 
-The format for Telegram messages is a bit odd in their official exports, and I can't tell what users are bots from the exports alone- but other than that, Telegram was refreshingly easy to add to this list.
+## Where is the data from?
 
-#### Reddit
+Anywhere toki pona is written in text, so long as there is a date associated
+with every message and the community itself is open to the public. Right now, I
+support three platforms:
 
-Reddit had functionally removed its own API well before I began this project, so scraping it "officially" would no longer be possible. Similarly, they limited scrollback on all endpoints to only 1000 items, meaning unofficial scraping would have to be done live in order to be sure you fetched everything. I obviously wasn't doing my own live scraping of Reddit, but thanks to [the incredible work of Pushshift, /u/raiderbdev, and /u/Watchful1](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/), I was able to fetch at least [/r/tokipona](https://reddit.com/r/tokipona).
+### Discord
 
-On that note: If you have or can create a complete archive of [/r/mi_lon](https://reddit.com/r/mi_lon), [/r/tokiponataso](https://reddit.com/r/tokiponataso), [/r/tokiponaunpa](https://reddit.com/r/tokiponaunpa), [/r/liputenpo](https://reddit.com/r/liputenpo), or any other toki pona communities on Reddit, please let me know!
+Discord makes up the majority of all written toki pona. For that matter,
+[ma pona pi toki pona](https://discord.gg/mapona) makes up the majority of all
+written toki pona on its own. As such, this data is the most important to have a
+look at- but unfortunately, it is also among the more locked-down platforms on
+this list. Discord does not offer any native functionality to export messages,
+but [this excellent project](https://github.com/Tyrrrz/DiscordChatExporter)
+enables you to fetch all messages you have access to in any server you're in.
 
-#### Toki Pona Forums
+### Telegram
 
-#### Yahoo! Groups
+Conveniently, Telegram offers an "export chat" function directly in its desktop
+UI, and this dumps every message in the chat that you can see from the start of
+the chat's existence forward. I found all the communities I could by Telegram's
+search function and asking around in other communities,
+[then collected them here after I was done](https://sona.pona.la/wiki/Communities#Telegram).
 
-#### Livejournal
+After that, jan Pensa (@spencjo) helped me out by exporting two particular chats
+for me, which had data I couldn't get:
 
-### Will you add more data in the future?
+- "mi tok e toki pona," a workgroup attemping to get toki pona an ISO-639 code.
+  This chat is functionally archived since they succeeded-
+  [toki pona has had an ISO code for over two years!](https://iso639-3.sil.org/code/tok)
+- "kulupu pi toki pona-" This chat is public, but up until April 2017 it was
+  configured to only show messages since you joined. Fortunately, jan Pensa had
+  been in this group since March 2016!
 
-Yes! I'd like to add
+The format for Telegram messages is a bit odd in their official exports, and I
+can't tell what users are bots from the exports alone- but other than that,
+Telegram was refreshingly easy to add to this list.
 
-### How often will you update the data?
+### Reddit
 
-I'm not sure yet! I'd like to update no less than once a year, but doing so two or even four times isn't out of the question. Collecting, parsing, and counting up all of the data is not labor intensive- writing the code to do all that was, but most of that is done.
+Reddit moved its API behind a pay-wall long before I began this project, so it
+is no longer reasonable to "officially" scrape Reddit. They also limited
+scrollback on all endpoints in the user API to only 1000 items, meaning
+unofficial scraping would have to be done live in order to be sure you fetched
+everything. I obviously wasn't doing my own live scraping of Reddit, but thanks
+to
+[the incredible work of Pushshift, /u/raiderbdev, and /u/Watchful1](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/),
+I was able to fetch at least [/r/tokipona](https://reddit.com/r/tokipona).
+
+On that note: If you have or can create a complete archive of
+[/r/mi_lon](https://reddit.com/r/mi_lon),
+[/r/tokiponataso](https://reddit.com/r/tokiponataso),
+[/r/tokiponaunpa](https://reddit.com/r/tokiponaunpa),
+[/r/liputenpo](https://reddit.com/r/liputenpo), or any other toki pona
+communities on Reddit, please let me know!
+
+## Will you add more communities?
+
+Yes! The main barrier to adding more communities is being able to download data
+from the given platform. For Discord, there is already an excellent open source
+archiving tool. For Telegram, you can export entire chats in the desktop client.
+And for Reddit, Pushshift previously archived everything they could find- and
+this work was picked up by /u/raiderbdev after they shut down.
+
+For everything else, I'd love to add them, but I need a way to get the data.
+
+### forums.tokipona.org
+
+To an outsider, it may seem odd to want to include a specific singular forum in
+this data- but this forum is important because it was active from 1 Oct 2009 to
+mid-2020. Most of this period is unrepresented in the current data, and this
+space is one of only a handful that were in use during that time. As such, this
+forum is highly important to the history of toki pona.
+
+I do already have a backup of this data, but adding it to the database is
+difficult. I lack user IDs, post IDs, and properly formatted quotes. That's
+because I used
+[this backup tool](https://github.com/Dascienz/phpBB-forum-scraper), and
+frankly, it's not very good. I have thus far not needed to make my own scrapers
+for any of the data I've collected, but this one may be different. If you know
+of a better phpBB scraper, or have a cleaner capture of this data,
+[please reach out](https://github.com/gregdan3/ilo-muni/issues)!
+
+### Yahoo group
+
+From some time in 2002 until Oct 1 2009, the toki pona yahoo group was one of
+very few spaces where toki pona was spoken, and it appears to have been the most
+popular. The IRC channel could have been more popular, but it wasn't preserved
+beyond a handful of specific conversations that I'm aware of. Fortunately, the
+entire yahoo group is backed up on the forum above. Unfortunately, its
+formatting is mangled badly because its newlines are missing. If that weren't
+enough, its formatting is already highly inconsistent due to the unstable nature
+of email from provider to provider. Including it in the database as-is would be
+messy and uninformative, or even misleading; it needs some pre-processing
+effort.
+
+### Facebook
+
+There are several toki pona communities on Facebook,
+[here](https://www.facebook.com/groups/sitelen),
+[here](https://www.facebook.com/groups/1590434267942176/),
+[here](https://www.facebook.com/groups/543153192468898/), and
+[here](https://www.facebook.com/groups/2424398856/). The majority of their
+activity is in a period similar to that of Discord- that is, from 2020 onward-
+but they have much more pre-2020 activity than most other communities that
+existed around that time. Unfortunately, scraping data from Facebook is
+extremely difficult- the handful of open source scrapers that exist are
+variously inconsistent, low quality, or unsupported.
+
+### LiveJournal
+
+There are at least two LiveJournal blogs that focused on toki pona,
+[here](https://tokipona.livejournal.com/) and
+[here](https://ru-tp.livejournal.com/), which were active in a similar time
+period to the forum or yahoo group. They're both small, but anything counts.
+Unfortunately, all the LiveJournal archiving tools I can find are for improving
+the personal data export feature, not for scraping the site.
+
+### toki.social (Mastodon)
+
+[toki.social](https://toki.social) is a Mastodon instance for toki pona! It's
+been around since early 2022. Not much else to say; it's a lovely place,
+although it's fairly quiet.
+
+### kulupu.pona.la
+
+[kulupu.pona.la](https://archive.org/details/kulupu.pona.la) was a forum hosted
+by [mazziechai](https://github.com/mazziechai/) which closed abruptly in
+November 2023 due to trolling. The forum was archived fully by Mazzie before the
+shutdown, but the format is pure HTML, making it a difficult to get the
+necessary data out of it.
+
+## Will you update the data over time?
+
+Yes! I plan to update this data at least once per year, but doing so two or
+three times isn't out of the question. Collecting, parsing, and counting up all
+of the data is not labor intensive- writing the code to do all that was, but
+most of that is done.
+
+## Why "ilo Muni?"
+
+Several reasons! I was originally going to name this project "lipu mute",
+"multiplicity document." However, I realized near the end of July that if this
+tool had a name, I would be able to search its name in this tool! This was too
+cool to pass up.
+
+From there, choosing a name was easy. I wanted to name it in toki pona, and have
+the name be a phrase which also describes itself. This tool shows how many words
+there are, and also the frequency of words, which are respectively "mute nimi"
+and "nimi mute".
+
+## Thanks
+
+- Thanks to ilo Nija for the logo! It's a stylized version of the sitelen pona
+  name for ilo Muni- the three bars are "mute" and the rectangle is "nimi".
+- Thanks to jan Lepeka, jan Tepo, ijo Alison, and many others of the Unicode
+  proposal workgroup for convicing me to start on this project. It's been
+  incredibly rewarding, and I hope it helps ~~and doesn't cause lots of future
+  arguments~~
+- Thanks to waso Keli, ijo Stella,
+- Thanks to kala Asi for listening and helping me iterate on the early versions
+  of the graph and search tool.
+- Thanks to kala Asi, jan Asiku, ilo Tani, pan Pake, and waso Ete for helping me
+  work through the set theory reasoning necessary to display the data
+  "correctly!"
+- Thanks to [phiresky](https://github.com/phiresky/sql.js-httpvfs) for the
+  _excellent_ `sql.js-httpvfs` library, without which this project would have
+  taken _much_ longer and been much more stressful.
+- Thanks to [jordemort](https://jordemort.dev/blog/client-side-search/) for
+  figuring out how to use that library in Astro!
