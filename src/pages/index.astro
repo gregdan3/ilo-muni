@@ -9,13 +9,43 @@ const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type { Length, Scale, Query } from "@utils/types";
+  import type {
+    Length,
+    Scale,
+    Query,
+    ProcessedQueries,
+    QueryError,
+  } from "@utils/types";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
 
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { SMOOTHABLE } from "@utils/constants";
+
+  function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
+    // Clear the error bin first
+    errorBin.innerHTML = "";
+
+    // If there are no errors, you might want to display a "No errors" message
+    if (errors.length === 0) {
+      errorBin.textContent = "";
+      return;
+    }
+
+    // Create a list to display errors
+    const ul = document.createElement("ul");
+
+    // Populate the list with the errors
+    errors.forEach((err) => {
+      const li = document.createElement("li");
+      li.textContent = `${err.query}: ${err.error}`;
+      ul.appendChild(li);
+    });
+
+    // Append the list to the error bin
+    errorBin.appendChild(ul);
+  }
 
   async function updatePage(
     canvas: HTMLCanvasElement,
@@ -26,6 +56,7 @@ const frontmatter = { title: "ilo Muni" };
     startDropdown: HTMLInputElement,
     endDropdown: HTMLInputElement,
     loader: HTMLSpanElement,
+    errorBin: HTMLDivElement,
   ) {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
@@ -43,7 +74,7 @@ const frontmatter = { title: "ilo Muni" };
     }
 
     loader.style.visibility = "visible";
-    let queries = await updateChart(
+    let { queries, errors } = await updateChart(
       canvas,
       queryText,
       sentLen,
@@ -53,9 +84,11 @@ const frontmatter = { title: "ilo Muni" };
       end,
     );
     loader.style.visibility = "hidden";
+
     if (!queries) {
-      return; // TODO: inform user they failed to query
+      return;
     }
+    dumpErrors(errorBin, errors);
 
     // rewrite urlParams with query repr so we don't copy user input error
     let queryReprs = queries.map((query: Query) => query.repr);
@@ -85,10 +118,10 @@ const frontmatter = { title: "ilo Muni" };
     smoothing: number,
     start: number,
     end: number,
-  ) {
+  ): Promise<ProcessedQueries> {
     const { queries, errors } = await inputToQueries(input, minSentLen);
     if (queries.length === 0) {
-      return;
+      return { queries, errors };
     }
 
     const results = await fetchManyOccurrenceSet(
@@ -99,15 +132,33 @@ const frontmatter = { title: "ilo Muni" };
       end,
     );
     if (results.length === 0) {
-      // TODO: tell user nothing came back
-      return;
+      queries.forEach((query) => {
+        const error: QueryError = {
+          query: query.raw,
+          error: "No results found for this query.",
+        };
+
+        errors.push(error);
+      });
+      return { queries: [], errors };
     }
     if (results.length < queries.length) {
-      // TODO: tell user some (which) words were not found
+      const resultTerms = new Set(results.map((result) => result.term));
+
+      queries.forEach((query) => {
+        if (!resultTerms.has(query.repr)) {
+          const error: QueryError = {
+            query: query.repr,
+            error: "No results found for this query.",
+          };
+
+          errors.push(error);
+        }
+      });
     }
 
     await reloadUsageChart(canvas, results);
-    return queries;
+    return { queries, errors };
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -129,6 +180,7 @@ const frontmatter = { title: "ilo Muni" };
     )! as HTMLInputElement;
 
     const loader = document.getElementById("loader")! as HTMLSpanElement;
+    const errorBin = document.getElementById("errorBin")! as HTMLDivElement;
 
     let initialParams = getSearchParams();
     // aside from query which starts empty, allow defaults of form
@@ -159,6 +211,7 @@ const frontmatter = { title: "ilo Muni" };
       startDropdown,
       endDropdown,
       loader,
+      errorBin,
     );
 
     const form = document.getElementById("usageForm")! as HTMLFormElement;
@@ -172,6 +225,7 @@ const frontmatter = { title: "ilo Muni" };
         startDropdown,
         endDropdown,
         loader,
+        errorBin,
       );
     });
   });

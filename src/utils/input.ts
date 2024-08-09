@@ -8,6 +8,7 @@ import type {
   Query,
   QueryError,
   ProcessedQueries,
+  PackagedPhrases,
 } from "@utils/types";
 
 function queryRepr(phrases: Phrase[]): string {
@@ -46,8 +47,9 @@ function toQueryTokens(query: string): string[] {
   return result.filter((token) => token.length > 0);
 }
 
-function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
+function toPhrases(query: string, givenMinSentLen: Length): PackagedPhrases {
   const phrases: Phrase[] = [];
+  const errors: string[] = [];
   let separator: Separator = null;
   let currentPhrase: string[] = [];
   let hasWildcard = false;
@@ -76,12 +78,12 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
       separator = token as Separator;
     } else if (token.startsWith("*")) {
       if (currentPhrase.length == 0) {
-        const error = `phrase "${token}" may not begin with a wildcard`;
-        console.log(error);
+        const error = `phrase may not begin with a wildcard`;
+        errors.push(error);
       }
       if (hasWildcard) {
-        const error = `phrase "${token}" may not have more than one wildcard`;
-        console.log(error);
+        const error = `phrases may not have more than one wildcard`;
+        errors.push(error);
       }
 
       hasWildcard = true;
@@ -89,8 +91,8 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
     } else if (PHRASE_RE.test(token)) {
       currentPhrase.push(token);
     } else {
-      const error = `phrase "${token}" must be letters, numbers, or UCSUR text`;
-      console.log(error);
+      const error = `phrases must be letters, numbers, or UCSUR text`;
+      errors.push(error);
     }
   });
 
@@ -105,7 +107,7 @@ function toPhrases(query: string, givenMinSentLen: Length): Phrase[] {
     );
   }
 
-  return phrases;
+  return { phrases, errors };
 }
 
 function createPhrase(
@@ -140,12 +142,27 @@ function createPhrase(
 
 function toQueries(input: string, givenMinSentLen: Length): ProcessedQueries {
   const rawPhrases = splitOnDelim(input, ",");
-  let queries: Query[] = [];
+  const queries: Query[] = [];
   const errors: QueryError[] = [];
-  queries = rawPhrases.map((query: string): Query => {
-    const phrases = toPhrases(query, givenMinSentLen);
-    return { raw: query, repr: queryRepr(phrases), phrases: phrases };
+  rawPhrases.map((query: string) => {
+    const { phrases, errors: phraseErrors } = toPhrases(query, givenMinSentLen);
+    const constructedQuery = {
+      raw: query,
+      repr: queryRepr(phrases),
+      phrases: phrases,
+    };
+
+    if (phraseErrors.length > 0) {
+      errors.push({
+        query: constructedQuery.raw,
+        error: phraseErrors.join("; "),
+      });
+      return;
+    }
+
+    queries.push(constructedQuery);
   });
+
   return { queries, errors };
 }
 

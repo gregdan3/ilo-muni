@@ -86,6 +86,11 @@ export interface QueryError {
   error: string;
 }
 
+export interface PackagedPhrases {
+  phrases: Phrase[];
+  errors: string[];
+}
+
 export interface ProcessedQueries {
   queries: Query[];
   errors: QueryError[];
