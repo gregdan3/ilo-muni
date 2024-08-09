@@ -1,6 +1,6 @@
 # ilo Muni
 
-"Multiplicity document" or "many pages": a graph of word occurrence in Toki Pona, based on [Google Ngrams](https://books.google.com/ngrams/) but simultaneously more and less ambitious.
+ilo Muni pi mute nimi, "Word Frequency Tool named Muni" is a tool for graphing word frequencies in Toki Pona, based on [Google Ngrams](https://books.google.com/ngrams/).
 
 ## Features
 
@@ -8,14 +8,12 @@ Check the [about page!]()
 
 ## Planned QoL
 
-- Telling user when/why their phrases don't show up
+- Warn the user when a phrase they search has silly things going on
+  - je appears in french
+  - ki appears in half a dozen different things that aren't toki pona
 - More distinct colors, but not ugly ones
 - Bold every August (for Toki Pona's birthday)
 - Always show the last tick on the graph
-
-## Planned Fixes
-
-- Move adding/subtracting before relative math to avoid floating point nonsense occurring (example: `tenpo ni - tenpo ni la - lon tenpo ni`, check feb 2019)
 
 ## Planned Features
 
@@ -32,8 +30,10 @@ Check the [about page!]()
 
 - Toggleable
 - Release of pu, ku, su
-- Creation of ma pona, kama sona, facebook group
+- Creation of reddit, ma pona, kama sona, facebook group
+- Release of notable videos about Toki Pona (jan misali, oats jenkins)
 - Start of pandemic
+- Suspiciously large gap starting in feb 2023
 
 ### Graph of all words ranked
 
@@ -41,22 +41,6 @@ Check the [about page!]()
 - Needs a new table with global occurrences (because reading global occurrences of each word from the frequency table would cost words \* timeframes, where i currently have ~80 timeframes)
 - Needs to be filterable by sentence length, but nothing else
 - Same page or separate page?
-
-### Wildcard Search
-
-- Search input option
-- word1 \* word2 gives top results for phrases word1 word3 word2
-- Should color them all the same?
-
-<details>
-  <summary>notes for me</summary>
-
-1. create global occurrences table [overlapping need with bar graph]
-1. count phrase length of input including \*
-1. substitute \* for %
-1. select from [global occurrence table] where phrase like [given phrase] and phrase_len = found len order by occurrences desc limit 10
-
-</details>
 
 ##### Acknowledgements
 
