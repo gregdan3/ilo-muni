@@ -20,15 +20,17 @@ import { BASE_URL } from "@utils/constants";
       name="viewport"
       content="width=device-width, height=device-height, user-scalable=yes, initial-scale=1.0"
     />
-    <meta name="date" content="2024-07-05" />
+    <meta name="date" content="2024-08-10" />
     <meta property="og:title" content={title} />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://TODO" />
-    <!-- <meta property="og:image" content="/avatar.gif" /> -->
+    <meta property="og:url" content="https://gregdan3.github.io/ilo-muni/" />
+    <meta property="og:image" content=`${BASE_URL}/ilo-muni.png` />
     <meta property="og:locale" content="en_US" />
-    <!-- <meta property="og:site_name" content="mun!" /> -->
-    <meta property="og:description" content="TODO: Study Toki Pona" />
-    <meta name="generator" content={Astro.generator} />
+    <meta property="og:site_name" content="ilo Muni" />
+    <meta
+      property="og:description"
+      content="Graphing Toki Pona Ngrams, because it's fun and free!"
+    />
 
     <title>{title}</title>
     <link rel="icon" type="image/svg+xml" href=`${BASE_URL}/favicon.svg` />
@@ -71,8 +73,30 @@ import { BASE_URL } from "@utils/constants";
         <h3>{title}</h3>
       </header>
       <slot />
-      <footer>
-        see my other work TODO: mun.la, gregdan3.dev, github, youtube
+      <footer style="margin-top: 2em">
+        <div style="display: flex; justify-content: space-evenly">
+          <a href="https://github.com/gregdan3">
+            <img
+              src=`${BASE_URL}/buttons/code_s.gif`
+              alt="@gregdan3 on GitHub"
+              class="social"
+            />
+          </a>
+          <a href="https://mun.la/sona">
+            <img
+              src=`${BASE_URL}/buttons/lessons_s.gif`
+              alt="@gregdan3d on YouTube"
+              class="social"
+            />
+          </a>
+          <a href="https://youtube.com/@gregdan3d">
+            <img
+              src=`${BASE_URL}/buttons/youtube.gif`
+              alt="@gregdan3d on YouTube"
+              class="social"
+            />
+          </a>
+        </div>
       </footer>
     </article>
   </body>
@@ -209,7 +233,6 @@ import { BASE_URL } from "@utils/constants";
   footer {
     font-size: 0.75em;
     line-height: 1em;
-    text-align: center;
     margin-top: 1em;
   }
   article a {
@@ -224,6 +247,19 @@ import { BASE_URL } from "@utils/constants";
     color: var(--urlvisited);
   }
 
+  .social {
+    width: 88px;
+    height: 31px;
+    box-shadow: 0.1em 0.1em 0 0 rgba(0, 0, 0, 1);
+    border: 2px solid FG1;
+    image-rendering: pixelated;
+  }
+
+  .social:hover {
+    box-shadow: 0.2em 0.2em 0 0 rgba(0, 0, 0, 1);
+    border: 2px solid FG1;
+  }
+
   @media (min-width: 900px) {
     html {
       font-size: 18px;
@@ -231,10 +267,18 @@ import { BASE_URL } from "@utils/constants";
     article {
       line-height: 1.7em;
     }
+    .social {
+      width: 132px;
+      height: 46.5px;
+    }
   }
   @media (min-width: 1200px) {
     html {
       font-size: 20px;
+    }
+    .social {
+      width: 176px;
+      height: 62px;
     }
   }
   @media (min-width: 1500px) {
@@ -245,6 +289,10 @@ import { BASE_URL } from "@utils/constants";
   @media (min-width: 1800px) {
     html {
       font-size: 24px;
+    }
+    .social {
+      width: 264px;
+      height: 93px;
     }
   }
   @media (pointer: none), (pointer: coarse) {
