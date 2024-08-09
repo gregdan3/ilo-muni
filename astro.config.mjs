@@ -11,7 +11,7 @@ export default defineConfig({
   publicDir: "./static",
   integrations: [mdx(), sitemap()],
   markdown: {
-    remarkPlugins: [[remarkToc, { heading: "Table of Contents", maxDepth: 4 }]],
+    remarkPlugins: [[remarkToc, { heading: "Table of Contents", maxDepth: 3 }]],
   },
   server: {
     headers: {
