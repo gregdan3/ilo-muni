@@ -71,7 +71,6 @@ export interface Phrase {
   separator: Separator; // how the current phrase connects to the previous phrase
   hasWildcard: boolean; // whether a single * exists in raw/
 }
-// TODO: what if
 
 // searches after split by , and stripped of whitespace
 export interface Query {
