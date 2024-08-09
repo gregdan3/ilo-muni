@@ -83,27 +83,27 @@ const frontmatter = { title: "Rank by Frequency" };
       yearDropdown.value = initialParams.year;
     }
 
-    const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
-    await updatePage(
-      ranksDiv,
-      phraseLenDropdown,
-      sentLenDropdown,
-      yearDropdown,
-      loader,
-      null,
-    );
-
-    const form = document.getElementById("ranksForm")! as HTMLFormElement;
-    form.addEventListener("change", async (event) => {
-      await updatePage(
-        ranksDiv,
-        phraseLenDropdown,
-        sentLenDropdown,
-        yearDropdown,
-        loader,
-        event,
-      );
-    });
+    // const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
+    // await updatePage(
+    //   ranksDiv,
+    //   phraseLenDropdown,
+    //   sentLenDropdown,
+    //   yearDropdown,
+    //   loader,
+    //   null,
+    // );
+    //
+    // const form = document.getElementById("ranksForm")! as HTMLFormElement;
+    // form.addEventListener("change", async (event) => {
+    //   await updatePage(
+    //     ranksDiv,
+    //     phraseLenDropdown,
+    //     sentLenDropdown,
+    //     yearDropdown,
+    //     loader,
+    //     event,
+    //   );
+    // });
   });
 </script>
 
@@ -163,6 +163,12 @@ const frontmatter = { title: "Rank by Frequency" };
         <!-- <div class="ku-lili">ku lili</div> -->
       </div>
     </div>
+
+    <div>
+      Hey! This page isn't live yet! How'd you get here? There isn't anything to
+      see yet, so best go back to search.
+    </div>
+
     <div id="ranksDiv"></div>
   </div>
 </Layout>
