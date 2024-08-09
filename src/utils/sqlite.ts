@@ -191,8 +191,10 @@ function makeLogRel(rows: Row[], totals: Row[]): Row[] {
   for (let i = 0; i < rows.length; i++) {
     const total = totals[i].occurrences;
     const occurrences = rows[i].occurrences;
-    rows[i].occurrences = Math.log(occurrences + 1) / Math.log(total + 1);
+    rows[i].occurrences =
+      total >= 1 ? Math.log(occurrences + 1) / Math.log(total + 1) : 0;
     // +1 avoids log(1) = 0 and log(0) = undef
+    // ternary avoids n / log(1) = undef
   }
   return rows;
 }
