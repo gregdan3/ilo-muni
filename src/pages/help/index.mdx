@@ -581,16 +581,41 @@ is "in toki pona". I wrote [a library](https://github.com/gregdan3/sona-toki) to
 do this, but it has its own collection of complexities which can impact how you
 interpret the data.
 
+I chose to use the dictionary from [lipu Linku](https://linku.la), including its
+[sandbox](https://linku.la/sandbox), in order to to identify definite "toki pona
+words." These weren't the only words I counted, because that would miss anything
+that weren't already in my dictionary. But it still isn't perfect.
+
 #### Dictionary
 
-I chose to use the dictionary from [lipu Linku](https://linku.la), including its
-[sandbox](https://linku.la/sandbox), in order to to identify
+If a word in my dictionary matches a word in another language, I would errantly
+count that word while scoring the sentence. My scoring algorithm has no concept
+of a penalty currently, so I couldn't identify that the words around a given one
+were specifically of some language other than toki pona- I'd just know they
+didn't match any of my filters.
 
-There are two ways the
+This is especially troublesome if a message is a single word in my dictionary,
+or otherwise very short. "je" is borderline non-existent in toki pona, but it's
+in the dictionary, and it's a first person pronoun in French!
 
 #### Short words
 
-####
+While writing my sentence scoring algorithm, I noticed that there were tons of
+1-2 letter words in other languages which would errantly match my scoring
+filter, and thus errantly raise the score of messages that were not in toki
+pona.
+
+To fix this, I changed my syllable checking and alphabetic match checking
+filters to only score if a given word has at least three letters.
+
+For the most part, this is a good assumption: two letter words are rare enough
+that I almost certainly have them all in my dictionary already. Doubly so for
+one letter words, since there are only six possible (a, e, i, o, u, n).
+
+But this means that, if a two letter word were coined, and it were not added to
+my dictionary, I would score it zero by default- it could still be discovered if
+it were next to many other toki pona words, but it would drag down the score of
+the sentence it's in.
 
 ---
 
