@@ -1,7 +1,7 @@
 import { makeAugust } from "@utils/other";
 
 export const BASE_URL = "/ilo-muni";
-export const DB_URL = `${BASE_URL}/db/2024-08-08-trimmed.sqlite`;
+export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
 // export const DB_URL = `https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite`;
 
 export const SMOOTHABLE = [

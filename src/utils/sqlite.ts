@@ -1,22 +1,29 @@
 import { createDbWorker } from "sql.js-httpvfs";
 import type { WorkerHttpvfs } from "sql.js-httpvfs";
-import { BASE_URL, DB_URL, LATEST_ALLOWED_TIMESTAMP } from "@utils/constants";
+import {
+  BASE_URL,
+  DB_URL_PREFIX,
+  LATEST_ALLOWED_TIMESTAMP,
+} from "@utils/constants";
 import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SMOOTHABLE } from "./constants";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
-export async function initDB(dbUrl: string): Promise<WorkerHttpvfs> {
+export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
   const worker = await createDbWorker(
     [
       {
         // TODO: investigate
         from: "inline",
         config: {
-          serverMode: "full",
-          url: dbUrl,
-          requestChunkSize: 1024, // TODO: reduce?
+          serverMode: "chunked",
+          requestChunkSize: 1024,
+          databaseLengthBytes: 461942784,
+          serverChunkSize: 26214400,
+          urlPrefix: dbUrlPrefix,
+          suffixLength: 3,
         },
       },
     ],
@@ -29,7 +36,7 @@ export async function initDB(dbUrl: string): Promise<WorkerHttpvfs> {
 /* TODO: queryresult? */
 export async function queryDb(query: string, params: any[]): Promise<any[]> {
   if (!workerPromise) {
-    workerPromise = initDB(DB_URL);
+    workerPromise = initDB(DB_URL_PREFIX);
   }
   const worker = await workerPromise;
 
