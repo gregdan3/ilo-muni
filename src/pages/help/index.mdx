@@ -77,8 +77,8 @@ like [**kama pona**](/ilo-muni/?query=kama+pona) or
 
 ### Multiple Searches
 
-You can graph **multiple phrases at once** by separating them with commas, even
-mixing words and phrases:
+You can graph **multiple phrases at once** by separating them with commas `,`,
+even mixing words and phrases:
 [**toki, pona, toki pona**](/ilo-muni?query=toki,+pona,+toki+pona). Often,
 different words or phrases will have very different amounts of use, resulting in
 it being hard to read more than the top one or two graphs. You can address that
@@ -99,6 +99,23 @@ with [alternate scales](#scales) later in this tutorial.
   [**sina seme, sina pali e seme**](/ilo-muni/?query=sina+seme,+sina+pali+e+seme)
 - See how popular Sonja's books are with
   [**pu, ku, su**](/ilo-muni/?query=pu,+ku,+su)
+
+</details>
+
+### Wildcard
+
+You can search for **multiple phrases of the same form** with a wildcard by
+replacing **one word other than the first** in a phrase with `*`. This will
+search for the **ten most popular phrases** that match your search and graph
+them.
+
+<details>
+  <summary>**Examples**</summary>
+
+- Estimate the most popular prep phrases for "tawa":
+  [**tawa \***](suli:4321/ilo-muni?query=tawa+*)
+- Observe the disparity in the top 1-2 uses of a word versus the rest:
+  [**sona \***](/ilo-muni?query=sona+*), [**ona \***](/ilo-muni?query=ona+*)
 
 </details>
 
