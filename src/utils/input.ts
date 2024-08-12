@@ -44,7 +44,7 @@ function splitOnDelim(input: string, delimiter: string): string[] {
 
 function toQueryTokens(query: string): string[] {
   const result = query.trim().split(PHRASE_DELIMS_RE);
-  return result.filter((token) => token.length > 0);
+  return result.filter((token) => token !== undefined && token.length > 0);
 }
 
 function toPhrases(query: string, givenMinSentLen: Length): PackagedPhrases {
