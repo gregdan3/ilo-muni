@@ -5,7 +5,7 @@ import {
   DB_URL_PREFIX,
   LATEST_ALLOWED_TIMESTAMP,
 } from "@utils/constants";
-import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
+import type { Scale, Length, Phrase, Query, Separator, Smoother } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
 
@@ -154,7 +154,14 @@ function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
   return result;
 }
 
-function makeSmooth(rows: Row[], smoothing: number): Row[] {
+const smootherFunctions: {
+  [key: string]: (rows: Row[], smoothing: number) => Row[]
+} = {
+  "simple": smoothSimple,
+  "exponential": smoothExponential,
+};
+
+function smoothSimple(rows: Row[], smoothing: number): Row[] {
   const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
   const len = rows.length;
 
@@ -172,6 +179,21 @@ function makeSmooth(rows: Row[], smoothing: number): Row[] {
     }
 
     smoothed[i].occurrences = sum / count;
+  }
+
+  return smoothed;
+}
+
+function smoothExponential(rows: Row[], smoothing: number): Row[] {
+  const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
+
+  // 0 < alpha < 1 (well, <= 1)
+  // Zero smoothing implies an alpha of 1, which actually doesn't do any smoothing!
+  // So we don't even need any special case handling, which is very cool
+  const alpha = 1 / (smoothing + 1);
+
+  for (let i = 1; i < rows.length; i++) {
+    smoothed[i].occurrences = alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
   }
 
   return smoothed;
@@ -341,6 +363,7 @@ async function fetchOneOccurrenceSet(
 export async function fetchManyOccurrenceSet(
   queries: Query[],
   scale: Scale,
+  smoother: Smoother,
   smoothing: number,
   start: number,
   end: number,
@@ -377,7 +400,8 @@ export async function fetchManyOccurrenceSet(
     const totals = await fetchTotalOccurrences(1, 1, start, end);
     mergedRows = scaleFunctions[scale](mergedRows, totals);
     if (smoothing > 0 && SCALES[scale].smoothable) {
-      mergedRows = makeSmooth(mergedRows, smoothing);
+      const smootherFunction = smootherFunctions[smoother];
+      mergedRows = smootherFunction(mergedRows, smoothing);
     }
 
     return {
