@@ -7,7 +7,7 @@ import {
 } from "@utils/constants";
 import type { Scale, Length, Phrase, Query, Separator } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
-import { SMOOTHABLE } from "./constants";
+import { SCALES } from "@utils/constants";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -376,7 +376,7 @@ export async function fetchManyOccurrenceSet(
 
     const totals = await fetchTotalOccurrences(1, 1, start, end);
     mergedRows = scaleFunctions[scale](mergedRows, totals);
-    if (smoothing > 0 && SMOOTHABLE.includes(scale)) {
+    if (smoothing > 0 && SCALES[scale].smoothable) {
       mergedRows = makeSmooth(mergedRows, smoothing);
     }
 

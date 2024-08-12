@@ -1,4 +1,4 @@
-import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
+import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP, SCALES } from "@utils/constants";
 import type {
   LengthParam,
   SmoothingParam,
@@ -6,7 +6,7 @@ import type {
   SearchURLParams,
   RanksURLParams,
 } from "@utils/types";
-import { lengthParams, smoothingParams, scales } from "@utils/types";
+import { lengthParams, smoothingParams } from "@utils/types";
 
 const SAMPLE_SEARCHES = [
   // duh
@@ -94,7 +94,7 @@ export function coalesceSmoothing(
 
 export function coalesceScale(maybeScale: string | null): Scale | null {
   let scale: Scale | null = null;
-  if (maybeScale && scales.includes(maybeScale)) {
+  if (maybeScale && maybeScale in SCALES) {
     scale = maybeScale as Scale;
   }
   return scale;
