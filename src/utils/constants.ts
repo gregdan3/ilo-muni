@@ -9,7 +9,7 @@ const ucsurRanges = "\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}";
 const symTokens = "+\\-*/()";
 
 export const PHRASE_DELIMS_RE = new RegExp(
-  `\\s+|(?<=[${ucsurRanges}])|(?=[${ucsurRanges}])|(?<=[${symTokens}])|(?=[${symTokens}])`,
+  `\\s+|([${ucsurRanges}${symTokens}])`,
   "u",
 );
 
