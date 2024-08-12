@@ -4,19 +4,6 @@ export const BASE_URL = "/ilo-muni";
 export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
 // export const DB_URL = `https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite`;
 
-export const SMOOTHABLE = [
-  // absolutes should be preserved
-  // derivatives are impervious to smoothing
-  "rel",
-  "logrel",
-  // "logabs",
-  "normrel",
-  // "normabs",
-  "entropy",
-  "relentropy",
-  "zscore",
-];
-
 // these consts are just to build the important regexes
 const ucsurRanges = "\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}";
 const symTokens = "+\\-*/()";
@@ -46,3 +33,54 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 // avoids the fact that july is incomplete in my dataset
 // no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
 export const LATEST_ALLOWED_TIMESTAMP = 1719792000;
+
+// absolutes should be preserved
+// derivatives are impervious to smoothing
+export const SCALES = {
+  abs: { name: "Absolute", category: "simple", smoothable: false },
+  rel: { name: "Relative", category: "simple", smoothable: true },
+  cmsum: { name: "Cumulative", category: "simple", smoothable: false },
+  logrel: { name: "Relative Log", category: "useful", smoothable: true },
+  normrel: { name: "Relative Minmax", category: "useful", smoothable: true },
+  normabs: { name: "Absolute Minmax", category: "useful", smoothable: false },
+  logabs: {
+    name: "Absolute Log",
+    category: "weird or dupe",
+    smoothable: false,
+  },
+  relentropy: {
+    name: "Relative Entropy",
+    category: "weird or dupe",
+    smoothable: true,
+  },
+  entropy: {
+    name: "Absolute Entropy",
+    category: "weird or dupe",
+    smoothable: true,
+  },
+  zscore: {
+    name: "Relative Z-Score",
+    category: "weird or dupe",
+    smoothable: true,
+  },
+  deriv1: {
+    name: "Absolute 1st Deriv",
+    category: "weird or dupe",
+    smoothable: false,
+  },
+  // deriv2: {
+  //   name: "2nd Deriv Absolute",
+  //   category: "weird or dupe",
+  //   smoothable: false,
+  // },
+  relderiv1: {
+    name: "Relative 1st Deriv",
+    category: "weird or dupe",
+    smoothable: false,
+  },
+  // relderiv2: {
+  //   name: "2nd Deriv Relative",
+  //   category: "weird or dupe",
+  //   smoothable: false,
+  // },
+};

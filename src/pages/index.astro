@@ -3,7 +3,25 @@ import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 import LenDropdown from "@components/LenDropdown.astro";
-import { EARLIEST_YEAR, LATEST_YEAR } from "@utils/constants";
+import { EARLIEST_YEAR, LATEST_YEAR, SCALES } from "@utils/constants";
+import type { Scale } from "@utils/types";
+
+type GroupedScales = {
+  [category: string]: Array<{ key: string } & (typeof SCALES)[Scale]>;
+};
+
+const groupedScales = Object.entries(SCALES).reduce<GroupedScales>(
+  (acc, [key, value]) => {
+    if (!acc[value.category]) {
+      acc[value.category] = [];
+    }
+    acc[value.category].push({ key, ...value });
+    return acc;
+  },
+  {} as GroupedScales,
+);
+
+const defaultScale = "rel"; // The default selected value
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -19,9 +37,8 @@ const frontmatter = { title: "ilo Muni" };
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
-
   import { getSearchParams, toURLParams } from "@utils/urlparams";
-  import { SMOOTHABLE } from "@utils/constants";
+  import { SCALES } from "@utils/constants";
 
   function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
     // Clear the error bin first
@@ -67,7 +84,7 @@ const frontmatter = { title: "ilo Muni" };
 
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
-    if (SMOOTHABLE.includes(scale)) {
+    if (SCALES[scale].smoothable) {
       smoothingDropdown.disabled = false;
     } else {
       smoothingDropdown.disabled = true;
@@ -103,7 +120,7 @@ const frontmatter = { title: "ilo Muni" };
       end: endDropdown.value,
     };
 
-    if (scale !== "absolute") {
+    if (SCALES[scale].smoothable) {
       usedParams.smoothing = smoothingDropdown.value;
     }
 
@@ -253,27 +270,22 @@ const frontmatter = { title: "ilo Muni" };
         />
 
         <!-- TODO: generate this from the list -->
+
         <select id="scaleDropdown">
-          <optgroup label="simple">
-            <option value="abs">Absolute</option>
-            <option value="rel" selected={true}>Relative</option>
-            <option value="cmsum">Cumulative</option>
-          </optgroup>
-          <optgroup label="useful">
-            <option value="logrel">Relative Log</option>
-            <option value="normrel">Relative Minmax</option>
-            <option value="normabs">Absolute Minmax</option>
-          </optgroup>
-          <optgroup label="weird or dupe">
-            <option value="logabs">Absolute Log</option>
-            <option value="relentropy">Relative Entropy</option>
-            <option value="entropy">Absolute Entropy</option>
-            <option value="zscore">Relative Z-Score</option>
-            <option value="deriv1">Absolute 1st Deriv</option>
-            <!-- <option value="deriv2">2nd Deriv Absolute</option> -->
-            <option value="relderiv1">Relative 1st Deriv</option>
-            <!-- <option value="relderiv2">2nd Deriv Relative</option> -->
-          </optgroup>
+          {
+            Object.entries(groupedScales).map(([category, scales]) => (
+              <optgroup label={category}>
+                {scales.map((scale) => (
+                  <option
+                    value={scale.key}
+                    selected={scale.key === defaultScale}
+                  >
+                    {scale.name}
+                  </option>
+                ))}
+              </optgroup>
+            ))
+          }
         </select>
 
         <select id="smoothingDropdown">
