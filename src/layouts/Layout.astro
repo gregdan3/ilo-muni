@@ -266,7 +266,7 @@ import { BASE_URL } from "@utils/constants";
     margin-top: 1em;
   }
   article a {
-    text-decoration: underline URL;
+    text-decoration: underline var(--url);
     color: var(--url);
   }
   article a:hover {
@@ -281,13 +281,13 @@ import { BASE_URL } from "@utils/constants";
     width: 88px;
     height: 31px;
     box-shadow: 0.1em 0.1em 0 0 rgba(0, 0, 0, 1);
-    border: 2px solid FG1;
+    border: 2px solid var(--prim-fg);
     image-rendering: pixelated;
   }
 
   .social:hover {
     box-shadow: 0.2em 0.2em 0 0 rgba(0, 0, 0, 1);
-    border: 2px solid FG1;
+    border: 2px solid var(--prim-fg);
   }
 
   @media (min-width: 600px) {
