@@ -30,6 +30,7 @@ const frontmatter = { title: "ilo Muni" };
   import type {
     Length,
     Scale,
+    Smoother,
     Query,
     ProcessedQueries,
     QueryError,
@@ -69,6 +70,7 @@ const frontmatter = { title: "ilo Muni" };
     searchBox: HTMLInputElement,
     sentLenDropdown: HTMLInputElement,
     scaleDropdown: HTMLInputElement,
+    smootherDropdown: HTMLInputElement,
     smoothingDropdown: HTMLInputElement,
     startDropdown: HTMLInputElement,
     endDropdown: HTMLInputElement,
@@ -78,6 +80,7 @@ const frontmatter = { title: "ilo Muni" };
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const scale = scaleDropdown.value as Scale;
+    const smoother = smootherDropdown.value as Smoother;
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
     const end = Number(endDropdown.value);
@@ -85,8 +88,10 @@ const frontmatter = { title: "ilo Muni" };
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
     if (SCALES[scale].smoothable) {
+      smootherDropdown.disabled = false;
       smoothingDropdown.disabled = false;
     } else {
+      smootherDropdown.disabled = true;
       smoothingDropdown.disabled = true;
     }
 
@@ -96,6 +101,7 @@ const frontmatter = { title: "ilo Muni" };
       queryText,
       sentLen,
       scale,
+      smoother,
       smoothing,
       start,
       end,
@@ -132,6 +138,7 @@ const frontmatter = { title: "ilo Muni" };
     input: string,
     minSentLen: Length,
     scale: Scale,
+    smoother: Smoother,
     smoothing: number,
     start: number,
     end: number,
@@ -144,6 +151,7 @@ const frontmatter = { title: "ilo Muni" };
     const results = await fetchManyOccurrenceSet(
       queries,
       scale,
+      smoother,
       smoothing,
       start,
       end,
@@ -186,6 +194,9 @@ const frontmatter = { title: "ilo Muni" };
     const scaleDropdown = document.getElementById(
       "scaleDropdown",
     )! as HTMLInputElement;
+    const smootherDropdown = document.getElementById(
+      "smootherDropdown",
+    )! as HTMLInputElement;
     const smoothingDropdown = document.getElementById(
       "smoothingDropdown",
     )! as HTMLInputElement;
@@ -224,6 +235,7 @@ const frontmatter = { title: "ilo Muni" };
       searchBox,
       sentLenDropdown,
       scaleDropdown,
+      smootherDropdown,
       smoothingDropdown,
       startDropdown,
       endDropdown,
@@ -238,6 +250,7 @@ const frontmatter = { title: "ilo Muni" };
         searchBox,
         sentLenDropdown,
         scaleDropdown,
+        smootherDropdown,
         smoothingDropdown,
         startDropdown,
         endDropdown,
@@ -286,6 +299,11 @@ const frontmatter = { title: "ilo Muni" };
               </optgroup>
             ))
           }
+        </select>
+
+        <select id="smootherDropdown">
+            <option value="simple">Simple smoother</option>
+            <option value="exponential">Exponential smoother</option>
         </select>
 
         <select id="smoothingDropdown">

@@ -4,6 +4,10 @@ export const lengthParams = ["1", "2", "3", "4", "5", "6"];
 export const lengths = lengthParams.map((n: string): number => {
   return parseInt(n, 10);
 });
+export const smootherParams = [
+  "simple",
+  "exponential",
+];
 export const smoothingParams = [
   "0",
   "1",
@@ -24,6 +28,7 @@ export const smoothingParams = [
 
 export type Scale = keyof typeof SCALES;
 export type LengthParam = (typeof lengthParams)[number];
+export type Smoother = (typeof smootherParams)[number];
 export type SmoothingParam = (typeof smoothingParams)[number];
 
 export interface SearchURLParams {
