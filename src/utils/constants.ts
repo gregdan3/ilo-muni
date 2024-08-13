@@ -86,9 +86,9 @@ export const SCALES = {
 };
 
 export const SMOOTHERS = {
-  cwin: { name: "Centered Window", category: "simple" },
-  exp: { name: "Exponential", category: "simple" },
-  gauss: { name: "Gaussian", category: "simple" },
-  med: { name: "Median", category: "simple" },
-  tri: { name: "Triangular", category: "simple" },
+  cwin: { name: "Window Avg", category: "recommended" },
+  exp: { name: "Exponential", category: "weird" },
+  gauss: { name: "Gaussian", category: "weird" },
+  med: { name: "Median", category: "weird" },
+  tri: { name: "Triangular", category: "weird" },
 };
