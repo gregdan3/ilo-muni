@@ -167,6 +167,12 @@ const smootherFunctions: {
   exp: smoothExponential,
   gauss: smoothGaussian,
   med: smoothMedian,
+  tri: (rows, smoothing) => {
+    return smoothCenterWindowAvg(
+      smoothCenterWindowAvg(rows, smoothing),
+      smoothing,
+    );
+  },
 };
 
 function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
