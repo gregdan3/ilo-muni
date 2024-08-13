@@ -19,7 +19,14 @@ function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
   const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
   const len = rows.length;
 
-  for (let i = 0; i < len; i++) {
+  let firstNonZero = 0;
+  while (firstNonZero < len && rows[firstNonZero].occurrences === 0) {
+    smoothed[firstNonZero].occurrences = 0;
+    firstNonZero += 1;
+    continue;
+  }
+
+  for (let i = firstNonZero; i < len; i++) {
     let sum = 0;
     let count = 0;
 
