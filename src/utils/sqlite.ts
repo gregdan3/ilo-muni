@@ -165,6 +165,7 @@ const smootherFunctions: {
 } = {
   cwin: smoothCenterWindowAvg,
   exp: smoothExponential,
+  gauss: smoothGaussian,
 };
 
 function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
@@ -202,6 +203,38 @@ function smoothExponential(rows: Row[], smoothing: number): Row[] {
     smoothed[i].occurrences =
       alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
   }
+  return smoothed;
+}
+
+function smoothGaussian(rows: Row[], smoothing: number): Row[] {
+  const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
+  const len = rows.length;
+  const kernelSize = smoothing * 2 + 1;
+  const sigma = smoothing / 2;
+  const gaussianKernel = Array.from({ length: kernelSize }, (_, i) => {
+    const x = i - smoothing;
+    return (
+      Math.exp(-(x * x) / (2 * sigma * sigma)) /
+      (sigma * Math.sqrt(2 * Math.PI))
+    );
+  });
+
+  for (let i = 0; i < len; i++) {
+    let sum = 0;
+    let kernelSum = 0;
+
+    for (let j = -smoothing; j <= smoothing; j++) {
+      const index = i + j;
+      if (index >= 0 && index < len) {
+        const weight = gaussianKernel[j + smoothing];
+        sum += rows[index].occurrences * weight;
+        kernelSum += weight;
+      }
+    }
+
+    smoothed[i].occurrences = sum / kernelSum;
+  }
+
   return smoothed;
 }
 

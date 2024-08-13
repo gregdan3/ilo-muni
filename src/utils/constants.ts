@@ -88,4 +88,5 @@ export const SCALES = {
 export const SMOOTHERS = {
   cwin: { name: "Centered Window", category: "simple" },
   exp: { name: "Exponential", category: "simple" },
+  gauss: { name: "Gaussian", category: "simple" },
 };
