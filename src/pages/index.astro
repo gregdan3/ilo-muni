@@ -3,42 +3,13 @@ import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 import LenDropdown from "@components/LenDropdown.astro";
+import CategorizedDropdown from "@components/search/CategorizedDropdown.astro";
 import {
   EARLIEST_YEAR,
   LATEST_YEAR,
   SCALES,
   SMOOTHERS,
 } from "@utils/constants";
-import type { Scale, Smoother } from "@utils/types";
-
-type GroupedScales = {
-  [category: string]: Array<{ key: string } & (typeof SCALES)[Scale]>;
-};
-type GroupedSmoothers = {
-  [category: string]: Array<{ key: string } & (typeof SMOOTHERS)[Smoother]>;
-};
-
-const groupedScales = Object.entries(SCALES).reduce<GroupedScales>(
-  (acc, [key, value]) => {
-    if (!acc[value.category]) {
-      acc[value.category] = [];
-    }
-    acc[value.category].push({ key, ...value });
-    return acc;
-  },
-  {} as GroupedScales,
-);
-
-const groupedSmoothers = Object.entries(SMOOTHERS).reduce<GroupedSmoothers>(
-  (acc, [key, value]) => {
-    if (!acc[value.category]) {
-      acc[value.category] = [];
-    }
-    acc[value.category].push({ key, ...value });
-    return acc;
-  },
-  {} as GroupedScales,
-);
 
 const defaultScale = "rel";
 const defaultSmoother = "cwin";
@@ -301,41 +272,17 @@ const frontmatter = { title: "ilo Muni" };
           id="sentLenDropdown"
         />
 
-        <!-- TODO: generate this from the list -->
+        <CategorizedDropdown
+          id="scaleDropdown"
+          options={SCALES}
+          selected={defaultScale}
+        />
 
-        <select id="scaleDropdown">
-          {
-            Object.entries(groupedScales).map(([category, scales]) => (
-              <optgroup label={category}>
-                {scales.map((scale) => (
-                  <option
-                    value={scale.key}
-                    selected={scale.key === defaultScale}
-                  >
-                    {scale.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))
-          }
-        </select>
-
-        <select id="smootherDropdown">
-          {
-            Object.entries(groupedSmoothers).map(([category, smoothers]) => (
-              <optgroup label={category}>
-                {smoothers.map((smoother) => (
-                  <option
-                    value={smoother.key}
-                    selected={smoother.key === defaultSmoother}
-                  >
-                    {smoother.name}
-                  </option>
-                ))}
-              </optgroup>
-            ))
-          }
-        </select>
+        <CategorizedDropdown
+          id="smootherDropdown"
+          options={SMOOTHERS}
+          selected={defaultSmoother}
+        />
 
         <select id="smoothingDropdown">
           {

@@ -1,0 +1,44 @@
+---
+export interface DropdownItem {
+  category: string;
+  label: string;
+}
+
+export interface CategorizedDropdownConfig {
+  options: any;
+  selected: string;
+  id: string;
+}
+
+const { options, selected, id } = Astro.props as CategorizedDropdownConfig;
+
+type GroupedOptions = {
+  [category: string]: Array<{ key: string } & DropdownItem>;
+};
+
+const groupedSmoothers = Object.entries(options).reduce<GroupedOptions>(
+  (acc, [key, value]) => {
+    const item = value as DropdownItem;
+    if (!acc[item.category]) {
+      acc[item.category] = [];
+    }
+    acc[item.category].push({ key, ...item });
+    return acc;
+  },
+  {} as GroupedOptions,
+);
+---
+
+<select id={id}>
+  {
+    Object.entries(groupedSmoothers).map(([category, smoothers]) => (
+      <optgroup label={category}>
+        {smoothers.map((smoother) => (
+          <option value={smoother.key} selected={smoother.key === selected}>
+            {smoother.label}
+          </option>
+        ))}
+      </optgroup>
+    ))
+  }
+</select>
