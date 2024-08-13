@@ -111,6 +111,8 @@ const frontmatter = { title: "ilo Muni" };
     if (SCALES[scale].smoothable) {
       smootherDropdown.disabled = false;
       smoothingDropdown.disabled = false;
+      // NOTE: do not disable the smoother dropdown when smoothing is 0
+      // it's true that it won't do anything, but it feels Terrible UI wise
     } else {
       smootherDropdown.disabled = true;
       smoothingDropdown.disabled = true;
