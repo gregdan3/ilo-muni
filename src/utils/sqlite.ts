@@ -5,7 +5,14 @@ import {
   DB_URL_PREFIX,
   LATEST_ALLOWED_TIMESTAMP,
 } from "@utils/constants";
-import type { Scale, Length, Phrase, Query, Separator, Smoother } from "@utils/types";
+import type {
+  Scale,
+  Length,
+  Phrase,
+  Query,
+  Separator,
+  Smoother,
+} from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
 
@@ -102,7 +109,6 @@ ORDER BY
 LIMIT
   10;`;
 // day=0 is all time in ranks table
-//
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
@@ -155,13 +161,13 @@ function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
 }
 
 const smootherFunctions: {
-  [key: string]: (rows: Row[], smoothing: number) => Row[]
+  [key: string]: (rows: Row[], smoothing: number) => Row[];
 } = {
-  "simple": smoothSimple,
-  "exponential": smoothExponential,
+  cwin: smoothCenterWindowAvg,
+  exp: smoothExponential,
 };
 
-function smoothSimple(rows: Row[], smoothing: number): Row[] {
+function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
   const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
   const len = rows.length;
 
@@ -193,9 +199,9 @@ function smoothExponential(rows: Row[], smoothing: number): Row[] {
   const alpha = 1 / (smoothing + 1);
 
   for (let i = 1; i < rows.length; i++) {
-    smoothed[i].occurrences = alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
+    smoothed[i].occurrences =
+      alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
   }
-
   return smoothed;
 }
 

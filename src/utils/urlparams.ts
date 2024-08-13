@@ -1,8 +1,14 @@
-import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP, SCALES } from "@utils/constants";
+import {
+  EARLIEST_TIMESTAMP,
+  LATEST_TIMESTAMP,
+  SCALES,
+  SMOOTHERS,
+} from "@utils/constants";
 import type {
   LengthParam,
   SmoothingParam,
   Scale,
+  Smoother,
   SearchURLParams,
   RanksURLParams,
 } from "@utils/types";
@@ -92,6 +98,16 @@ export function coalesceSmoothing(
   return smoothing;
 }
 
+export function coalesceSmoother(
+  maybeSmoother: string | null,
+): Smoother | null {
+  let smoother: Smoother | null = null;
+  if (maybeSmoother && maybeSmoother in SMOOTHERS) {
+    smoother = maybeSmoother as Smoother;
+  }
+  return smoother;
+}
+
 export function coalesceScale(maybeScale: string | null): Scale | null {
   let scale: Scale | null = null;
   if (maybeScale && maybeScale in SCALES) {
@@ -137,13 +153,16 @@ export function getSearchParams(): SearchURLParams {
   const smoothingParam = urlParams.get("smoothing") || "";
   const smoothing = coalesceSmoothing(smoothingParam);
 
+  const smootherParam = urlParams.get("smoother") || "";
+  const smoother = coalesceSmoother(smootherParam);
+
   const startParam = urlParams.get("start") || "";
   const start = coalesceTimestamp(startParam);
 
   const endParam = urlParams.get("end") || "";
   const end = coalesceTimestamp(endParam);
 
-  return { query, minSentLen, scale, smoothing, start, end };
+  return { query, minSentLen, scale, smoothing, smoother, start, end };
 }
 
 export function getRanksParams(): RanksURLParams {

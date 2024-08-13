@@ -3,11 +3,19 @@ import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 import LenDropdown from "@components/LenDropdown.astro";
-import { EARLIEST_YEAR, LATEST_YEAR, SCALES } from "@utils/constants";
-import type { Scale } from "@utils/types";
+import {
+  EARLIEST_YEAR,
+  LATEST_YEAR,
+  SCALES,
+  SMOOTHERS,
+} from "@utils/constants";
+import type { Scale, Smoother } from "@utils/types";
 
 type GroupedScales = {
   [category: string]: Array<{ key: string } & (typeof SCALES)[Scale]>;
+};
+type GroupedSmoothers = {
+  [category: string]: Array<{ key: string } & (typeof SMOOTHERS)[Smoother]>;
 };
 
 const groupedScales = Object.entries(SCALES).reduce<GroupedScales>(
@@ -21,7 +29,19 @@ const groupedScales = Object.entries(SCALES).reduce<GroupedScales>(
   {} as GroupedScales,
 );
 
-const defaultScale = "rel"; // The default selected value
+const groupedSmoothers = Object.entries(SMOOTHERS).reduce<GroupedSmoothers>(
+  (acc, [key, value]) => {
+    if (!acc[value.category]) {
+      acc[value.category] = [];
+    }
+    acc[value.category].push({ key, ...value });
+    return acc;
+  },
+  {} as GroupedScales,
+);
+
+const defaultScale = "rel";
+const defaultSmoother = "exp";
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -87,6 +107,7 @@ const frontmatter = { title: "ilo Muni" };
 
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
+
     if (SCALES[scale].smoothable) {
       smootherDropdown.disabled = false;
       smoothingDropdown.disabled = false;
@@ -128,6 +149,7 @@ const frontmatter = { title: "ilo Muni" };
 
     if (SCALES[scale].smoothable) {
       usedParams.smoothing = smoothingDropdown.value;
+      usedParams.smoother = smootherDropdown.value;
     }
 
     toURLParams(usedParams);
@@ -302,8 +324,20 @@ const frontmatter = { title: "ilo Muni" };
         </select>
 
         <select id="smootherDropdown">
-            <option value="simple">Simple smoother</option>
-            <option value="exponential">Exponential smoother</option>
+          {
+            Object.entries(groupedSmoothers).map(([category, smoothers]) => (
+              <optgroup label={category}>
+                {smoothers.map((smoother) => (
+                  <option
+                    value={smoother.key}
+                    selected={smoother.key === defaultSmoother}
+                  >
+                    {smoother.name}
+                  </option>
+                ))}
+              </optgroup>
+            ))
+          }
         </select>
 
         <select id="smoothingDropdown">
