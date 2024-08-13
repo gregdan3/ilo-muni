@@ -3,11 +3,19 @@ import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 import LenDropdown from "@components/LenDropdown.astro";
-import { EARLIEST_YEAR, LATEST_YEAR, SCALES } from "@utils/constants";
-import type { Scale } from "@utils/types";
+import {
+  EARLIEST_YEAR,
+  LATEST_YEAR,
+  SCALES,
+  SMOOTHERS,
+} from "@utils/constants";
+import type { Scale, Smoother } from "@utils/types";
 
 type GroupedScales = {
   [category: string]: Array<{ key: string } & (typeof SCALES)[Scale]>;
+};
+type GroupedSmoothers = {
+  [category: string]: Array<{ key: string } & (typeof SMOOTHERS)[Smoother]>;
 };
 
 const groupedScales = Object.entries(SCALES).reduce<GroupedScales>(
@@ -21,7 +29,19 @@ const groupedScales = Object.entries(SCALES).reduce<GroupedScales>(
   {} as GroupedScales,
 );
 
-const defaultScale = "rel"; // The default selected value
+const groupedSmoothers = Object.entries(SMOOTHERS).reduce<GroupedSmoothers>(
+  (acc, [key, value]) => {
+    if (!acc[value.category]) {
+      acc[value.category] = [];
+    }
+    acc[value.category].push({ key, ...value });
+    return acc;
+  },
+  {} as GroupedScales,
+);
+
+const defaultScale = "rel";
+const defaultSmoother = "exp";
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -30,6 +50,7 @@ const frontmatter = { title: "ilo Muni" };
   import type {
     Length,
     Scale,
+    Smoother,
     Query,
     ProcessedQueries,
     QueryError,
@@ -69,6 +90,7 @@ const frontmatter = { title: "ilo Muni" };
     searchBox: HTMLInputElement,
     sentLenDropdown: HTMLInputElement,
     scaleDropdown: HTMLInputElement,
+    smootherDropdown: HTMLInputElement,
     smoothingDropdown: HTMLInputElement,
     startDropdown: HTMLInputElement,
     endDropdown: HTMLInputElement,
@@ -78,15 +100,21 @@ const frontmatter = { title: "ilo Muni" };
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const scale = scaleDropdown.value as Scale;
+    const smoother = smootherDropdown.value as Smoother;
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
     const end = Number(endDropdown.value);
 
     // disable smoothness if absolute is set
     // graphing absolute data with smoothness is silly
+
     if (SCALES[scale].smoothable) {
+      smootherDropdown.disabled = false;
       smoothingDropdown.disabled = false;
+      // NOTE: do not disable the smoother dropdown when smoothing is 0
+      // it's true that it won't do anything, but it feels Terrible UI wise
     } else {
+      smootherDropdown.disabled = true;
       smoothingDropdown.disabled = true;
     }
 
@@ -96,6 +124,7 @@ const frontmatter = { title: "ilo Muni" };
       queryText,
       sentLen,
       scale,
+      smoother,
       smoothing,
       start,
       end,
@@ -122,6 +151,7 @@ const frontmatter = { title: "ilo Muni" };
 
     if (SCALES[scale].smoothable) {
       usedParams.smoothing = smoothingDropdown.value;
+      usedParams.smoother = smootherDropdown.value;
     }
 
     toURLParams(usedParams);
@@ -132,6 +162,7 @@ const frontmatter = { title: "ilo Muni" };
     input: string,
     minSentLen: Length,
     scale: Scale,
+    smoother: Smoother,
     smoothing: number,
     start: number,
     end: number,
@@ -144,6 +175,7 @@ const frontmatter = { title: "ilo Muni" };
     const results = await fetchManyOccurrenceSet(
       queries,
       scale,
+      smoother,
       smoothing,
       start,
       end,
@@ -186,6 +218,9 @@ const frontmatter = { title: "ilo Muni" };
     const scaleDropdown = document.getElementById(
       "scaleDropdown",
     )! as HTMLInputElement;
+    const smootherDropdown = document.getElementById(
+      "smootherDropdown",
+    )! as HTMLInputElement;
     const smoothingDropdown = document.getElementById(
       "smoothingDropdown",
     )! as HTMLInputElement;
@@ -224,6 +259,7 @@ const frontmatter = { title: "ilo Muni" };
       searchBox,
       sentLenDropdown,
       scaleDropdown,
+      smootherDropdown,
       smoothingDropdown,
       startDropdown,
       endDropdown,
@@ -238,6 +274,7 @@ const frontmatter = { title: "ilo Muni" };
         searchBox,
         sentLenDropdown,
         scaleDropdown,
+        smootherDropdown,
         smoothingDropdown,
         startDropdown,
         endDropdown,
@@ -281,6 +318,23 @@ const frontmatter = { title: "ilo Muni" };
                     selected={scale.key === defaultScale}
                   >
                     {scale.name}
+                  </option>
+                ))}
+              </optgroup>
+            ))
+          }
+        </select>
+
+        <select id="smootherDropdown">
+          {
+            Object.entries(groupedSmoothers).map(([category, smoothers]) => (
+              <optgroup label={category}>
+                {smoothers.map((smoother) => (
+                  <option
+                    value={smoother.key}
+                    selected={smoother.key === defaultSmoother}
+                  >
+                    {smoother.name}
                   </option>
                 ))}
               </optgroup>
