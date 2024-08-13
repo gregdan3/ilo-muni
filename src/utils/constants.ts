@@ -90,4 +90,5 @@ export const SMOOTHERS = {
   exp: { name: "Exponential", category: "simple" },
   gauss: { name: "Gaussian", category: "simple" },
   med: { name: "Median", category: "simple" },
+  tri: { name: "Triangular", category: "simple" },
 };
