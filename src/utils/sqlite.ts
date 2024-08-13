@@ -166,6 +166,7 @@ const smootherFunctions: {
   cwin: smoothCenterWindowAvg,
   exp: smoothExponential,
   gauss: smoothGaussian,
+  med: smoothMedian,
 };
 
 function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
@@ -233,6 +234,26 @@ function smoothGaussian(rows: Row[], smoothing: number): Row[] {
     }
 
     smoothed[i].occurrences = sum / kernelSum;
+  }
+
+  return smoothed;
+}
+
+function smoothMedian(rows: Row[], smoothing: number): Row[] {
+  const smoothed: Row[] = rows.map((row: Row): Row => ({ ...row }));
+  const len = rows.length;
+
+  for (let i = 0; i < len; i++) {
+    const window: number[] = [];
+    for (
+      let j = Math.max(0, i - smoothing);
+      j <= Math.min(len - 1, i + smoothing);
+      j++
+    ) {
+      window.push(rows[j].occurrences);
+    }
+    window.sort((a, b) => a - b);
+    smoothed[i].occurrences = window[Math.floor(window.length / 2)];
   }
 
   return smoothed;
