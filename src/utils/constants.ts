@@ -84,3 +84,8 @@ export const SCALES = {
   //   smoothable: false,
   // },
 };
+
+export const SMOOTHERS = {
+  cwin: { name: "Centered Window", category: "simple" },
+  exp: { name: "Exponential", category: "simple" },
+};
