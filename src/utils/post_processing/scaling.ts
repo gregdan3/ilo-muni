@@ -46,6 +46,10 @@ const normalizedAbsoluteScale: AbsoluteScaler = (rows: Row[]) => {
     const min = Math.min(...rows.map((row) => row.occurrences));
     const max = Math.max(...rows.map((row) => row.occurrences));
 
+  if (min === max) {
+      return rows.map((row: Row) =>  ({...row, occurrences: 0}))
+  }
+
     return rows.map((row: Row) => ({
         ...row,
         occurrences: (row.occurrences - min) / (max - min),
