@@ -15,8 +15,8 @@ import type {
 } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
-import { scaleFunctions } from '@utils/post_processing/scaling.ts';
-import { smootherFunctions } from '@utils/post_processing/smoothing.ts';
+import { scaleFunctions } from "@utils/post_processing/scaling.ts";
+import { smootherFunctions } from "@utils/post_processing/smoothing.ts";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -161,7 +161,6 @@ function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
   }
   return result;
 }
-
 
 async function fetchOneOccurrenceSet(
   params: QueryParams,

@@ -1,4 +1,4 @@
-import type { Row } from '@utils/sqlite.ts';
+import type { Row } from "@utils/sqlite.ts";
 
 export const smootherFunctions: {
   [key: string]: (rows: Row[], smoothing: number) => Row[];
@@ -9,8 +9,8 @@ export const smootherFunctions: {
   med: smoothMedian,
   tri: (rows, smoothing) => {
     return smoothCenterWindowAvg(
-        smoothCenterWindowAvg(rows, smoothing),
-        smoothing,
+      smoothCenterWindowAvg(rows, smoothing),
+      smoothing,
     );
   },
 };
@@ -31,9 +31,9 @@ function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
     let count = 0;
 
     for (
-        let j = Math.max(0, i - smoothing);
-        j <= Math.min(len - 1, i + smoothing);
-        j++
+      let j = Math.max(0, i - smoothing);
+      j <= Math.min(len - 1, i + smoothing);
+      j++
     ) {
       sum += rows[j].occurrences;
       count++;
@@ -55,7 +55,7 @@ function smoothExponential(rows: Row[], smoothing: number): Row[] {
 
   for (let i = 1; i < rows.length; i++) {
     smoothed[i].occurrences =
-        alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
+      alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
   }
   return smoothed;
 }
@@ -68,8 +68,8 @@ function smoothGaussian(rows: Row[], smoothing: number): Row[] {
   const gaussianKernel = Array.from({ length: kernelSize }, (_, i) => {
     const x = i - smoothing;
     return (
-        Math.exp(-(x * x) / (2 * sigma * sigma)) /
-        (sigma * Math.sqrt(2 * Math.PI))
+      Math.exp(-(x * x) / (2 * sigma * sigma)) /
+      (sigma * Math.sqrt(2 * Math.PI))
     );
   });
 
@@ -99,9 +99,9 @@ function smoothMedian(rows: Row[], smoothing: number): Row[] {
   for (let i = 0; i < len; i++) {
     const window: number[] = [];
     for (
-        let j = Math.max(0, i - smoothing);
-        j <= Math.min(len - 1, i + smoothing);
-        j++
+      let j = Math.max(0, i - smoothing);
+      j <= Math.min(len - 1, i + smoothing);
+      j++
     ) {
       window.push(rows[j].occurrences);
     }
