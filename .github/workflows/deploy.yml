@@ -4,6 +4,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    paths:
+      - src/
+      - static/
   workflow_dispatch:
 
 permissions:
