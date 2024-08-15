@@ -37,58 +37,58 @@ export const LATEST_ALLOWED_TIMESTAMP = 1719792000;
 // absolutes should be preserved
 // derivatives are impervious to smoothing
 export const SCALES = {
-  abs: { name: "Absolute", category: "simple", smoothable: false },
-  rel: { name: "Relative", category: "simple", smoothable: true },
-  cmsum: { name: "Cumulative", category: "simple", smoothable: false },
-  logrel: { name: "Relative Log", category: "useful", smoothable: true },
-  normrel: { name: "Relative Minmax", category: "useful", smoothable: true },
-  normabs: { name: "Absolute Minmax", category: "useful", smoothable: false },
+  abs: { label: "Absolute", category: "simple", smoothable: false },
+  rel: { label: "Relative", category: "simple", smoothable: true },
+  cmsum: { label: "Cumulative", category: "simple", smoothable: false },
+  logrel: { label: "Relative Log", category: "useful", smoothable: true },
+  normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
+  normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
   logabs: {
-    name: "Absolute Log",
+    label: "Absolute Log",
     category: "weird or dupe",
     smoothable: false,
   },
   relentropy: {
-    name: "Relative Entropy",
+    label: "Relative Entropy",
     category: "weird or dupe",
     smoothable: true,
   },
   entropy: {
-    name: "Absolute Entropy",
+    label: "Absolute Entropy",
     category: "weird or dupe",
     smoothable: true,
   },
   zscore: {
-    name: "Relative Z-Score",
+    label: "Relative Z-Score",
     category: "weird or dupe",
     smoothable: true,
   },
   deriv1: {
-    name: "Absolute 1st Deriv",
+    label: "Absolute 1st Deriv",
     category: "weird or dupe",
     smoothable: false,
   },
   // deriv2: {
-  //   name: "2nd Deriv Absolute",
+  //   label: "2nd Deriv Absolute",
   //   category: "weird or dupe",
   //   smoothable: false,
   // },
   relderiv1: {
-    name: "Relative 1st Deriv",
+    label: "Relative 1st Deriv",
     category: "weird or dupe",
     smoothable: false,
   },
   // relderiv2: {
-  //   name: "2nd Deriv Relative",
+  //   label: "2nd Deriv Relative",
   //   category: "weird or dupe",
   //   smoothable: false,
   // },
 };
 
 export const SMOOTHERS = {
-  cwin: { name: "Window Avg", category: "recommended" },
-  exp: { name: "Exponential", category: "weird" },
-  gauss: { name: "Gaussian", category: "weird" },
-  med: { name: "Median", category: "weird" },
-  tri: { name: "Triangular", category: "weird" },
+  cwin: { label: "Window Avg", category: "recommended" },
+  exp: { label: "Exponential", category: "weird" },
+  gauss: { label: "Gaussian", category: "weird" },
+  med: { label: "Median", category: "weird" },
+  tri: { label: "Triangular", category: "weird" },
 };
