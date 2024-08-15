@@ -271,12 +271,17 @@ alternate data,
 
 </details>
 
+### Smoother
+
+By default, **Window Avg** is set, and I don't recommend changing it from the
+default unless you're aware of what change you're making and why.
+
 ### Smoothing
 
 By default, **2 smoothing** is set. The number is how many neighbors **on both
-sides** of a given data point will be averaged with that point. For example, if
-you set **5 smoothing**, it means a given point will be set to the average of
-the 5 points before, 5 points after, and itself.
+sides** of a given data point will be smoothed. For example, if you set **5
+smoothing** with the **Window Avg** smoother, it means a given point will be set
+to the average of the 5 points before, 5 points after, and itself.
 
 Smoothing is helpful for making noisy graphs more readable while preserving the
 trend line of the original graph. Compare the graphs of **wawa, nasa, suwi,
@@ -286,8 +291,10 @@ sewi, suli** with
 
 Note that smoothing can produce misleading graphs with respect to the time axis,
 such as
-[**smearing periodic phrases over too much time**](/ilo-muni/?query=tenpo+pana&smoothing=10).
-Sometimes, **0 smoothing** is better!
+[**smearing periodic phrases over too much time**](/ilo-muni/?query=tenpo+pana&smoothing=10)
+or
+[**implying that misikeke was used before November 2019**](/ilo-muni/?query=misikeke&smoothing=10&smoother=gauss)
+with specific smoothers. Sometimes, **0 smoothing** is better!
 
 {/* NOTE: smoothing used to smear to before a term existed too, but this is fixed */}
 
