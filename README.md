@@ -1,14 +1,23 @@
 # ilo Muni
 
-ilo Muni pi mute nimi, "Word Frequency Tool named Muni" is a tool for graphing
-word frequencies in toki pona, based on
-[Google Ngrams](https://books.google.com/ngrams/).
+ilo Muni is a graphing tool which displays the occurrence of toki pona words and
+phrases over time, as they appear in online toki pona communities. It is based
+on the [Google Ngram Viewer](https://books.google.com/ngrams/), but has many
+more features (though granted it lacks part of speech tag searching) to help
+separate patterns of usage from noise or particularly loud individuals. It
+depends on and exists because of two prior tools I made,
+[sona toki "language knowledge"](https://github.com/gregdan3/sona-toki) and
+[sona mute "frequency knowledge"](https://github.com/gregdan3/sona-mute).
 
-## Features
+## [More about ilo Muni](https://gregdan3.github.io/ilo-muni/about/)
 
-Check the [about page!]()
+## [How to use ilo Muni](https://gregdan3.github.io/ilo-muni/help/)
 
-## Planned QoL
+## [Acknowledgements and Thanks](https://gregdan3.github.io/ilo-muni/about/#thank-you-to)
+
+## Future Work
+
+### Quality of Life
 
 - Warn the user when a phrase they search has silly things going on
   - je appears in french
@@ -17,9 +26,9 @@ Check the [about page!]()
 - Bold every August (for toki pona's birthday)
 - Always show the last tick on the graph
 
-## Planned Features
+### New Features
 
-### Real Input Parser
+#### Real Input Parser
 
 - The current input parser is kinda bad.
 - It works for + and -, but adding onto it would be hell
@@ -30,7 +39,7 @@ Check the [about page!]()
 - And anyone expecting my input to do cool things like that will actually get a
   result, but a nonsense one!
 
-### Major Event Annotations
+#### Major Event Annotations
 
 - Toggleable
 - Release of pu, ku, su
@@ -39,9 +48,49 @@ Check the [about page!]()
 - Start of pandemic
 - Suspiciously large gap starting in feb 2023
 
-##### Acknowledgements
+## Licenses
 
-- Thanks to Phiresky for
-  [the unreal capabilities of sql.js-httpvfs](https://github.com/phiresky/sql.js-httpvfs).
-- Thanks to Jordemort for
-  [figuring out how to use that library in Astro](https://jordemort.dev/blog/client-side-search/))
+I would have distributed these statements in the license files themselves, but
+the [licensee library](https://github.com/licensee/licensee) that GitHub uses
+doesn't like when I do that. I'd like this software to be identified at a glance
+as having these specific licenses, which means adjusting how I deliver this
+information.
+
+### AGPL-3.0-or-later
+
+The
+[GNU Affero General Public License v3.0 or later](https://www.gnu.org/licenses/agpl-3.0.en.html)
+which is [distributed with this software](./LICENSE-AGPL) applies to all
+components of this software which are not specified by the adjacent CC-BY-SA-4.0
+license.
+
+Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
+
+### CC-BY-SA-4.0
+
+The
+[Creative Commons Attribution Share Alike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/)
+which is [distributed with this software](./LICENSE-CC-BY-SA) applies to the
+following files, files in a specified directory, and files at a specified URL;
+each is listed below its original copyright holder.
+
+Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
+
+- src/pages/about/
+- src/pages/help/
+- static/buttons/youtube.gif
+- static/db/
+- https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz
+
+Copyright (C) 2024 Nia (@nia.co, @yknowlikenia)
+
+- static/favicon-16x16.png
+- static/favicon-32x32.png
+- static/favicon.ico
+- static/favicon.svg
+- static/ilo-muni.png
+
+Copyright (C) 2024 Cuymacu (@cuymacu)
+
+- static/buttons/code_s.gif
+- static/buttons/lessons_s.gif

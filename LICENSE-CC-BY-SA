@@ -1,27 +1,3 @@
-This license is a part of ilo Muni, a graphing tool which displays the
-occurrence of toki pona words and phrases over time as they appear in online
-toki pona communities. This license applies to the following components,
-listed below their original copyright holder as files, directories containing
-files, or URLs which lead to files:
-
-Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
-  src/pages/about/
-  src/pages/help/
-  static/buttons/youtube.gif
-  static/db/
-  https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz
-
-Copyright (C) 2024 Nia Way (@nia.co)
-  static/favicon-16x16.png
-  static/favicon-32x32.png
-  static/favicon.ico
-  static/favicon.svg
-  static/ilo-muni.png
-
-Copyright (C) 2024 Cuymacu (@cuymacu)
-  static/buttons/code_s.gif
-  static/buttons/lessons_s.gif
-
 Attribution-ShareAlike 4.0 International
 
 =======================================================================
