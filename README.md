@@ -78,7 +78,6 @@ Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
 
 - src/pages/about/
 - src/pages/help/
-- static/buttons/youtube.gif
 - static/db/
 - https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz
 
@@ -94,3 +93,4 @@ Copyright (C) 2024 Cuymacu (@cuymacu)
 
 - static/buttons/code_s.gif
 - static/buttons/lessons_s.gif
+- static/buttons/youtube_s.gif
