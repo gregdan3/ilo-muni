@@ -80,6 +80,7 @@ const frontmatter = { title: "ilo Muni" };
     sampleQueryButton = document.getElementById(
       "sampleQueryButton",
     )! as HTMLElement;
+    copyUrlButton = document.getElementById("copyUrlButton")! as HTMLElement;
   }
 
   function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
@@ -238,6 +239,9 @@ const frontmatter = { title: "ilo Muni" };
       searchBox.value = randomQuery();
       await updatePage();
     });
+    copyUrlButton.addEventListener("click", async () => {
+      await copyUrlToClipboard();
+    });
     const form = document.getElementById("usageForm")! as HTMLFormElement;
     form.addEventListener("change", async () => {
       await updatePage();
@@ -282,9 +286,25 @@ const frontmatter = { title: "ilo Muni" };
         pluralText=" smoothing"
         id="smoothingDropdown"
       />
-    </form>
 
+      <div></div>
+
+      <EpochRangePicker
+        startYear={EARLIEST_YEAR}
+        endYear={LATEST_YEAR}
+        startValueYear={2016}
+        startId="startDropdown"
+        endId="endDropdown"
+        renderAs="date"
+      />
+    </form>
+    <span style="padding: 0.1em"></span>
+    <IconButton id="copyUrlButton" icon="mingcute:copy-line" />
+    <span style="padding: 1.8em"></span>
     <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
+
+    <!-- <IconButton id="helpButton" icon="mingcute:question-line" /> -->
+    <!-- <IconButton id="copyImageButton" icon="mingcute:pic-line" /> -->
   </div>
 
   <div style="position: relative; margin-top: 0.25em; max-height: 100%;">

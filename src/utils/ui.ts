@@ -5,12 +5,25 @@ export function randomQuery(): string {
   return randomElem(SAMPLE_SEARCHES);
 }
 
-export async function copyUrlToClipboard(): Promise<string> {
-  try {
-    const url = window.location.href;
+export async function copyUrlToClipboard() {
+  const url = window.location.href;
+
+  if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(url);
-    return "URL copied to clipboard!";
-  } catch (err) {
-    return `Failed to copy URL: ${err}`;
+  } else {
+    const textArea = document.createElement("textarea");
+    textArea.value = url;
+    textArea.style.position = "absolute";
+    textArea.style.left = "-9999px";
+    document.body.prepend(textArea);
+
+    try {
+      textArea.select();
+      document.execCommand("copy");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      textArea.remove();
+    }
   }
 }
