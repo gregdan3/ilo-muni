@@ -1,9 +1,14 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Loader from "@components/Loader.astro";
-import LenDropdown from "@components/LenDropdown.astro";
+import IntDropdown from "@components/IntDropdown.astro";
 import EpochPicker from "@components/EpochPicker.astro";
-import { EARLIEST_YEAR, LATEST_YEAR } from "@utils/constants";
+import {
+  EARLIEST_YEAR,
+  LATEST_YEAR,
+  LENGTHS,
+  SMOOTHINGS,
+} from "@utils/constants";
 
 const frontmatter = { title: "Rank by Frequency" };
 ---
@@ -122,18 +127,17 @@ const frontmatter = { title: "Rank by Frequency" };
 
       <form id="ranksForm" onsubmit="return false;" autocomplete="off">
         <div>
-          <LenDropdown
-            maxLength={6}
+          <IntDropdown
+            options={LENGTHS}
             singularText="All sentences"
             pluralText="+ words per sentence"
             id="sentLenDropdown"
           />
 
-          <LenDropdown
-            maxLength={6}
-            singularText="1 word"
-            pluralText=" words"
-            id="phraseLenDropdown"
+          <IntDropdown
+            options={SMOOTHINGS}
+            pluralText=" smoothing"
+            id="smoothingDropdown"
           />
         </div>
         <!-- TODO: all time picker -->

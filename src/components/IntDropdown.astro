@@ -1,0 +1,24 @@
+---
+export interface IntDropdownProps {
+  options: string[];
+  selected: string;
+  singularText?: string;
+  pluralText: string;
+  id: string;
+}
+
+const { options, selected, singularText, pluralText, id } =
+  Astro.props as IntDropdownProps;
+---
+
+<select id={id}>
+  {
+    options.map((option) => (
+      <option value={option} selected={option === selected}>
+        {singularText && option === "1"
+          ? singularText
+          : `${option}${pluralText}`}
+      </option>
+    ))
+  }
+</select>

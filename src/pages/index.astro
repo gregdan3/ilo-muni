@@ -2,13 +2,15 @@
 import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
-import LenDropdown from "@components/LenDropdown.astro";
+import IntDropdown from "@components/IntDropdown.astro";
 import CategorizedDropdown from "@components/search/CategorizedDropdown.astro";
 import {
   EARLIEST_YEAR,
   LATEST_YEAR,
+  LENGTHS,
   SCALES,
   SMOOTHERS,
+  SMOOTHINGS,
 } from "@utils/constants";
 
 const defaultScale = "rel";
@@ -238,8 +240,8 @@ const frontmatter = { title: "ilo Muni" };
       </div>
 
       <div>
-        <LenDropdown
-          maxLength={6}
+        <IntDropdown
+          options={LENGTHS}
           singularText="All sentences"
           pluralText="+ words per sentence"
           id="sentLenDropdown"
@@ -257,20 +259,11 @@ const frontmatter = { title: "ilo Muni" };
           selected={defaultSmoother}
         />
 
-        <select id="smoothingDropdown">
-          {
-            Array.from({ length: 10 }, (_, i) => (
-              <option value={i} selected={i === 2}>
-                {i} smoothing
-              </option>
-            ))
-          }
-          {
-            Array.from({ length: 5 }, (_, i) => (
-              <option value={(i + 1) * 10}>{(i + 1) * 10} smoothing</option>
-            ))
-          }
-        </select>
+        <IntDropdown
+          options={SMOOTHINGS}
+          pluralText=" smoothing"
+          id="smoothingDropdown"
+        />
         <EpochRangePicker
           startYear={EARLIEST_YEAR}
           endYear={LATEST_YEAR}
