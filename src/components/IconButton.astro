@@ -1,0 +1,13 @@
+---
+export interface IconButtonConfig {
+  id: string;
+  icon: string;
+}
+const { id, icon } = Astro.props as IconButtonConfig;
+
+import { Icon } from "astro-icon/components";
+---
+
+<button id={id}>
+  <Icon name={icon} />
+</button>
