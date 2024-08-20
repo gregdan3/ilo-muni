@@ -1,4 +1,25 @@
 import { UCSUR_RE } from "@utils/constants";
+import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
+
+export function randomElem<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export function isValidTimestamp(timestamp: string | null): boolean {
+  // TODO: it also needs to be one of the selectable timestamps, not just any in range
+  if (!timestamp) {
+    return false;
+  }
+
+  const parsedTimestamp = parseInt(timestamp, 10);
+  if (parsedTimestamp < EARLIEST_TIMESTAMP) {
+    return false;
+  }
+  if (parsedTimestamp > LATEST_TIMESTAMP) {
+    return false;
+  }
+  return true;
+}
 
 export function makeAugust(year: number) {
   return new Date(Date.UTC(year, 7, 1));

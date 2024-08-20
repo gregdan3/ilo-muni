@@ -34,6 +34,56 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 // no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
 export const LATEST_ALLOWED_TIMESTAMP = 1719792000;
 
+export const SAMPLE_SEARCHES = [
+  // duh
+  "toki, pona, toki pona",
+  "sitelen, pona, sitelen pona",
+  // phrase trends
+  "tomo tawa, ilo tawa",
+  "sina seme, sina pilin seme, sina pali e seme",
+  // synonyms
+  "ale, ali, ale + ali",
+  "ala, x, ala + x",
+  "anu, y, anu + y",
+  // word groups
+  "laso, loje, walo, jelo, pimeja",
+  "soweli, waso, kala, akesi, pipi",
+  "sewi, anpa",
+  "sinpin, monsi",
+  "meli, mije, tonsi",
+  "pu, ku, su",
+  "lukin, oko",
+  "sin, namako",
+  "selo, sijelo",
+  // modifier usage
+  "wawa a, wawa mute",
+  "tenpo ni, tenpo lon",
+  "tenpo kama, tenpo pini",
+  "tenpo weka, tenpo poka",
+  "tenpo suno, tenpo pimeja",
+  "tenpo suli, tenpo lili",
+  // grammatical things
+  "kepeken ilo, kepeken e ilo",
+  "kin la, poka la, sama la",
+  "pali e, lon e",
+  // names
+  "jan kekan, mun kekan",
+  "epanja, kanse, tosi",
+  "sonja, jan sonja",
+  "inli, toki inli",
+  // disambiguation
+  "san - kekan san",
+  "inli - toki inli, epanja - toki epanja",
+  "toki_1 - toki_2, pona_1 - pona_2",
+  // periodic phrases
+  "suno pi toki pona",
+  "tenpo monsuta",
+  "tenpo pana",
+  "tenpo lete, tenpo seli",
+  // funney
+  "sona kiwen",
+];
+
 // absolutes should be preserved
 // derivatives are impervious to smoothing
 export const SCALES = {
