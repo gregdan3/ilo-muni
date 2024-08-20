@@ -5,6 +5,8 @@ import Loader from "@components/Loader.astro";
 import IntDropdown from "@components/IntDropdown.astro";
 import CategorizedDropdown from "@components/CategorizedDropdown.astro";
 import IconButton from "@components/IconButton.astro";
+import InfoModal from "@components/InfoModal.astro";
+import Help from "@components/search/Help.mdx";
 
 import {
   EARLIEST_YEAR,
@@ -300,10 +302,10 @@ const frontmatter = { title: "ilo Muni" };
     </form>
     <span style="padding: 0.1em"></span>
     <IconButton id="copyUrlButton" icon="mingcute:copy-line" />
-    <span style="padding: 1.8em"></span>
+    <!-- <IconButton id="helpButton" icon="mingcute:question-line" /> -->
+    <span style="padding: 1.4em"></span>
     <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
 
-    <!-- <IconButton id="helpButton" icon="mingcute:question-line" /> -->
     <!-- <IconButton id="copyImageButton" icon="mingcute:pic-line" /> -->
   </div>
 
@@ -313,6 +315,10 @@ const frontmatter = { title: "ilo Muni" };
   </div>
 
   <div id="errorBin"></div>
+
+  <InfoModal>
+    <Help />
+  </InfoModal>
 </Layout>
 
 <style>

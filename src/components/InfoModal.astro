@@ -1,0 +1,13 @@
+---
+export interface InfoModalProps {
+  id: string;
+}
+const { id } = Astro.props as InfoModalProps;
+---
+
+<dialog
+  id={id}
+  style="position: absolute; top:50%; bottom:50%; max-width: 65%;"
+>
+  <slot />
+</dialog>
