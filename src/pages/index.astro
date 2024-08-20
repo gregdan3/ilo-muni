@@ -4,6 +4,8 @@ import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 import IntDropdown from "@components/IntDropdown.astro";
 import CategorizedDropdown from "@components/search/CategorizedDropdown.astro";
+import IconButton from "@components/IconButton.astro";
+
 import {
   EARLIEST_YEAR,
   LATEST_YEAR,
@@ -33,6 +35,8 @@ const frontmatter = { title: "ilo Muni" };
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { SCALES } from "@utils/constants";
+  import { randomQuery, copyUrlToClipboard } from "@utils/ui";
+
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
   let sentLenDropdown: HTMLInputElement;
@@ -72,6 +76,10 @@ const frontmatter = { title: "ilo Muni" };
 
     loader = document.getElementById("loader")! as HTMLSpanElement;
     errorBin = document.getElementById("errorBin")! as HTMLDivElement;
+
+    sampleQueryButton = document.getElementById(
+      "sampleQueryButton",
+    )! as HTMLElement;
   }
 
   function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
@@ -222,8 +230,14 @@ const frontmatter = { title: "ilo Muni" };
       endDropdown.value = initialParams.end;
     }
 
+    // runs chart updates and such
     await updatePage();
 
+    // setup reactivity
+    sampleQueryButton.addEventListener("click", async () => {
+      searchBox.value = randomQuery();
+      await updatePage();
+    });
     const form = document.getElementById("usageForm")! as HTMLFormElement;
     form.addEventListener("change", async () => {
       await updatePage();
@@ -233,47 +247,44 @@ const frontmatter = { title: "ilo Muni" };
 
 <Layout frontmatter={frontmatter}>
   <div>
-    <form id="usageForm" onsubmit="return false;" autocomplete="off">
+    <form
+      id="usageForm"
+      onsubmit="return false;"
+      autocomplete="off"
+      style="display: inline;"
+    >
       <div>
         <input type="text" id="searchBox" spellcheck="false" />
         <Loader id="loader" />
       </div>
 
-      <div>
-        <IntDropdown
-          options={LENGTHS}
-          singularText="All sentences"
-          pluralText="+ words per sentence"
-          id="sentLenDropdown"
-        />
+      <IntDropdown
+        options={LENGTHS}
+        singularText="All sentences"
+        pluralText="+ words per sentence"
+        id="sentLenDropdown"
+      />
 
-        <CategorizedDropdown
-          id="scaleDropdown"
-          options={SCALES}
-          selected={defaultScale}
-        />
+      <CategorizedDropdown
+        id="scaleDropdown"
+        options={SCALES}
+        selected={defaultScale}
+      />
 
-        <CategorizedDropdown
-          id="smootherDropdown"
-          options={SMOOTHERS}
-          selected={defaultSmoother}
-        />
+      <CategorizedDropdown
+        id="smootherDropdown"
+        options={SMOOTHERS}
+        selected={defaultSmoother}
+      />
 
-        <IntDropdown
-          options={SMOOTHINGS}
-          pluralText=" smoothing"
-          id="smoothingDropdown"
-        />
-        <EpochRangePicker
-          startYear={EARLIEST_YEAR}
-          endYear={LATEST_YEAR}
-          startValueYear={2016}
-          startId="startDropdown"
-          endId="endDropdown"
-          renderAs="date"
-        />
-      </div>
+      <IntDropdown
+        options={SMOOTHINGS}
+        pluralText=" smoothing"
+        id="smoothingDropdown"
+      />
     </form>
+
+    <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
   </div>
 
   <div style="position: relative; margin-top: 0.25em; max-height: 100%;">
