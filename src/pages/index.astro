@@ -73,26 +73,19 @@ const frontmatter = { title: "ilo Muni" };
   }
 
   function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
-    // Clear the error bin first
     errorBin.innerHTML = "";
-
-    // If there are no errors, you might want to display a "No errors" message
     if (errors.length === 0) {
       errorBin.textContent = "";
       return;
     }
-
-    // Create a list to display errors
     const ul = document.createElement("ul");
 
-    // Populate the list with the errors
     errors.forEach((err) => {
       const li = document.createElement("li");
       li.textContent = `${err.query}: ${err.error}`;
       ul.appendChild(li);
     });
 
-    // Append the list to the error bin
     errorBin.appendChild(ul);
   }
 
@@ -104,9 +97,6 @@ const frontmatter = { title: "ilo Muni" };
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
     const end = Number(endDropdown.value);
-
-    // disable smoothness if absolute is set
-    // graphing absolute data with smoothness is silly
 
     if (SCALES[scale].smoothable) {
       smootherDropdown.disabled = false;
