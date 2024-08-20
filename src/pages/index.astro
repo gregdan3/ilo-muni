@@ -31,6 +31,46 @@ const frontmatter = { title: "ilo Muni" };
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { SCALES } from "@utils/constants";
+  let usageCanvas: HTMLCanvasElement;
+  let searchBox: HTMLInputElement;
+  let sentLenDropdown: HTMLInputElement;
+  let scaleDropdown: HTMLInputElement;
+  let smootherDropdown: HTMLInputElement;
+  let smoothingDropdown: HTMLInputElement;
+  let startDropdown: HTMLInputElement;
+  let endDropdown: HTMLInputElement;
+  let loader: HTMLSpanElement;
+  let errorBin: HTMLDivElement;
+  let sampleQueryButton: HTMLElement;
+  let copyUrlButton: HTMLElement;
+
+  function initFetch() {
+    usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
+
+    searchBox = document.getElementById("searchBox")! as HTMLInputElement;
+
+    sentLenDropdown = document.getElementById(
+      "sentLenDropdown",
+    )! as HTMLInputElement;
+    scaleDropdown = document.getElementById(
+      "scaleDropdown",
+    )! as HTMLInputElement;
+
+    smootherDropdown = document.getElementById(
+      "smootherDropdown",
+    )! as HTMLInputElement;
+    smoothingDropdown = document.getElementById(
+      "smoothingDropdown",
+    )! as HTMLInputElement;
+
+    startDropdown = document.getElementById(
+      "startDropdown",
+    )! as HTMLInputElement;
+    endDropdown = document.getElementById("endDropdown")! as HTMLInputElement;
+
+    loader = document.getElementById("loader")! as HTMLSpanElement;
+    errorBin = document.getElementById("errorBin")! as HTMLDivElement;
+  }
 
   function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
     // Clear the error bin first
@@ -56,18 +96,7 @@ const frontmatter = { title: "ilo Muni" };
     errorBin.appendChild(ul);
   }
 
-  async function updatePage(
-    canvas: HTMLCanvasElement,
-    searchBox: HTMLInputElement,
-    sentLenDropdown: HTMLInputElement,
-    scaleDropdown: HTMLInputElement,
-    smootherDropdown: HTMLInputElement,
-    smoothingDropdown: HTMLInputElement,
-    startDropdown: HTMLInputElement,
-    endDropdown: HTMLInputElement,
-    loader: HTMLSpanElement,
-    errorBin: HTMLDivElement,
-  ) {
+  async function updatePage() {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const scale = scaleDropdown.value as Scale;
@@ -91,7 +120,6 @@ const frontmatter = { title: "ilo Muni" };
 
     loader.style.visibility = "visible";
     let { queries, errors } = await updateChart(
-      canvas,
       queryText,
       sentLen,
       scale,
@@ -129,7 +157,6 @@ const frontmatter = { title: "ilo Muni" };
   }
 
   async function updateChart(
-    canvas: HTMLCanvasElement,
     input: string,
     minSentLen: Length,
     scale: Scale,
@@ -177,33 +204,12 @@ const frontmatter = { title: "ilo Muni" };
       });
     }
 
-    await reloadUsageChart(canvas, results);
+    await reloadUsageChart(usageCanvas, results);
     return { queries, errors };
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const searchBox = document.getElementById("searchBox")! as HTMLInputElement;
-    const sentLenDropdown = document.getElementById(
-      "sentLenDropdown",
-    )! as HTMLInputElement;
-    const scaleDropdown = document.getElementById(
-      "scaleDropdown",
-    )! as HTMLInputElement;
-    const smootherDropdown = document.getElementById(
-      "smootherDropdown",
-    )! as HTMLInputElement;
-    const smoothingDropdown = document.getElementById(
-      "smoothingDropdown",
-    )! as HTMLInputElement;
-    const startDropdown = document.getElementById(
-      "startDropdown",
-    )! as HTMLInputElement;
-    const endDropdown = document.getElementById(
-      "endDropdown",
-    )! as HTMLInputElement;
-
-    const loader = document.getElementById("loader")! as HTMLSpanElement;
-    const errorBin = document.getElementById("errorBin")! as HTMLDivElement;
+    initFetch();
 
     let initialParams = getSearchParams();
     // aside from query which starts empty, allow defaults of form
@@ -224,34 +230,11 @@ const frontmatter = { title: "ilo Muni" };
       endDropdown.value = initialParams.end;
     }
 
-    const usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-    await updatePage(
-      usageCanvas,
-      searchBox,
-      sentLenDropdown,
-      scaleDropdown,
-      smootherDropdown,
-      smoothingDropdown,
-      startDropdown,
-      endDropdown,
-      loader,
-      errorBin,
-    );
+    await updatePage();
 
     const form = document.getElementById("usageForm")! as HTMLFormElement;
     form.addEventListener("change", async () => {
-      await updatePage(
-        usageCanvas,
-        searchBox,
-        sentLenDropdown,
-        scaleDropdown,
-        smootherDropdown,
-        smoothingDropdown,
-        startDropdown,
-        endDropdown,
-        loader,
-        errorBin,
-      );
+      await updatePage();
     });
   });
 </script>
