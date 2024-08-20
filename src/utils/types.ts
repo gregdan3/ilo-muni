@@ -1,31 +1,17 @@
 // URL params
-import { SCALES, SMOOTHERS } from "@utils/constants";
-export const lengthParams = ["1", "2", "3", "4", "5", "6"];
-export const lengths = lengthParams.map((n: string): number => {
+import { SCALES, SMOOTHERS, LENGTHS, SMOOTHINGS } from "@utils/constants";
+
+export const lengths = LENGTHS.map((n: string): number => {
   return parseInt(n, 10);
 });
-export const smoothingParams = [
-  "0",
-  "1",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "20",
-  "30",
-  "40",
-  "50",
-];
+export const smoothings = SMOOTHINGS.map((n: string): number => {
+  return parseInt(n, 10);
+});
 
 export type Scale = keyof typeof SCALES;
-export type LengthParam = (typeof lengthParams)[number];
+export type LengthParam = (typeof LENGTHS)[number];
 export type Smoother = keyof typeof SMOOTHERS;
-export type SmoothingParam = (typeof smoothingParams)[number];
+export type SmoothingParam = (typeof SMOOTHINGS)[number];
 
 export interface SearchURLParams {
   query: string;

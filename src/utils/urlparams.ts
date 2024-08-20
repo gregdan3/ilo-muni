@@ -1,4 +1,10 @@
-import { SCALES, SMOOTHERS } from "@utils/constants";
+import {
+  SCALES,
+  SMOOTHERS,
+  LENGTHS,
+  SMOOTHINGS,
+  SAMPLE_SEARCHES,
+} from "@utils/constants";
 import type {
   LengthParam,
   SmoothingParam,
@@ -7,13 +13,11 @@ import type {
   SearchURLParams,
   RanksURLParams,
 } from "@utils/types";
-import { lengthParams, smoothingParams } from "@utils/types";
 import { randomElem, isValidTimestamp } from "@utils/other";
-import { SAMPLE_SEARCHES } from "@utils/constants";
 
 export function coalesceLength(maybeLen: string): LengthParam | null {
   let len: LengthParam | null = null;
-  if (maybeLen && lengthParams.includes(maybeLen)) {
+  if (maybeLen && LENGTHS.includes(maybeLen)) {
     len = maybeLen as LengthParam;
   }
   return len;
@@ -23,7 +27,7 @@ export function coalesceSmoothing(
   maybeSmoothing: string | null,
 ): SmoothingParam | null {
   let smoothing: SmoothingParam | null = null;
-  if (maybeSmoothing && smoothingParams.includes(maybeSmoothing)) {
+  if (maybeSmoothing && SMOOTHINGS.includes(maybeSmoothing)) {
     smoothing = maybeSmoothing as SmoothingParam;
   }
   return smoothing;

@@ -34,6 +34,25 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 // no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
 export const LATEST_ALLOWED_TIMESTAMP = 1719792000;
 
+export const LENGTHS = ["1", "2", "3", "4", "5", "6"];
+export const SMOOTHINGS = [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "20",
+  "30",
+  "40",
+  "50",
+];
+
 export const SAMPLE_SEARCHES = [
   // duh
   "toki, pona, toki pona",
