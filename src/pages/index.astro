@@ -19,6 +19,7 @@ import {
 
 const defaultScale = "rel";
 const defaultSmoother = "cwin";
+const defaultSmoothing = "2";
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -284,9 +285,10 @@ const frontmatter = { title: "ilo Muni" };
       />
 
       <IntDropdown
-        options={SMOOTHINGS}
-        pluralText=" smoothing"
         id="smoothingDropdown"
+        options={SMOOTHINGS}
+        selected={defaultSmoothing}
+        pluralText=" smoothing"
       />
 
       <div></div>
