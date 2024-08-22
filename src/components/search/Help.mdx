@@ -1,17 +1,27 @@
 ---
 ---
 
-- Search words or phrases up to **6 words long**: `musi mute a`
-- Search **multiple phrases at once** with commas `,`: `toki, pona`
-- Use **wildcard** `*` in place of a word to get top phrases: `ona li *`
-- **Add** phrases with `+`: `ale + ali`
-- **Subtract** with `-`: `toki - toki pona`
-- Set a **minimum sentence length** by adding `_1-6` to a phrase:
-  `toki_2, toki_3`
-- The sentences menu sets the **minimum sentence length** for **all searches**
-- The **Relative scale** shows the percentage of times a word appeared
-- The **Absolute scale** shows the number of times a word appeared
+import { Icon } from "astro-icon/components";
+
+<h3 style="margin: 0; line-height: 0.5em;">Search</h3>
+
+- Search **1 to 6 word phrases**: "toki pona"
+- Search **multiple phrases** with commas: "soweli, waso"
+- Use a **wildcard** `*` to get top matching phrases: "ona li \*"
+- **Add** phrases with `+`: "ale + ali"
+- **Subtract** phrases with `-`: "toki - toki pona"
+- Limit **minimum sentence length** with `_1-6` on a phrase: "toki_2, toki_3"
+
+<h3 style="margin-bottom: 0; line-height: 0.5em;">Options</h3>
+
+- The "all sentences" menu sets **minimum sentence length** for **all phrases**
+- **Relative** shows what % of all words are the searched word
+- **Absolute** shows how many times the searched word appeared
 - **Smoothing** averages out noisy graphs, but too much can be misleading
-- The rest is weird or complicated- use the defaults or
-  [check the help page](/ilo-muni/help)
-- **o musi pona, o alasa pona! Have fun, search responsibly!**
+- The rest is complicated! [See the help page for more.](/ilo-muni/help)
+
+<h3 style="margin-bottom: 0; line-height: 0.5em;">Buttons</h3>
+
+- <Icon name="mingcute:question-line" />: Open this help dialog
+- <Icon name="mingcute:copy-line" />: Copy the current URL (to share!)
+- <Icon name="mingcute:refresh-3-line" />: Get a random sample search
