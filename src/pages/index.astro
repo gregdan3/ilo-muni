@@ -7,6 +7,7 @@ import CategorizedDropdown from "@components/CategorizedDropdown.astro";
 import IconButton from "@components/IconButton.astro";
 import InfoModal from "@components/InfoModal.astro";
 import Help from "@components/search/Help.mdx";
+import { Icon } from "astro-icon/components";
 
 import {
   EARLIEST_YEAR,
@@ -303,8 +304,11 @@ const frontmatter = { title: "ilo Muni" };
       />
     </form>
     <span style="padding-left: 0.2em"></span>
+    <InfoModal>
+      <Icon name="mingcute:question-line" slot="button" />
+      <Help />
+    </InfoModal>
     <IconButton id="copyUrlButton" icon="mingcute:copy-line" />
-    <!-- <IconButton id="helpButton" icon="mingcute:question-line" /> -->
     <span style="padding-left: 2.8em"></span>
     <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
 
@@ -317,10 +321,6 @@ const frontmatter = { title: "ilo Muni" };
   </div>
 
   <div id="errorBin"></div>
-
-  <InfoModal>
-    <Help />
-  </InfoModal>
 </Layout>
 
 <style>
