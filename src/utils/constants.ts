@@ -1,4 +1,5 @@
 import { makeAugust } from "@utils/other";
+import type { Axis } from "@utils/types";
 
 export const BASE_URL = "/ilo-muni";
 export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
@@ -105,30 +106,85 @@ export const SAMPLE_SEARCHES = [
 
 // absolutes should be preserved
 // derivatives are impervious to smoothing
-export const SCALES = {
-  abs: { label: "Absolute", category: "simple", smoothable: false },
-  rel: { label: "Relative", category: "simple", smoothable: true },
-  cmsum: { label: "Cumulative", category: "simple", smoothable: false },
+export const SCALES: {
+  [key: string]: {
+    label: string;
+    category: string;
+    smoothable: boolean;
+    axis: Axis;
+  };
+} = {
+  abs: {
+    label: "Absolute",
+    category: "simple",
+    smoothable: false,
+    axis: "linear",
+  },
+  rel: {
+    label: "Relative",
+    category: "simple",
+    smoothable: true,
+    axis: "linear",
+  },
+  cmsum: {
+    label: "Cumulative",
+    category: "simple",
+    smoothable: false,
+    axis: "linear",
+  },
   logabs: {
     label: "Absolute Log",
     category: "useful",
     smoothable: false,
+    axis: "logarithmic",
   },
-  logrel: { label: "Relative Log", category: "useful", smoothable: true },
-  logcm: { label: "Cumulative Log", category: "useful", smoothable: false },
-  normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
-  normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
-  normcm: { label: "Cumulative Minmax", category: "useful", smoothable: false },
-  entropy: { label: "Absolute Entropy", category: "weird", smoothable: true },
+  logrel: {
+    label: "Relative Log",
+    category: "useful",
+    smoothable: true,
+    axis: "logarithmic",
+  },
+  logcm: {
+    label: "Cumulative Log",
+    category: "useful",
+    smoothable: false,
+    axis: "logarithmic",
+  },
+  normabs: {
+    label: "Absolute Minmax",
+    category: "useful",
+    smoothable: false,
+    axis: "linear",
+  },
+  normrel: {
+    label: "Relative Minmax",
+    category: "useful",
+    smoothable: true,
+    axis: "linear",
+  },
+  normcm: {
+    label: "Cumulative Minmax",
+    category: "useful",
+    smoothable: false,
+    axis: "linear",
+  },
+  entropy: {
+    label: "Absolute Entropy",
+    category: "weird",
+    smoothable: true,
+    axis: "linear",
+  },
   relentropy: {
     label: "Relative Entropy",
     category: "weird",
     smoothable: true,
+    axis: "linear",
   },
   deriv1: {
     label: "Absolute 1st Deriv",
     category: "weird",
     smoothable: false,
+    axis: "linear",
   },
   // deriv2: {
   //   label: "2nd Deriv Absolute",
@@ -139,6 +195,7 @@ export const SCALES = {
     label: "Relative 1st Deriv",
     category: "weird",
     smoothable: false,
+    axis: "linear",
   },
   // relderiv2: {
   //   label: "2nd Deriv Relative",
@@ -149,6 +206,7 @@ export const SCALES = {
     label: "Relative Z-Score",
     category: "weird",
     smoothable: true,
+    axis: "linear",
   },
 };
 

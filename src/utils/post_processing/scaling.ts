@@ -147,22 +147,3 @@ export const scaleFunctions: {
   relentropy: relativeEntropyScale,
   zscore: relativeZScoreScale,
 };
-
-export const axes: { [key: string]: Axis } = {
-  abs: "linear",
-  rel: "linear",
-  logabs: "logarithmic",
-  logrel: "logarithmic",
-  normabs: "linear",
-  normrel: "linear",
-  deriv1: "linear",
-  deriv2: "linear",
-  relderiv1: "linear",
-  relderiv2: "linear",
-  cmsum: "linear",
-  normcm: "linear",
-  logcm: "logarithmic",
-  entropy: "linear",
-  relentropy: "linear",
-  zscore: "linear",
-};
