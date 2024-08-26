@@ -155,7 +155,7 @@ export async function reloadUsageChart(
       label: result.term,
       data: result.data,
     }));
-    existingChart.options.scales!.y = { type: axis };
+    existingChart.options.scales!.y!.type = axis;
     existingChart.update();
   }
 }
