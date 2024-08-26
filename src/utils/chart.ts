@@ -64,7 +64,6 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
         },
         y: {
           beginAtZero: true,
-          alignToPixels: true,
           grid: {
             color: "#EAEAEA",
             lineWidth: 2,
