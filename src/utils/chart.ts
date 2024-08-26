@@ -43,6 +43,7 @@ async function initUsageChart(
       scales: {
         x: {
           type: "time",
+          axis: "x",
           time: {
             unit: "month",
             round: "month",
@@ -70,6 +71,7 @@ async function initUsageChart(
         y: {
           beginAtZero: true,
           type: axis,
+          axis: "y",
           grid: {
             color: "#EAEAEA",
             lineWidth: 2,
