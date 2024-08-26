@@ -51,8 +51,9 @@ async function initUsageChart(
           },
           grid: {
             drawOnChartArea: false,
+            color: "#EAEAEA",
+            tickColor: "#9e9e9e",
             lineWidth: 2,
-            color: "#9e9e9e",
           },
           ticks: {
             padding: 2,
@@ -74,6 +75,7 @@ async function initUsageChart(
           grid: {
             color: "#EAEAEA",
             lineWidth: 2,
+            tickColor: "#9e9e9e",
           },
           border: {
             display: false,
