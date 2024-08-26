@@ -135,8 +135,8 @@ export interface QueryParams {
   end: number;
 }
 
-function graphableDate(timestamp: number): Date {
-  return new Date(timestamp * 1000 + DAY_IN_MS);
+function fakeLocalizeTimestamp(timestamp: number): number {
+  return timestamp * 1000 + DAY_IN_MS;
 }
 
 function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
@@ -177,7 +177,7 @@ async function fetchOneOccurrenceSet(
 
   resp = resp.map(
     (row: { day: number; occurrences: number }): Row => ({
-      day: graphableDate(row.day),
+      day: fakeLocalizeTimestamp(row.day),
       occurrences: row.occurrences,
     }),
   );
@@ -314,7 +314,7 @@ async function fetchTotalOccurrences(
   let result = await queryDb(TOTAL_QUERY, [phraseLen, minSentLen, start, end]);
   result = result.map(
     (row: { day: number; occurrences: number }): Row => ({
-      day: graphableDate(row.day),
+      day: fakeLocalizeTimestamp(row.day),
       occurrences: row.occurrences,
     }),
   );
