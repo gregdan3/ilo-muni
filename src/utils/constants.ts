@@ -118,39 +118,35 @@ export const SCALES = {
   logcm: { label: "Cumulative Log", category: "useful", smoothable: false },
   normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
   normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
-  entropy: {
-    label: "Absolute Entropy",
-    category: "weird or dupe",
-    smoothable: true,
-  },
+  entropy: { label: "Absolute Entropy", category: "weird", smoothable: true },
   relentropy: {
     label: "Relative Entropy",
-    category: "weird or dupe",
+    category: "weird",
     smoothable: true,
   },
   deriv1: {
     label: "Absolute 1st Deriv",
-    category: "weird or dupe",
+    category: "weird",
     smoothable: false,
   },
   // deriv2: {
   //   label: "2nd Deriv Absolute",
-  //   category: "weird or dupe",
+  //   category: "weird",
   //   smoothable: false,
   // },
   relderiv1: {
     label: "Relative 1st Deriv",
-    category: "weird or dupe",
+    category: "weird",
     smoothable: false,
   },
   // relderiv2: {
   //   label: "2nd Deriv Relative",
-  //   category: "weird or dupe",
+  //   category: "weird",
   //   smoothable: false,
   // },
   zscore: {
     label: "Relative Z-Score",
-    category: "weird or dupe",
+    category: "weird",
     smoothable: true,
   },
 };
