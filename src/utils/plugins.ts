@@ -114,6 +114,8 @@ export const crossHairPlugin = {
     ctx.beginPath();
     ctx.moveTo(x, area.top);
     ctx.lineTo(x, area.bottom);
+    // ctx.moveTo(area.left, y);
+    // ctx.lineTo(area.right, y);
     ctx.lineWidth = 1;
     ctx.strokeStyle = "rgba(120, 130, 130, 0.8)";
     ctx.setLineDash([2, 2]);
