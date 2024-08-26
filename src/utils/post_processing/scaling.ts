@@ -94,6 +94,9 @@ const cumulativeScale: AbsoluteScaler = (rows: Row[]) => {
   });
 };
 
+const normalizedCumulativeScale: AbsoluteScaler = (rows: Row[]) =>
+  normalizedScale(cumulativeScale(rows));
+
 const absoluteEntropyScale: AbsoluteScaler = (rows: Row[]) => {
   const totalOccurrences = getTotalOccurrences(rows);
 
@@ -139,6 +142,7 @@ export const scaleFunctions: {
   relderiv2: relativeSecondDerivativeScale,
   cmsum: cumulativeScale,
   logcm: cumulativeScale,
+  normcm: normalizedCumulativeScale,
   entropy: absoluteEntropyScale,
   relentropy: relativeEntropyScale,
   zscore: relativeZScoreScale,
@@ -156,6 +160,7 @@ export const axes: { [key: string]: Axis } = {
   relderiv1: "linear",
   relderiv2: "linear",
   cmsum: "linear",
+  normcm: "linear",
   logcm: "logarithmic",
   entropy: "linear",
   relentropy: "linear",

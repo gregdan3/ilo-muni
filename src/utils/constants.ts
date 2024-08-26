@@ -118,6 +118,7 @@ export const SCALES = {
   logcm: { label: "Cumulative Log", category: "useful", smoothable: false },
   normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
   normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
+  normcm: { label: "Cumulative Minmax", category: "useful", smoothable: false },
   entropy: { label: "Absolute Entropy", category: "weird", smoothable: true },
   relentropy: {
     label: "Relative Entropy",
