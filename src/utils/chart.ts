@@ -69,7 +69,6 @@ async function initUsageChart(
           // },
         },
         y: {
-          beginAtZero: true,
           type: axis,
           axis: "y",
           grid: {
