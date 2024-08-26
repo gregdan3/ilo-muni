@@ -115,6 +115,7 @@ export const SCALES = {
     smoothable: false,
   },
   logrel: { label: "Relative Log", category: "useful", smoothable: true },
+  logcm: { label: "Cumulative Log", category: "useful", smoothable: false },
   normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
   normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
   entropy: {
