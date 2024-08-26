@@ -1,4 +1,4 @@
-import { htmlLegendPlugin, verticalLinePlugin } from "@utils/plugins";
+import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import type { Axis } from "@utils/types";
 import type { Result, Row } from "@utils/sqlite";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
@@ -32,7 +32,7 @@ async function initUsageChart(
         data: result.data,
       })),
     },
-    plugins: [htmlLegendPlugin, verticalLinePlugin],
+    plugins: [htmlLegendPlugin, crossHairPlugin],
     options: {
       responsive: true,
       animation: false,

@@ -91,8 +91,8 @@ export const htmlLegendPlugin = {
   },
 };
 
-export const verticalLinePlugin = {
-  id: "verticalLine",
+export const crossHairPlugin = {
+  id: "crossHair",
   afterTooltipDraw: (chart: Chart) => {
     const tooltip = chart.tooltip;
     const ctx = chart.ctx;
@@ -156,4 +156,4 @@ declare module "chart.js" {
 
 Chart.register(annotationPlugin);
 Chart.register(htmlLegendPlugin);
-Chart.register(verticalLinePlugin);
+Chart.register(crossHairPlugin);
