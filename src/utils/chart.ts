@@ -43,6 +43,18 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
             round: "month",
             tooltipFormat: "MMM yyyy",
           },
+          grid: {
+            drawOnChartArea: false,
+            lineWidth: 2,
+            color: "#9e9e9e",
+          },
+          ticks: {
+            padding: 2,
+          },
+          border: {
+            width: 2,
+            color: "#9e9e9e",
+          },
           // beforeFit: function (axis) {
           //   // @ts-expect-error
           //   let lbs: string[] = axis.chart.config.data.labels!;
@@ -52,6 +64,14 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
         },
         y: {
           beginAtZero: true,
+          alignToPixels: true,
+          grid: {
+            color: "#EAEAEA",
+            lineWidth: 2,
+          },
+          border: {
+            display: false,
+          },
         },
       },
       elements: {
