@@ -1,4 +1,5 @@
 import type { Row } from "@utils/sqlite.ts";
+import type { Axis } from "@utils/types.ts";
 
 type AbsoluteScaler = (rows: Row[]) => Row[];
 type RelativeScaler = (rows: Row[], totals: Row[]) => Row[];
@@ -128,8 +129,8 @@ export const scaleFunctions: {
 } = {
   abs: absoluteScale,
   rel: relativeScale,
-  logabs: logarithmicAbsoluteScale,
-  logrel: logarithmicRelativeScale,
+  logabs: absoluteScale,
+  logrel: relativeScale,
   normabs: normalizedAbsoluteScale,
   normrel: normalizedRelativeScale,
   deriv1: absoluteDerivativeScale,
@@ -140,4 +141,21 @@ export const scaleFunctions: {
   entropy: absoluteEntropyScale,
   relentropy: relativeEntropyScale,
   zscore: relativeZScoreScale,
+};
+
+export const axes: { [key: string]: Axis } = {
+  abs: "linear",
+  rel: "linear",
+  logabs: "logarithmic",
+  logrel: "logarithmic",
+  normabs: "linear",
+  normrel: "linear",
+  deriv1: "linear",
+  deriv2: "linear",
+  relderiv1: "linear",
+  relderiv2: "linear",
+  cmsum: "linear",
+  entropy: "linear",
+  relentropy: "linear",
+  zscore: "linear",
 };

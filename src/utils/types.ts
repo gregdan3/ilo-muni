@@ -12,6 +12,7 @@ export type Scale = keyof typeof SCALES;
 export type LengthParam = (typeof LENGTHS)[number];
 export type Smoother = keyof typeof SMOOTHERS;
 export type SmoothingParam = (typeof SMOOTHINGS)[number];
+export type Axis = "linear" | "logarithmic";
 
 export interface SearchURLParams {
   query: string;

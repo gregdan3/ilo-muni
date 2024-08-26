@@ -1,4 +1,5 @@
 import { htmlLegendPlugin, verticalLinePlugin } from "@utils/plugins";
+import type { Axis } from "@utils/types";
 import type { Result, Row } from "@utils/sqlite";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
@@ -18,7 +19,11 @@ function roundForGraph(num: number): number {
   return Math.floor(num * multiplier) / multiplier;
 }
 
-async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
+async function initUsageChart(
+  canvas: HTMLCanvasElement,
+  data: Result[],
+  axis: Axis,
+) {
   const chart = new Chart(canvas, {
     type: "line",
     data: {
@@ -64,6 +69,7 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
         },
         y: {
           beginAtZero: true,
+          type: axis,
           grid: {
             color: "#EAEAEA",
             lineWidth: 2,
@@ -139,14 +145,16 @@ async function initUsageChart(canvas: HTMLCanvasElement, data: Result[]) {
 export async function reloadUsageChart(
   canvas: HTMLCanvasElement,
   data: Result[],
+  axis: Axis,
 ) {
   if (!existingChart) {
-    existingChart = await initUsageChart(canvas, data);
+    existingChart = await initUsageChart(canvas, data, axis);
   } else {
     existingChart.data.datasets = data.map((result: Result) => ({
       label: result.term,
       data: result.data,
     }));
+    existingChart.options.scales!.y = { type: axis };
     existingChart.update();
   }
 }

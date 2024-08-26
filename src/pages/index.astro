@@ -40,6 +40,7 @@ const frontmatter = { title: "ilo Muni" };
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { SCALES } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
+  import { axes } from "@utils/post_processing/scaling.ts";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
@@ -209,7 +210,9 @@ const frontmatter = { title: "ilo Muni" };
       });
     }
 
-    await reloadUsageChart(usageCanvas, results);
+    const axis = axes[scale];
+
+    await reloadUsageChart(usageCanvas, results, axis);
     return { queries, errors };
   }
 
