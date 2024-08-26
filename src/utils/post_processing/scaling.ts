@@ -43,7 +43,7 @@ const logarithmicRelativeScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
     logarithmicAbsoluteScale(totals),
   );
 
-const normalizedAbsoluteScale: AbsoluteScaler = (rows: Row[]) => {
+const normalizedScale: AbsoluteScaler = (rows: Row[]) => {
   const min = Math.min(...rows.map((row) => row.occurrences));
   const max = Math.max(...rows.map((row) => row.occurrences));
 
@@ -58,7 +58,7 @@ const normalizedAbsoluteScale: AbsoluteScaler = (rows: Row[]) => {
 };
 
 const normalizedRelativeScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
-  normalizedAbsoluteScale(relativeScale(rows, totals));
+  normalizedScale(relativeScale(rows, totals));
 
 const absoluteDerivativeScale: AbsoluteScaler = (rows: Row[]) =>
   rows.map((row, i) => {
@@ -131,7 +131,7 @@ export const scaleFunctions: {
   rel: relativeScale,
   logabs: absoluteScale,
   logrel: relativeScale,
-  normabs: normalizedAbsoluteScale,
+  normabs: normalizedScale,
   normrel: normalizedRelativeScale,
   deriv1: absoluteDerivativeScale,
   deriv2: absoluteSecondDerivativeScale,
