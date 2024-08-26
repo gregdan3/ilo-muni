@@ -109,26 +109,21 @@ export const SCALES = {
   abs: { label: "Absolute", category: "simple", smoothable: false },
   rel: { label: "Relative", category: "simple", smoothable: true },
   cmsum: { label: "Cumulative", category: "simple", smoothable: false },
-  logrel: { label: "Relative Log", category: "useful", smoothable: true },
-  normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
-  normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
   logabs: {
     label: "Absolute Log",
-    category: "weird or dupe",
+    category: "useful",
     smoothable: false,
   },
-  relentropy: {
-    label: "Relative Entropy",
-    category: "weird or dupe",
-    smoothable: true,
-  },
+  logrel: { label: "Relative Log", category: "useful", smoothable: true },
+  normabs: { label: "Absolute Minmax", category: "useful", smoothable: false },
+  normrel: { label: "Relative Minmax", category: "useful", smoothable: true },
   entropy: {
     label: "Absolute Entropy",
     category: "weird or dupe",
     smoothable: true,
   },
-  zscore: {
-    label: "Relative Z-Score",
+  relentropy: {
+    label: "Relative Entropy",
     category: "weird or dupe",
     smoothable: true,
   },
@@ -152,6 +147,11 @@ export const SCALES = {
   //   category: "weird or dupe",
   //   smoothable: false,
   // },
+  zscore: {
+    label: "Relative Z-Score",
+    category: "weird or dupe",
+    smoothable: true,
+  },
 };
 
 export const SMOOTHERS = {
