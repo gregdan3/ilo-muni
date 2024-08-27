@@ -201,7 +201,7 @@ export const SCALES = {
     smoothable: true,
     axis: "linear",
   },
-};
+} as const;
 
 export const SMOOTHERS = {
   cwin: { label: "Window Avg", category: "recommended" },
