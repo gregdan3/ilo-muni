@@ -56,7 +56,20 @@ async function initUsageChart(
             lineWidth: 2,
           },
           ticks: {
-            padding: 2,
+            major: { enabled: true },
+            padding: 1,
+            callback: function (value, index, ticks) {
+              const tick = ticks[index];
+              const date = new Date(tick.value);
+
+              // const last = ticks.length - 1;
+              // if (index == 0 || index == last) {
+              //   return `${date.toLocaleString("default", { month: "short" })} ${date.getFullYear()}`;
+              // }
+
+              // null ticks aren't drawn at all; empty string draws a tick and grid line
+              return tick.major ? date.getFullYear() : null;
+            },
           },
           border: {
             width: 2,
