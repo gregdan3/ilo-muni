@@ -106,14 +106,7 @@ export const SAMPLE_SEARCHES = [
 
 // absolutes should be preserved
 // derivatives are impervious to smoothing
-export const SCALES: {
-  [key: string]: {
-    label: string;
-    category: string;
-    smoothable: boolean;
-    axis: Axis;
-  };
-} = {
+export const SCALES = {
   abs: {
     label: "Absolute",
     category: "simple",
