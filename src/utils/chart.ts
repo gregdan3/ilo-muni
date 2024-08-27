@@ -68,7 +68,7 @@ async function initUsageChart(
               // }
 
               // null ticks aren't drawn at all; empty string draws a tick and grid line
-              return tick.major ? date.getFullYear() : null;
+              return tick.major ? date.getFullYear() : null; // : date.toLocaleString("default", { month: "short" });
             },
           },
           border: {
