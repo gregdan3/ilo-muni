@@ -77,6 +77,7 @@ async function initUsageChart(
             color: "#EAEAEA",
             lineWidth: 2,
             tickColor: "#9e9e9e",
+            tickLength: 6,
           },
           border: {
             display: false,
