@@ -115,7 +115,7 @@ LIMIT
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 
 export interface Row {
-  day: Date;
+  day: number; // timestamp representing a date
   occurrences: number;
 }
 export interface Result {
