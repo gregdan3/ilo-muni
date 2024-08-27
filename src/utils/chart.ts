@@ -50,7 +50,7 @@ async function initUsageChart(
             tooltipFormat: "MMM yyyy",
           },
           grid: {
-            drawOnChartArea: false,
+            drawOnChartArea: true,
             color: "#EAEAEA",
             tickColor: "#9e9e9e",
             lineWidth: 2,
