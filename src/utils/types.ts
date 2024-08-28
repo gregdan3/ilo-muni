@@ -1,6 +1,8 @@
 // URL params
 import { SCALES, SMOOTHERS, LENGTHS, SMOOTHINGS } from "@utils/constants";
 
+import { FORMATTERS } from "@utils/ui.ts";
+
 export const lengths = LENGTHS.map((n: string): number => {
   return parseInt(n, 10);
 });
@@ -8,7 +10,9 @@ export const smoothings = SMOOTHINGS.map((n: string): number => {
   return parseInt(n, 10);
 });
 
+export type Formatter = keyof typeof FORMATTERS;
 export type Scale = keyof typeof SCALES;
+export type ScaleData = (typeof SCALES)[Scale];
 export type LengthParam = (typeof LENGTHS)[number];
 export type Smoother = keyof typeof SMOOTHERS;
 export type SmoothingParam = (typeof SMOOTHINGS)[number];

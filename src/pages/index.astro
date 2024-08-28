@@ -209,9 +209,9 @@ const frontmatter = { title: "ilo Muni" };
       });
     }
 
-    const axis = SCALES[scale].axis;
+    const scaleData = SCALES[scale];
 
-    await reloadUsageChart(usageCanvas, results, axis);
+    await reloadUsageChart(usageCanvas, results, scaleData);
     return { queries, errors };
   }
 
