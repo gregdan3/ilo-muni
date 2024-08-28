@@ -152,11 +152,8 @@ async function initUsageChart(
             return b.raw.occurrences - a.raw.occurrences;
           },
           callbacks: {
-            label: (ctx: TooltipItem<keyof ChartTypeRegistry>) => {
-              // @ts-expect-error: it doesn't know about `raw`
-              const occurrences = roundForGraph(ctx.raw.occurrences);
-              return `${ctx.dataset.label}: ${occurrences}`;
-            },
+            label: (ctx: TooltipItem<keyof ChartTypeRegistry>) =>
+              formatLabel(ctx, FORMATTERS[scale.tooltipNums]),
           },
         },
       },
