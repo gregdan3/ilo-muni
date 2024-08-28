@@ -8,18 +8,6 @@ import "chartjs-adapter-date-fns";
 
 let existingChart: Chart<keyof ChartTypeRegistry, Row[], unknown> | null = null;
 
-function roundForGraph(num: number): number {
-  if (num >= 1) {
-    return num;
-  }
-  if (num === 0) {
-    return num;
-  }
-  const exponent = Math.floor(Math.log10(Math.abs(num))) + 1;
-  const multiplier = Math.pow(10, 5 - exponent);
-  return Math.floor(num * multiplier) / multiplier;
-}
-
 async function initUsageChart(
   canvas: HTMLCanvasElement,
   data: Result[],
