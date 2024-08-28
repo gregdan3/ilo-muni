@@ -1,6 +1,6 @@
 import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import { FORMATTERS } from "@utils/ui.ts";
-import type { ScaleData } from "@utils/types";
+import type { ScaleData, FormatterFn } from "@utils/types";
 import type { Result, Row } from "@utils/sqlite";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
@@ -97,6 +97,7 @@ async function initUsageChart(
             display: false,
           },
           ticks: {
+            // @ts-expect-error: value can apparently be string but it never is
             callback: FORMATTERS[scale.axisNums],
           },
         },
@@ -164,6 +165,15 @@ async function initUsageChart(
   return chart;
 }
 
+function formatLabel(
+  ctx: TooltipItem<keyof ChartTypeRegistry>,
+  format: FormatterFn,
+): string {
+  // @ts-expect-error: it doesn't know about `raw`
+  const data = format(ctx.raw.occurrences);
+  return `${ctx.dataset.label}: ${data}`;
+}
+
 export async function reloadUsageChart(
   canvas: HTMLCanvasElement,
   data: Result[],
@@ -177,8 +187,12 @@ export async function reloadUsageChart(
       data: result.data,
     }));
     existingChart.options.scales!.y!.type = scale.axis;
+    // @ts-expect-error: value can apparently be string but it never is
     existingChart.options.scales!.y!.ticks!.callback =
       FORMATTERS[scale.axisNums];
+    existingChart.options.plugins!.tooltip!.callbacks!.label = (
+      ctx: TooltipItem<keyof ChartTypeRegistry>,
+    ) => formatLabel(ctx, FORMATTERS[scale.tooltipNums]);
     existingChart.update();
   }
 }

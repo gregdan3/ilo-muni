@@ -41,8 +41,11 @@ export function formatInteger(n: number): string {
   return scaled.toFixed(1).replace(/\.0$/, "") + suffix;
 }
 
-export function formatRaw(n: number): string {
-  return n.toString();
+export function formatRaw(n: number, sigDigits: number = 5): string {
+  if (n >= 1 || n === 0 || n <= -1) {
+    return n.toString();
+  }
+  return n.toFixed(sigDigits);
 }
 
 export function formatPercentage(n: number, sigDigits: number = 2): string {
@@ -62,8 +65,9 @@ export function formatPercentage(n: number, sigDigits: number = 2): string {
 }
 
 export const FORMATTERS = {
-  raw: formatRaw,
+  raw: (n: number) => formatRaw(n, 2),
+  longRaw: (n: number) => formatRaw(n, 5),
   percent: (n: number) => formatPercentage(n, 2),
-  rawPercent: (n: number) => formatPercentage(n, 5),
+  longPercent: (n: number) => formatPercentage(n, 5),
   int: formatInteger,
 } as const;

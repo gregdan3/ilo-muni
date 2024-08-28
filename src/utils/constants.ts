@@ -121,7 +121,7 @@ export const SCALES = {
     smoothable: true,
     axis: "linear",
     axisNums: "percent", // truncated to 2 significant digits
-    tooltipNums: "rawPercent", // truncated to 5 significant digits
+    tooltipNums: "longPercent", // truncated to 5 significant digits
   },
   cmsum: {
     label: "Cumulative",
@@ -145,7 +145,7 @@ export const SCALES = {
     smoothable: true,
     axis: "logarithmic",
     axisNums: "percent",
-    tooltipNums: "rawPercent",
+    tooltipNums: "longPercent",
   },
   logcm: {
     label: "Cumulative Log",
@@ -161,7 +161,7 @@ export const SCALES = {
     smoothable: false,
     axis: "linear",
     axisNums: "raw",
-    tooltipNums: "raw",
+    tooltipNums: "longRaw",
   },
   normrel: {
     label: "Relative Minmax",
@@ -169,7 +169,7 @@ export const SCALES = {
     smoothable: true,
     axis: "linear",
     axisNums: "raw",
-    tooltipNums: "raw",
+    tooltipNums: "longRaw",
   },
   normcm: {
     label: "Cumulative Minmax",
@@ -177,7 +177,7 @@ export const SCALES = {
     smoothable: false,
     axis: "linear",
     axisNums: "raw",
-    tooltipNums: "raw",
+    tooltipNums: "longRaw",
   },
   entropy: {
     label: "Absolute Entropy",
@@ -217,7 +217,7 @@ export const SCALES = {
     smoothable: false,
     axis: "linear",
     axisNums: "percent",
-    tooltipNums: "rawPercent",
+    tooltipNums: "longPercent",
   },
   // relderiv2: {
   //   label: "2nd Deriv Relative",
@@ -225,7 +225,7 @@ export const SCALES = {
   //   smoothable: false,
   //   axis: "linear",
   //   axisNums: "percent",
-  //   tooltipNums: "rawPercent",
+  //   tooltipNums: "longPercent",
   // },
   zscore: {
     label: "Relative Z-Score",

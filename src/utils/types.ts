@@ -11,6 +11,7 @@ export const smoothings = SMOOTHINGS.map((n: string): number => {
 });
 
 export type Formatter = keyof typeof FORMATTERS;
+export type FormatterFn = (typeof FORMATTERS)[Formatter];
 export type Scale = keyof typeof SCALES;
 export type ScaleData = (typeof SCALES)[Scale];
 export type LengthParam = (typeof LENGTHS)[number];
