@@ -3,12 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import Loader from "@components/Loader.astro";
 import IntDropdown from "@components/IntDropdown.astro";
 import EpochPicker from "@components/EpochPicker.astro";
-import {
-  EARLIEST_YEAR,
-  LATEST_YEAR,
-  LENGTHS,
-  SMOOTHINGS,
-} from "@utils/constants";
+import { EARLIEST_YEAR, LATEST_YEAR, LENGTHS } from "@utils/constants";
 
 const frontmatter = { title: "Rank by Frequency" };
 ---
@@ -18,6 +13,33 @@ const frontmatter = { title: "Rank by Frequency" };
   import { fetchRanks } from "@utils/sqlite";
   import { reloadBarChart } from "@utils/ranks";
   import { getRanksParams, toURLParams } from "@utils/urlparams";
+
+  let ranksDiv: HTMLDivElement;
+  let yearDropdown: HTMLInputElement;
+  let searchBox: HTMLInputElement;
+  let phraseLenDropdown: HTMLInputElement;
+  let sentLenDropdown: HTMLInputElement;
+  let loader: HTMLSpanElement;
+  let errorBin: HTMLDivElement;
+  // let copyUrlButton: HTMLElement;
+
+  function initFetch() {
+    ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
+
+    searchBox = document.getElementById("searchBox")! as HTMLInputElement;
+
+    phraseLenDropdown = document.getElementById(
+      "phraseLenDropdown",
+    )! as HTMLInputElement;
+    sentLenDropdown = document.getElementById(
+      "sentLenDropdown",
+    )! as HTMLInputElement;
+    yearDropdown = document.getElementById("yearDropdown")! as HTMLInputElement;
+    loader = document.getElementById("loader")! as HTMLSpanElement;
+    errorBin = document.getElementById("errorBin")! as HTMLDivElement;
+
+    // copyUrlButton = document.getElementById("copyUrlButton")! as HTMLElement;
+  }
 
   async function updateChart(
     ranksDiv: HTMLDivElement,
@@ -30,14 +52,7 @@ const frontmatter = { title: "Rank by Frequency" };
     await reloadBarChart(ranksDiv, data, phraseLen);
   }
 
-  async function updatePage(
-    ranksDiv: HTMLDivElement,
-    phraseLenDropdown: HTMLInputElement,
-    sentLenDropdown: HTMLInputElement,
-    yearDropdown: HTMLInputElement,
-    loader: HTMLSpanElement,
-    event: Event | null,
-  ) {
+  async function updatePage(event: Event | null) {
     let phraseLen = Number(phraseLenDropdown.value) as Length;
     let sentLen = Number(sentLenDropdown.value) as Length;
     const year = Number(yearDropdown.value);
@@ -65,49 +80,24 @@ const frontmatter = { title: "Rank by Frequency" };
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    const sentLenDropdown = document.getElementById(
-      "sentLenDropdown",
-    )! as HTMLInputElement;
-    const phraseLenDropdown = document.getElementById(
-      "phraseLenDropdown",
-    )! as HTMLInputElement;
-    const yearDropdown = document.getElementById(
-      "yearDropdown",
-    )! as HTMLInputElement;
-
-    const loader = document.getElementById("loader")! as HTMLSpanElement;
-
-    let initialParams = getRanksParams();
-    if (initialParams.minSentLen) {
-      sentLenDropdown.value = initialParams.minSentLen;
-    }
-    if (initialParams.phraseLen) {
-      phraseLenDropdown.value = initialParams.phraseLen;
-    }
-    if (initialParams.year) {
-      yearDropdown.value = initialParams.year;
-    }
-
-    // const ranksDiv = document.getElementById("ranksDiv")! as HTMLDivElement;
-    // await updatePage(
-    //   ranksDiv,
-    //   phraseLenDropdown,
-    //   sentLenDropdown,
-    //   yearDropdown,
-    //   loader,
-    //   null,
-    // );
+    // initFetch();
+    //
+    // let initialParams = getRanksParams();
+    // if (initialParams.minSentLen) {
+    //   sentLenDropdown.value = initialParams.minSentLen;
+    // }
+    // if (initialParams.phraseLen) {
+    //   phraseLenDropdown.value = initialParams.phraseLen;
+    // }
+    // if (initialParams.year) {
+    //   yearDropdown.value = initialParams.year;
+    // }
+    //
+    // await updatePage(null);
     //
     // const form = document.getElementById("ranksForm")! as HTMLFormElement;
     // form.addEventListener("change", async (event) => {
-    //   await updatePage(
-    //     ranksDiv,
-    //     phraseLenDropdown,
-    //     sentLenDropdown,
-    //     yearDropdown,
-    //     loader,
-    //     event,
-    //   );
+    //   await updatePage(event);
     // });
   });
 </script>
@@ -135,9 +125,10 @@ const frontmatter = { title: "Rank by Frequency" };
           />
 
           <IntDropdown
-            options={SMOOTHINGS}
-            pluralText=" smoothing"
-            id="smoothingDropdown"
+            options={LENGTHS}
+            singularText="1 word"
+            pluralText=" word phrases"
+            id="phraseLenDropdown"
           />
         </div>
         <!-- TODO: all time picker -->
