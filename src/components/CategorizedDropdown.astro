@@ -8,9 +8,16 @@ export interface CategorizedDropdownConfig {
   options: any;
   selected: string;
   id: string;
+  style?: string;
 }
 
-const { options, selected, id } = Astro.props as CategorizedDropdownConfig;
+const { options, selected, id, style } =
+  Astro.props as CategorizedDropdownConfig;
+
+let class_ = "inline";
+if (style) {
+  class_ = style;
+}
 
 type GroupedOptions = {
   [category: string]: Array<{ key: string } & DropdownItem>;
@@ -29,7 +36,7 @@ const groupedSmoothers = Object.entries(options).reduce<GroupedOptions>(
 );
 ---
 
-<select id={id}>
+<select id={id} class={class_}>
   {
     Object.entries(groupedSmoothers).map(([category, smoothers]) => (
       <optgroup label={category}>
@@ -42,3 +49,15 @@ const groupedSmoothers = Object.entries(options).reduce<GroupedOptions>(
     ))
   }
 </select>
+
+<style>
+  .inline {
+    display: inline;
+  }
+  .hidden {
+    display: hidden;
+  }
+  .nodisplay {
+    display: none;
+  }
+</style>

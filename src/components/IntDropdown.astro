@@ -5,13 +5,18 @@ export interface IntDropdownProps {
   singularText?: string;
   pluralText: string;
   id: string;
+  style?: string;
 }
-
-const { options, selected, singularText, pluralText, id } =
+const { options, selected, singularText, pluralText, id, style } =
   Astro.props as IntDropdownProps;
+
+let class_ = "inline";
+if (style) {
+  class_ = style;
+}
 ---
 
-<select id={id}>
+<select id={id} class={class_}>
   {
     options.map((option) => (
       <option value={option} selected={option === selected}>
@@ -22,3 +27,15 @@ const { options, selected, singularText, pluralText, id } =
     ))
   }
 </select>
+
+<style>
+  .inline {
+    display: inline;
+  }
+  .hidden {
+    display: hidden;
+  }
+  .nodisplay {
+    display: none;
+  }
+</style>

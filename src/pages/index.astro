@@ -51,6 +51,8 @@ const frontmatter = { title: "ilo Muni" };
   let endDropdown: HTMLInputElement;
   let loader: HTMLSpanElement;
   let errorBin: HTMLDivElement;
+
+  let advancedButton: HTMLElement;
   let sampleQueryButton: HTMLElement;
   let copyUrlButton: HTMLElement;
 
@@ -85,6 +87,7 @@ const frontmatter = { title: "ilo Muni" };
       "sampleQueryButton",
     )! as HTMLElement;
     copyUrlButton = document.getElementById("copyUrlButton")! as HTMLElement;
+    advancedButton = document.getElementById("advancedButton")! as HTMLElement;
   }
 
   function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
@@ -248,6 +251,20 @@ const frontmatter = { title: "ilo Muni" };
     copyUrlButton.addEventListener("click", async () => {
       await copyUrlToClipboard();
     });
+    advancedButton.addEventListener("click", async () => {
+      let state =
+        sentLenDropdown.className === "nodisplay" &&
+        smootherDropdown.className === "nodisplay";
+
+      if (state) {
+        sentLenDropdown.className = "inline";
+        smootherDropdown.className = "inline";
+      } else {
+        sentLenDropdown.className = "nodisplay";
+        smootherDropdown.className = "nodisplay";
+      }
+    });
+
     const form = document.getElementById("usageForm")! as HTMLFormElement;
     form.addEventListener("change", async () => {
       await updatePage();
@@ -272,6 +289,7 @@ const frontmatter = { title: "ilo Muni" };
         singularText="All sentences"
         pluralText="+ words per sentence"
         id="sentLenDropdown"
+        style="nodisplay"
       />
 
       <CategorizedDropdown
@@ -284,6 +302,7 @@ const frontmatter = { title: "ilo Muni" };
         id="smootherDropdown"
         options={SMOOTHERS}
         selected={defaultSmoother}
+        style="nodisplay"
       />
 
       <IntDropdown
@@ -309,11 +328,12 @@ const frontmatter = { title: "ilo Muni" };
       <Icon name="mingcute:question-line" slot="button" />
       <Help />
     </InfoModal>
+    <IconButton id="advancedButton" icon="mingcute:tool-line" />
+    <span style="padding-left: 1em"></span>
     <IconButton id="copyUrlButton" icon="mingcute:copy-line" />
-    <span style="padding-left: 2.8em"></span>
-    <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
-
     <!-- <IconButton id="copyImageButton" icon="mingcute:pic-line" /> -->
+    <!-- <span style="padding-left: 1em"></span> -->
+    <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
   </div>
 
   <div style="position: relative; margin-top: 0.25em; max-height: 100%;">
