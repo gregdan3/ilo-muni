@@ -22,7 +22,7 @@ export const PHRASE_RE = new RegExp(
 export const UCSUR_RE = new RegExp(`^[${ucsurRanges}]$`, "u");
 
 // TODO: fetch from db at init? would make it not so much a constant
-export const EARLIEST_YEAR = 2010;
+export const EARLIEST_YEAR = 2001;
 // NOTE: the data goes back to 2010 but there is almost nothing there
 // export const EARLIEST_YEAR = 2010;
 export const LATEST_YEAR = 2024;
@@ -33,7 +33,7 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 // start of june 1 in epoch time
 // avoids the fact that july is incomplete in my dataset
 // no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
-export const LATEST_ALLOWED_TIMESTAMP = 1719792000;
+export const LATEST_ALLOWED_TIMESTAMP = 1720569600; // 10 jul 2024 -> 7 aug 2024
 
 export const LENGTHS = ["1", "2", "3", "4", "5", "6"];
 export const SMOOTHINGS = [
