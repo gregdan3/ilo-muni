@@ -9,37 +9,18 @@ const { id } = Astro.props;
 
 {id ? <span id={id} /> : <span />}
 
-<!-- <div>loading!</div> -->
-
 <style>
-  /* div { */
-  /*   display: inline-block; */
-  /*   width: 30%; */
-  /*   height: 1.6em; */
-  /*   animation: marquee 1.25s linear infinite; */
-  /*   overflow: hidden; */
-  /* } */
-
   span {
-    border: 4px solid rgb(210, 210, 210);
-    border-top: 4px solid #3498db; /* Blue */
+    border: 8px solid rgb(210, 210, 210);
+    border-top: 8px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 1em;
-    height: 1em;
+    width: 2em;
+    height: 2em;
     animation: spin 1.25s linear infinite;
     display: inline-block;
     vertical-align: text-bottom;
     visibility: hidden;
   }
-
-  /* @keyframes marquee { */
-  /*   from { */
-  /*     transform: translateX(110%); */
-  /*   } */
-  /*   to { */
-  /*     transform: translateX(-10%); */
-  /*   } */
-  /* } */
 
   @keyframes spin {
     0% {
