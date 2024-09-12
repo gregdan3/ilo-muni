@@ -113,6 +113,7 @@ LIMIT
 // day=0 is all time in ranks table
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
+const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in milliseconds
 
 export interface Row {
   day: number; // timestamp representing a date
@@ -135,8 +136,8 @@ export interface QueryParams {
   end: number;
 }
 
-function fakeLocalizeTimestamp(timestamp: number): number {
-  return timestamp * 1000 + DAY_IN_MS;
+function localizeTimestamp(timestamp: number): number {
+  return timestamp * 1000 + timezoneOffset;
 }
 
 function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
@@ -177,7 +178,7 @@ async function fetchOneOccurrenceSet(
 
   resp = resp.map(
     (row: { day: number; occurrences: number }): Row => ({
-      day: fakeLocalizeTimestamp(row.day),
+      day: localizeTimestamp(row.day),
       occurrences: row.occurrences,
     }),
   );
@@ -314,7 +315,7 @@ async function fetchTotalOccurrences(
   let result = await queryDb(TOTAL_QUERY, [phraseLen, minSentLen, start, end]);
   result = result.map(
     (row: { day: number; occurrences: number }): Row => ({
-      day: fakeLocalizeTimestamp(row.day),
+      day: localizeTimestamp(row.day),
       occurrences: row.occurrences,
     }),
   );
