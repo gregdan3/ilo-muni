@@ -3,14 +3,20 @@ layout: "@layouts/Layout.astro"
 title: About ilo Muni
 ---
 
-This page is about **how and why ilo Muni exists**, plus future plans, how to
-contribute, and thanks for everyone who helped me along the way. If you want to
-know how to use ilo Muni, [check the help page!](/ilo-muni/help/)
+This page is about **what ilo Muni is, and how and why it exists**, as well as
+thanks for everyone who helped make it possible. If you want to know how to use
+ilo Muni, [check the help page!](/ilo-muni/help/)
 
 Feel free to skip around. If you don't care about a section, that's totally
 okay!
 
 ## Table of Contents
+
+## My question isn't here!
+
+Feel free to [email me](mailto:gregdan3+ilomuni@protonmail.com)! You can also
+reach out on other platforms, but email is easiest for me to see and respond to
+(because it is the quietest way people try to talk to me).
 
 ## Why did you make ilo Muni?
 
@@ -65,7 +71,7 @@ agree _must_ be in the proposal, that being the
 [Unicode document register](https://www.unicode.org/L2/L-curdoc.htm) as of
 writing, but Unicode has acknowledged it!
 
-After this, the new work to be done was much more open-ended. I started
+After this, the work left to be done was much more open-ended. I started
 improving upon my Discord bot,
 [ilo pi toki pona taso](https://github.com/gregdan3/ilo-pi-toki-pona-taso). At
 the time, it had a simple way to detect whether or not you were speaking toki
@@ -86,29 +92,36 @@ has been five months in the making!
 ## Where is the data from?
 
 Anywhere toki pona is written in text, so long as there is a date associated
-with every message and the community itself is open to the public. Right now, I
-support three platforms:
+with every message and the community is open to the public. Right now, I support
+six platforms:
 
 ### Discord
 
 Discord makes up the majority of all written toki pona. For that matter,
-[ma pona pi toki pona](https://discord.gg/mapona) makes up the majority of all
+[ma pona pi toki pona](https://discord.gg/mapona) is nearly the majority of all
 written toki pona on its own. As such, this data is the most important to have a
-look at- but unfortunately, it is also among the more locked-down platforms on
-this list. Discord does not offer any native functionality to export messages,
-but [this excellent project](https://github.com/Tyrrrz/DiscordChatExporter)
-enables you to fetch all messages you have access to in any server you're in.
+look at- but Discord is among the least export-friendly platforms on the
+internet. Discord does not offer any native functionality to export messages.
+Fortunately,
+[this excellent project](https://github.com/Tyrrrz/DiscordChatExporter) enables
+you to fetch all messages you have access to in any server you're in, including
+in threads, and with tons of metadata per message!
+
+The main challenge was actually in finding all of the communities to fetch- I
+could have settled for just the large ones, since they'd represent most of the
+data and be easy to find, but I chose to hunt down as many as I could. I ended
+up finding over **120** servers, and I'm certain there are more!
 
 ### Telegram
 
-Conveniently, Telegram offers an "export chat" function directly in its desktop
-UI, and this dumps every message in the chat that you can see from the start of
-the chat's existence forward. I found all the communities I could by Telegram's
-search function and asking around in other communities,
-[then collected them here after I was done](https://sona.pona.la/wiki/Communities#Telegram).
+Telegram offers an "export chat" function directly in its desktop UI, and this
+dumps every message you can see from the start of the chat's existence to the
+present. Perfect! I spent some time searching to find all the communities I
+could, then asking around in other communities. Once I was done,
+[I listed them here too](https://sona.pona.la/wiki/Communities#Telegram).
 
 After that, jan Pensa (@spencjo) helped me out by exporting two particular chats
-for me:
+which were special cases:
 
 - **mi tok e toki pona**: a workgroup attemping to get toki pona an ISO-639
   code. This chat is functionally archived since they succeeded-
@@ -123,63 +136,67 @@ Telegram was refreshingly easy to add to this list.
 
 ### Reddit
 
-Reddit moved its API behind a pay-wall long before I began this project, so it
-is no longer reasonable to "officially" scrape Reddit. They also limited
-scrollback on all endpoints in the user API to only 1000 items, meaning
-unofficial scraping would have to be done live in order to be sure you fetched
-everything. I obviously wasn't doing my own live scraping of Reddit, but thanks
-to
+Reddit moved its API behind a paywall long before I began this project, so it is
+no longer reasonable to "officially" scrape Reddit. They also limited scrollback
+on all endpoints in the user API to only 1000 items, meaning unofficial scraping
+would have to be done live in order to be sure you fetched everything. I
+obviously wasn't doing my own live scraping of Reddit, but thanks to
 [the incredible work of Pushshift, /u/raiderbdev, and /u/Watchful1](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/),
-I was able to fetch at least [/r/tokipona](https://reddit.com/r/tokipona)
-through the end of 2023.
-
-On that note: If you have or can create a complete archive of
-[/r/mi_lon](https://reddit.com/r/mi_lon),
+I was able to fetch [/r/tokipona](https://reddit.com/r/tokipona) and a dozen
+smaller subreddits including [/r/mi_lon](https://reddit.com/r/mi_lon),
 [/r/tokiponataso](https://reddit.com/r/tokiponataso),
-[/r/tokiponaunpa](https://reddit.com/r/tokiponaunpa),
-[/r/liputenpo](https://reddit.com/r/liputenpo), or any other toki pona
-communities on Reddit, please
-[let me know](https://github.com/gregdan3/ilo-muni)!
+[/r/tokiponaunpa](https://reddit.com/r/tokiponaunpa), and
+[/r/liputenpo](https://reddit.com/r/liputenpo).
 
-## Will you add more communities?
+Previously, I was limited to just /r/tokipona through the end of 2023, but
+/u/Watchful1 reached out and created a dump for all these communities through
+the end of July 2024. Enormous thanks!
 
-Yes! The main barrier to adding more communities is being able to download data
-from the given platform. For Discord, there is already an excellent open source
-archiving tool. For Telegram, you can export entire chats in the desktop client.
-And for Reddit, Pushshift previously archived everything they could find- and
-this work was picked up by /u/raiderbdev after they shut down.
-
-For everything else, I'd love to add them, but I need a way to get the data.
+### YouTube
 
 ### forums.tokipona.org
 
 To an outsider, it may seem odd to want to include a specific singular forum in
 this data- but this forum is important because it was active from 1 Oct 2009 to
-mid-2020. Most of this period is unrepresented in the current data, and this
-space is one of only a handful that were in use during that time. As such, this
-forum is highly important to the history of toki pona.
+mid-2020, and was one of the only active spaces during most of that time. As
+such, this forum is highly important to the history of toki pona.
 
-I do already have a backup of this data, but adding it to the database is
-difficult. I lack user IDs, post IDs, and properly formatted quotes. That's
-because I used
-[this backup tool](https://github.com/Dascienz/phpBB-forum-scraper), and
-frankly, it's not very good. I have thus far not needed to make my own scrapers
-for any of the data I've collected, but this one may be different. If you know
-of a better phpBB scraper, or have a cleaner capture of this data,
-[please reach out](https://github.com/gregdan3/ilo-muni/issues/new)!
+I managed to create a backup of this data using
+[wget](https://www.gnu.org/software/wget/), specifically its recursive download
+feature. Normally I'd prefer to have a more stripped down and structured backup,
+such as having everything packaged into JSON. However, the forum is closed to
+new accounts, and has received only a dozen posts in the past two years; it will
+likely remain up as an archive rather than ever become an active space again.
+Because of that, having a large archive is okay; it won't get any larger.
 
 ### Yahoo group
 
-From some time in 2002 until Oct 1 2009, the toki pona yahoo group was one of
-very few spaces where toki pona was spoken, and it appears to have been the most
-popular. The IRC channel could have been more popular, but it wasn't preserved
-beyond a handful of specific conversations that I'm aware of. Fortunately, the
-entire yahoo group is backed up on the forum above. Unfortunately, its
-formatting is mangled badly because its newlines are missing. If that weren't
-enough, its formatting is already highly inconsistent due to the unstable nature
-of email from provider to provider. Including it in the database as-is would be
-messy and uninformative, or even misleading; it needs some pre-processing
-effort.
+The toki pona yahoo group was one of very few spaces where toki pona was spoken
+before 2010. It was active from March 2002 until October 1st 2009, and I'm only
+aware of three other communities that existed at all during this time. The IRC
+channel could have been more popular, but it wasn't preserved beyond a handful
+of specific conversations that I'm aware of. Fortunately, the entire yahoo group
+is backed up on the forum above, so including the forum also means including the
+Yahoo group!
+
+As a fair warning, the formatting of messages in the Yahoo group backup is
+rough. Many newlines are missing, presumably caused by whatever software was
+used to copy the data to the forum. For that matter, messages are formatted
+inconsistently due to the unstable nature of email from provider to provider.
+
+However, my preprocessing in [sona mute](https://github.com/gregdan3/sona-mute)
+was more than capable of handling the inconsistent formatting. It would be nice
+to go back to this data to improve the formatting and squeeze a bit more
+accuracy out of it as a result, but it's adequate as-is.
+
+## Will you add more communities?
+
+Yes! The main barrier to adding more communities is being able to download data
+from the given platform. For all of the communities I support, there was a
+relatively easy way to obtain the messages from the platform or from a
+pre-existing archive of the platform. For everything I don't yet support, there
+isn't an easy way to download the data from the platform, or a pre-existing
+archive to download.
 
 ### Facebook
 
@@ -193,6 +210,20 @@ but they have much more pre-2020 activity than most other communities that
 existed around that time. Unfortunately, scraping data from Facebook is
 extremely difficult- the handful of open source scrapers that exist are
 variously inconsistent, low quality, or unsupported.
+
+### Tumblr
+
+There are a surprising number of toki pona blogs and toki pona posts on Tumblr,
+which would be excellent to include! During my searching, I identified around
+700 blogs that had posted about toki pona at any point. Additionally, toki pona
+activity on Tumblr goes back as far as 2016, with a major uptick in 2020
+and 2021.
+
+However, downloading the data to include it seems extremely difficult. There is
+a tool called [TumblThree](https://tumblthreeapp.github.io/TumblThree/) which
+purports to let you download Tumblr and Twitter data, but my experience is that
+it gets rate limited aggressively by both platforms- even with the slowest
+settings.
 
 ### LiveJournal
 
@@ -218,7 +249,7 @@ November 2023 due to trolling. The forum was archived fully by Mazzie before the
 shutdown, but the format is pure HTML, making it a difficult to get the
 necessary data out of it.
 
-## Will you update the data over time?
+## Will you update the data in the future?
 
 Yes! I plan to update this data at least once per year, but doing so two or
 three times isn't out of the question. Collecting, parsing, and counting up all
@@ -227,7 +258,54 @@ most of that is done.
 
 That said, there isn't much value in updating more than once per year. Google
 Ngrams only updates about every three years. Trends in language don't generally
-happen in weeks or months- even at the community's current size
+happen in weeks or months- even at the community's current size, these trends
+take years.
+
+## What can I do with ilo Muni?
+
+### Can I use the data in my project?
+
+Sure! The database is distributed under the terms of the
+[CC BY-SA 4.0 License](https://creativecommons.org/licenses/by-sa/4.0/deed.en).
+In short, you can use the data for anything you like, but you need to attribute
+me when you do so, and any derivative works made from the data must use the same
+license. See the linked deed and associated license terms for more details.
+
+- [Download the 2024-09-07 DB (current)](https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz)
+- [Download the 2024-08-08 DB (first)](https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz)
+
+### Can I cite ilo Muni in my study?
+
+Yes! I recommend including the access date for the graphing tool, because I
+update the primary dataset periodically with improvements or additions. The
+dataset is already dated.
+
+Here are some samples in various citation formats:
+
+#### MLA 9
+
+- Danielson, G., III. _ilo Muni_, 10 Aug. 2024.
+  https://gregdan3.github.io/ilo-muni/. Accessed 12 Sept. 2024.
+- Danielson, G., III. _ilo Muni_, 10 Aug. 2024.
+  https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz.
+
+#### APA 7
+
+- Danielson, G., III. (2024, August 10). _Ilo Muni_ [Computer software]. Retrieved
+  September 12th, 2024, from https://gregdan3.github.io/ilo-muni/
+- Danielson, G., III. (2024, August 10). _Ilo Muni_ [Dataset].
+  https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz
+
+### How can I contribute?
+
+You can contribute to ilo Muni [here](https://github.com/gregdan3/ilo-muni), its
+preprocessing library [here](https://github.com/gregdan3/sona-toki), and its
+frequency counting library [here](https://github.com/gregdan3/sona-mute)!
+
+However, code is not the only way to help- if you know of a Toki Pona community
+that I don't, and especially if you already have an archive of that data, please
+[email me](mailto:gregdan3+ilomuni@protonmail.com) or
+[open an issue](https://github.com/gregdan3/ilo-muni/issues).
 
 ## Why "ilo Muni?"
 
@@ -247,11 +325,6 @@ preference for Muni!), so I decided to search both names in the version of ilo
 Muni that existed at that time- "Nimu" had just over 40 results, but "Muni"
 didn't come up, so I went with it. Here we are!
 
-## I'm doing research! How do I cite you?
-
-Uh, I don't know yet! Please [email me](mailto:gregdan3+ilomuni@protonmail.com)
-and we can talk about it.
-
 ## Thank you to...
 
 - **ilo Nija** for the logo! It's a stylized version of the sitelen pona name
@@ -269,6 +342,11 @@ and we can talk about it.
   graph and search tool.
 - **jan Asiku, ilo Tani, pan Pake, and waso Ete** for helping me work through
   the set theory reasoning necessary to display the data usefully!
+- [**/u/Watchful1**](https://old.reddit.com/user/Watchful1/) for providing the
+  Reddit data they had already archived!
+- [**Tyrrrz**](https://github.com/Tyrrrz/DiscordChatExporter) and his
+  contributors for the Discord Chat Exporter, without which this project would
+  have been functionally impossible.
 - [**phiresky**](https://github.com/phiresky/sql.js-httpvfs) for the _excellent_
   `sql.js-httpvfs` library, without which this project would have taken _much_
   longer and been much more stressful.
