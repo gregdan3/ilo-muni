@@ -80,6 +80,7 @@ Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
 - src/pages/help/
 - static/db/
 - https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz
+- https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz
 
 Copyright (C) 2024 Nia (@nia.co, @yknowlikenia)
 
