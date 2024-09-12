@@ -29,7 +29,7 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
         config: {
           serverMode: "chunked",
           requestChunkSize: 1024,
-          databaseLengthBytes: 461942784,
+          databaseLengthBytes: 558073856,
           serverChunkSize: 26214400,
           urlPrefix: dbUrlPrefix,
           suffixLength: 3,
