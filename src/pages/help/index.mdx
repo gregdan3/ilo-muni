@@ -9,8 +9,8 @@ This page is about **how to use and understand ilo Muni**, which you can work
 through like a tutorial or a manual. If you want to know how or why ilo Muni
 exists, or want to talk to me, [see the about page!](/ilo-muni/about)
 
-There's also a cheatsheet for using ilo Muni on the main page, under the
-<Icon name="mingcute:question-line"/> help button.
+There's also a quick reference under the <Icon name="mingcute:question-line" />
+help button on the main page.
 
 ## Table of Contents
 
@@ -151,7 +151,7 @@ the uses of the word "toki" which are not in the phrase "toki pona".
 
 </details>
 
-### Set Minimum Sentence Length
+### Minimum Sentence Length
 
 You can **set a minimum sentence length** for one term by adding an underscore
 `_` and a number from 1 to 6 **to the end of that term**. For example,
@@ -160,7 +160,7 @@ of times toki appeared in any sentence, versus the smaller percentage of times
 that it was in specifically sentences of length 6. You can do this with phrases
 too: [**ona li, ona li_6**](/ilo-muni/?query=ona+li,+ona+li_6)
 
-You can use this with subtraction to isolate a word or phrase: The search
+You can use this with subtraction to **isolate a word or phrase**: The search
 [**toki - toki_2**](/ilo-muni/?query=toki+-+toki_2) will show you every time
 "toki" appeared, minus the times it appeared in sentences with 2 or more words-
 which means you have all the times "toki" was the only word in the sentence. Or,
@@ -190,21 +190,90 @@ more details!
 Note: [Scale has its own section](#scales), because it's much more complicated
 than the other options.
 
+### Smoothing
+
+By default, **2 smoothing** is set. The number is how many neighbors **on both
+sides** of a given data point will be smoothed. For example, if you set **5
+smoothing** with the **Window Avg** smoother, it means a given point will be set
+to the average of the 5 points before, 5 points after, and itself.
+
+Smoothing is helpful for making noisy graphs more readable while preserving the
+trend line of the original graph. Compare the graphs of **wawa, nasa, suwi,
+sewi, suli** with
+[**0 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=0) and
+[**5 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=5).
+
+Note that smoothing can produce misleading graphs with respect to the time axis,
+such as
+[**smearing periodic phrases over too much time**](/ilo-muni/?query=tenpo+pana&smoothing=10)
+or
+[**implying that misikeke was used before November 2019**](/ilo-muni/?query=misikeke&smoothing=10&smoother=gauss)
+with specific smoothers. Sometimes, **0 smoothing** is better!
+
+{/* NOTE: smoothing used to smear to before a term existed too, but this is fixed */}
+
+Some [scales](#scales) will have smoothing disabled, usually because it wouldn't
+make sense to average their values. This applies to the **absolute** scale, for
+example, because it is meant to show you the exact number of times a given word
+or phrase appeared! This also applies to both offered **derivatives**, because
+they are completely impervious to localized averaging.
+
+### Dates
+
+By default, the date range for the graph is set from **August 2016** to **August
+2024**. You can select any start or end you want, but there are some caveats to
+warn you about:
+
+First, the graph ends in July 12th 2024, and that datapoint covers that day
+through August 7th 2024. The graph ends there because I collected this data
+during August, so the incomplete data from August 8th onwards is not present in
+the database.
+
+Second, the default start date is **August 2016** because the data prior to that
+is extremely sparse. I have left in the option to query for that data, but
+understand that relative graphs will be noisy, the absolute graphs will be flat,
+minmax graphs will become nonsense- and for the other graphs, here be dragons.
+
+<details>
+<summary>**Historical note**</summary>
+
+In databases published prior to September 7th, 2024, I count words in monthly
+"buckets." If you study a graph from then, or download the older database to
+graph, you'll see each point aligns with a specific month and is labeled as
+such. This is a straight-forward way to graph and read the data, but it has some
+disadvantages for interpretability.
+
+Some months are shorter than others, so [the absolute scale](#absolute) may be
+misleading for those periods, implying they were less active than neighboring
+months. Similarly, weeks are not evenly distributed over months, so some months
+will have more weekends and therefore more active periods than others.
+Fortunately, this doesn't change [the relative scale](#relative), since that is
+measured as a percentage of words said.
+
+Still, in the future I would like to change the size of the time "buckets" to be
+4-weekly, to reduce or eliminate the above described biases.
+
+</details>
+
 ### Minimum Sentence Length
 
-By default, **All sentences** is set, meaning you will see how words or phrases
-appear in any length of sentence. If you set this option to **3+ words per
-sentence**, you'll see how words or phrases appear in sentences which have **at
-least 3 words**. This can be helpful if you want to study more "substantial"
-uses of words, i.e. those that appear in longer sentences.
+**Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to
+show it.
+
+This option is also called **words per sentence** in its dropdown. By default,
+**All sentences** is set, meaning you will see how words or phrases appear in
+any length of sentence. If you set this option to **3+ words per sentence**,
+you'll see how words or phrases appear in sentences which have **at least 3
+words**. This can be helpful if you want to study more "substantial" uses of
+words, i.e. those that appear in longer sentences.
 
 If one of your searches
 [sets the minimum sentence length for a term](#set-minimum-sentence-length), pay
 attention to the legend: If the legend shows the term without an underscore, it
-means the length you chose was already being searched for anyway. This can
-happen with a search like [**toki pona_2**](/ilo-muni/?query=toki+pona_2)
-normally, or [**wawa_3**](/ilo-muni/?query=wawa_3&minSentLen=3) while the
-minimum sentence length is set to 3.
+means the length you chose was already being searched. This can happen with a
+search like [**toki pona_2**](/ilo-muni/?query=toki+pona_2) normally, or
+[**wawa_3**](/ilo-muni/?query=wawa_3&minSentLen=3) while the minimum sentence
+length dropdown is set to 3.
 
 This happens to the phrase **toki pona** with a minimum sentence length of 2
 because phrases have a minimum sentence length equal to how many words are in
@@ -255,83 +324,23 @@ some specific word. This graphing tool does not offer that information because
 doing so would produce misleading graphs for both side-by-side comparison and
 for adding or subtracting specific results. If you're interested in that
 alternate data,
-[download the database!](https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz)
+[download the database!](https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz)
 
 </details>
 
 ### Smoother
 
+**Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to
+show it.
+
 By default, **Window Avg** is set, and I don't recommend changing it from the
 default unless you're aware of what change you're making and why.
 
-### Smoothing
 
-By default, **2 smoothing** is set. The number is how many neighbors **on both
-sides** of a given data point will be smoothed. For example, if you set **5
-smoothing** with the **Window Avg** smoother, it means a given point will be set
-to the average of the 5 points before, 5 points after, and itself.
 
-Smoothing is helpful for making noisy graphs more readable while preserving the
-trend line of the original graph. Compare the graphs of **wawa, nasa, suwi,
-sewi, suli** with
-[**0 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=0) and
-[**5 smoothing**](/ilo-muni/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=5).
 
-Note that smoothing can produce misleading graphs with respect to the time axis,
-such as
-[**smearing periodic phrases over too much time**](/ilo-muni/?query=tenpo+pana&smoothing=10)
-or
-[**implying that misikeke was used before November 2019**](/ilo-muni/?query=misikeke&smoothing=10&smoother=gauss)
-with specific smoothers. Sometimes, **0 smoothing** is better!
 
-{/* NOTE: smoothing used to smear to before a term existed too, but this is fixed */}
 
-Some [scales](#scales) will have smoothing disabled, usually because it wouldn't
-make sense to average their values. This applies to the **absolute** scale, for
-example, because it is meant to show you the exact number of times a given word
-or phrase appeared! This also applies to both offered **derivatives**, because
-they are completely impervious to localized averaging.
-
-### Dates
-
-By default, the date range for the graph is set from **August 2016** to **August
-2024**. You can select any start or end you want, but there are some caveats to
-warn you about:
-
-First, the graph ends in July 2024. This is because I collected this data during
-August, so it is incomplete after July. For that matter, it is differently
-incomplete depending on the platform and specific community, because I cannot
-collect them all simultaneously. The August data is in the database, but it
-produces misleading graphs to include, so I have omitted it from display.
-
-Second, the default start date is **August 2016** because the data prior to that
-is extremely sparse. I have left in the option to query for that data, but
-understand that the relative graphs will be noisy, the absolute graphs will be
-flat, minmax graphs will become nonsense- and for the other graphs, here be
-dragons.
-
-Lastly, it is important to note that the way I store the data is a potential
-source of bias. If you're curious, read the following:
-
-<details>
-<summary>**Discussion**</summary>
-
-In the database, I count words in monthly "buckets." You can see this on the
-graph, where each point aligns with a specific month and is labeled as such.
-This is a straight-forward way to graph and read the data, but it has some
-disadvantages for interpretability.
-
-Some months are shorter than others, so [the absolute scale](#absolute) may be
-misleading for those periods, implying they were less active than neighboring
-months. Similarly, weeks are not evenly distributed over months, so some months
-will have more weekends and therefore more active periods than others.
-Fortunately, this doesn't change [the relative scale](#relative), since that is
-measured as a percentage of words said.
-
-Still, in the future I would like to change the size of the time "buckets" to be
-4-weekly, to reduce or eliminate the above described biases.
-
-</details>
 
 ---
 
@@ -488,9 +497,9 @@ Rest assured that I do not have anything useful to say about them yet.
 
 ## Potential Bias
 
-I discussed ways that [smoothing](#smoothing) and [dates](#dates) can create
-misleading graphs, but these are not the only forms of bias possible. Most of
-the remaining bias is in where and how the data is collected.
+I discussed how [smoothing](#smoothing) can create misleading graphs, but this
+is not the only forms of bias possible. Most of the remaining bias is in where
+and how the data is collected.
 
 ### Bots
 
@@ -551,6 +560,10 @@ future.
 
 ### Platform Notes
 
+No notes for Telegram, Reddit, YouTube, or the Toki Pona forums; all of them are
+represented in their entirety, or as much entirety as can be reasonably
+obtained, through the final represented date of ilo Muni.
+
 #### Discord
 
 Right now, the data for ilo Muni is collected from Discord, Telegram, and
@@ -566,26 +579,6 @@ In a sense, Discord is "over-represented" in the data, because it is such a
 large portion of the data in the first place. For the time being, I have chosen
 to weight all messages equally, but I would like to produce alternate databases
 and analyses in the future.
-
-#### Telegram
-
-As far as I'm aware, I found and successfully exported the entire history of
-every public toki pona channel on Telegram. No notes.
-
-#### Reddit
-
-Unfortunately,
-[the pricing for Reddit's API was changed drastically in summer 2023](https://en.wikipedia.org/wiki/2023_Reddit_API_controversy).
-This means it is now either difficult or expensive to collect data from the
-platform, and the user API only allows scrolling back as much as 1000 posts.
-Fortunately,
-[/u/raiderbdev has done the archival work and /u/Watchful1 has sorted it](https://www.reddit.com/r/pushshift/comments/1akrhg3/separate_dump_files_for_the_top_40k_subreddits/),
-so there is Reddit data available, but that data only goes to the end of 2023.
-As such, there is no Reddit data during 2024. Additionally, the linked archive
-data only covers the top 40,000 subreddits, which means it only covers
-[/r/tokipona](https://www.reddit.com/r/tokipona/) and not any of the other toki
-pona subreddits such as [/r/mi_lon](https://www.reddit.com/r/mi_lon/) or
-[/r/tokiponataso](https://www.reddit.com/r/tokiponataso/).
 
 ### Identifying toki pona
 
