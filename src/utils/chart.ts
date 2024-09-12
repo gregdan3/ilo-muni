@@ -35,8 +35,8 @@ async function initUsageChart(
           axis: "x",
           time: {
             unit: "month",
-            round: "month",
-            tooltipFormat: "MMM yyyy",
+            // round: "month",
+            tooltipFormat: "dd MMM yyyy",
           },
           grid: {
             drawOnChartArea: true,
