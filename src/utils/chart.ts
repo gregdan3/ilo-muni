@@ -74,7 +74,7 @@ async function initUsageChart(
         y: {
           type: scale.axis,
           axis: "y",
-          suggestedMin: 0,
+          // suggestedMin: 0,
           grid: {
             color: "#EAEAEA",
             lineWidth: 2,
