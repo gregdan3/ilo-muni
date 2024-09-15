@@ -627,22 +627,23 @@ the sentence it's in.
 
 ## Frequently Asked Questions
 
-### Why does it take so long to get a graph?
+### Why does [query] take so long?
 
-Searching for one or a few specific terms should only take a few seconds, but to
-be real: You're reading a big SQLite blob over the network, making requests to
-it one by one. I can only speed this up so much.
+While searching for one or a few terms should only take about half a second, searching
+with a wildcard or for many terms will take much longer- you can estimate this by
+multiplying the half second by the number of queries.
+
+That said, even large queries will become faster as you make more queries
+in the same session. This is because you're downloading and caching more of the index
+needed to fulfill queries!
+
+But this is limited by the fact that each part of each query must be fetched
+consecutively, including for different queries. There is only one worker fetching data,
+because multiple workers would be unable to share their cache.
 
 If I had a database hosting solution, nearly all of the queries would be as
 instant as the network itself. If you have any suggestions for one,
 [let me know!](https://github.com/gregdan3/ilo-muni/issues/new)
-
-### Why is the graph empty?
-
-This is an error handling issue. You made a search with a malformed term and I
-didn't catch and throw it out. Oops. I already know why this is happening, but
-I'm going to fix this later. Feel free to
-[open an issue](https://github.com/gregdan3/ilo-muni/issues/new) though!
 
 ### Why is my subtraction negative?
 
@@ -654,9 +655,6 @@ than the phrase "tawa pona", probably because the community is very welcoming!
 It's _probably_ possible to get floating point silliness when subtracting, but I
 haven't seen that happen personally-
 [please reach out if you spot it](https://github.com/gregdan3/ilo-muni/issues/new)!
-
-Note: the y-axis scale may sometimes display in scientific notation instead of
-integers or rationals. This is not an error! That's just ChartJS!
 
 ### Why is the data so noisy before 2020?
 
