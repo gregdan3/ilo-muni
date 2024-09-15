@@ -284,18 +284,17 @@ const frontmatter = { title: "ilo Muni" };
         <input type="text" id="searchBox" spellcheck="false" />
       </div>
 
-      <IntDropdown
-        options={LENGTHS}
-        singularText="All sentences"
-        pluralText="+ words per sentence"
-        id="sentLenDropdown"
-        style="nodisplay"
-      />
-
       <CategorizedDropdown
         id="scaleDropdown"
         options={SCALES}
         selected={defaultScale}
+      />
+
+      <IntDropdown
+        id="smoothingDropdown"
+        options={SMOOTHINGS}
+        selected={defaultSmoothing}
+        pluralText=" smoothing"
       />
 
       <CategorizedDropdown
@@ -306,10 +305,11 @@ const frontmatter = { title: "ilo Muni" };
       />
 
       <IntDropdown
-        id="smoothingDropdown"
-        options={SMOOTHINGS}
-        selected={defaultSmoothing}
-        pluralText=" smoothing"
+        options={LENGTHS}
+        singularText="All sentences"
+        pluralText="+ words per sentence"
+        id="sentLenDropdown"
+        style="nodisplay"
       />
 
       <div></div>
