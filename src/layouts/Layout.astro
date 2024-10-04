@@ -7,6 +7,10 @@ interface Props {
   frontmatter: Frontmatter;
 }
 
+import TokiPonaGif from "@data/buttons/tokipona_s.gif";
+import GithubGif from "@data/buttons/github_s.gif";
+import YouTubeGif from "@data/buttons/youtube_s.gif";
+
 const { title } = Astro.props.frontmatter;
 
 import { BASE_URL } from "@utils/constants";
@@ -83,23 +87,19 @@ import { BASE_URL } from "@utils/constants";
       <footer style="margin-top: 1em">
         <div style="display: flex; justify-content: center; ">
           <a href="https://github.com/gregdan3" style="margin:0.5em;">
+            <img src={GithubGif.src} alt="@gregdan3 on GitHub" class="social" />
+          </a>
+          <a href="https://youtube.com/@gregdan3d" style="margin:0.5em;">
             <img
-              src=`${BASE_URL}/buttons/code_s.gif`
-              alt="@gregdan3 on GitHub"
+              src={YouTubeGif.src}
+              alt="@gregdan3d on YouTube"
               class="social"
             />
           </a>
           <a href="https://mun.la/sona" style="margin:0.5em;">
             <img
-              src=`${BASE_URL}/buttons/lessons_s.gif`
-              alt="@gregdan3d on YouTube"
-              class="social"
-            />
-          </a>
-          <a href="https://youtube.com/@gregdan3d" style="margin:0.5em;">
-            <img
-              src=`${BASE_URL}/buttons/youtube_s.gif`
-              alt="@gregdan3d on YouTube"
+              src={TokiPonaGif.src}
+              alt="toki pona lessons on mun.la"
               class="social"
             />
           </a>
