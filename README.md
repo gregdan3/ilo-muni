@@ -92,6 +92,6 @@ Copyright (C) 2024 Nia (@nia.co, @yknowlikenia)
 
 Copyright (C) 2024 Cuymacu (@cuymacu)
 
-- static/buttons/code_s.gif
-- static/buttons/lessons_s.gif
+- static/buttons/github_s.gif
+- static/buttons/tokipona_s.gif
 - static/buttons/youtube_s.gif
