@@ -195,7 +195,7 @@ const frontmatter = { title: "ilo Muni" };
       queries.forEach((query) => {
         const error: QueryError = {
           query: query.raw,
-          error: "No results found for this query.",
+          error: "No results for this query.",
         };
 
         errors.push(error);
@@ -209,7 +209,7 @@ const frontmatter = { title: "ilo Muni" };
         if (!resultTerms.has(query.repr)) {
           const error: QueryError = {
             query: query.repr,
-            error: "No results found for this query.",
+            error: "No results for this query.",
           };
 
           errors.push(error);
