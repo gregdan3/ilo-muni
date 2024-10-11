@@ -38,6 +38,7 @@ const frontmatter = { title: "ilo Muni" };
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyOccurrenceSet } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
+  import { countQuery } from "@utils/analytics";
   import { SCALES } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
 
@@ -162,6 +163,8 @@ const frontmatter = { title: "ilo Muni" };
     }
 
     toURLParams(usedParams);
+
+    countQuery();
   }
 
   async function updateChart(
