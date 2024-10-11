@@ -10,7 +10,6 @@ export function countQuery(
     // @ts-expect-error: it will exist
     if (window.goatcounter && window.goatcounter.count) {
       clearInterval(t);
-      console.log(`Counting ${path}`);
       // @ts-expect-error: it does exist
       window.goatcounter.count({
         path: path,
