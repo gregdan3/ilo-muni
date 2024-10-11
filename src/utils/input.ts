@@ -197,6 +197,13 @@ async function expandWildcards(queries: Query[]): Promise<ProcessedQueries> {
     } else if (wildcardPhrases.length === 1) {
       const wildcardPhrase = wildcardPhrases[0];
       const topPhrases = await fetchTopPhrases(wildcardPhrase);
+      if (topPhrases.length === 0) {
+        errors.push({
+          query: query.raw,
+          error: "No results for this wildcard.",
+        });
+        continue;
+      }
 
       for (const topPhrase of topPhrases) {
         const newQuery = {
