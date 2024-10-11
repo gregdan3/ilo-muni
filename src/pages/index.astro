@@ -144,8 +144,10 @@ const frontmatter = { title: "ilo Muni" };
     }
     dumpErrors(errorBin, errors);
 
-    // rewrite urlParams with query repr so we don't copy user input error
+    // valid queries are given stable syntax
     let queryReprs = queries.map((query: Query) => query.repr);
+    // errors are preserved as is
+    queryReprs.push(...errors.map((error: QueryError) => error.query));
     let query = queryReprs.join(", ");
     // the space is technically wasteful but looks better
 
