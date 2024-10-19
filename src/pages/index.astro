@@ -36,7 +36,7 @@ const frontmatter = { title: "ilo Muni" };
   } from "@utils/types";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
-  import { fetchManyOccurrenceSet } from "@utils/sqlite";
+  import { fetchManyHitsRows } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { countQuery } from "@utils/analytics";
   import { SCALES } from "@utils/constants";
@@ -183,7 +183,7 @@ const frontmatter = { title: "ilo Muni" };
       return { queries, errors };
     }
 
-    const results = await fetchManyOccurrenceSet(
+    const results = await fetchManyHitsRows(
       queries,
       scale,
       smoother,
