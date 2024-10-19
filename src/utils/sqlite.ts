@@ -137,7 +137,7 @@ export interface QueryParams {
 }
 
 function localizeTimestamp(timestamp: number): number {
-  return timestamp * 1000 + timezoneOffset;
+  return timestamp * 1000 + DAY_IN_MS;
 }
 
 function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
