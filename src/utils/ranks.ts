@@ -12,13 +12,13 @@ const colorMap: { [key: string]: string } = {
   unknown: "white",
 };
 
-function calcWidth(maxOccurrences: number, thisOccurrences: number): number {
+function calcWidth(maxHits: number, thisHits: number): number {
   // neither value can be 0
-  const adjustedThisOccurrences = Math.log(thisOccurrences);
-  const adjustedMaxOccurrences = Math.log(maxOccurrences);
+  const adjustedThisHits = Math.log(thisHits);
+  const adjustedMaxHits = Math.log(maxHits);
 
-  return adjustedThisOccurrences / adjustedMaxOccurrences;
-  // return thisOccurrences / maxOccurrences;
+  return adjustedThisHits / adjustedMaxHits;
+  // return thisHits / maxHits;
 }
 
 function truncateWord(word: string, maxLength: number = 40): string {
@@ -29,9 +29,9 @@ function truncateWord(word: string, maxLength: number = 40): string {
   return word;
 }
 
-async function makeGradient(phrase: string) {
+async function makeGradient(term: string) {
   // make a linear gradient with sharp cutoffs out of a list of words
-  const words = phrase.split(/\s+/);
+  const words = term.split(/\s+/);
   const gradientStops: string[] = [];
   const totalWords = words.length;
 
@@ -58,14 +58,14 @@ async function makeGradient(phrase: string) {
 
 async function assignWordClasses(
   item: Rank,
-  phraseLen: number,
+  termLen: number,
   elem: HTMLElement,
 ) {
   if (isUCSUR(item.term)) {
     elem.classList.add("ucsur");
   }
 
-  if (phraseLen === 1) {
+  if (termLen === 1) {
     const classes = await getLinkuCategories(item.term);
     elem.classList.add(...classes);
   }
@@ -74,21 +74,21 @@ async function assignWordClasses(
 async function makeDivEntry(
   item: Rank,
   index: number,
-  maxOccurrences: number,
-  phraseLen: number,
+  maxHits: number,
+  termLen: number,
 ): Promise<HTMLDivElement> {
   const rankItem = document.createElement("div");
   rankItem.classList.add("rankItem");
 
   const rankText = document.createElement("span");
   const word = truncateWord(item.term);
-  rankText.textContent = `${index + 1}. ${word}: ${item.occurrences}`;
+  rankText.textContent = `${index + 1}. ${word}: ${item.hits}`;
 
   const rankBar = document.createElement("span");
-  rankBar.style.width = `${calcWidth(maxOccurrences, item.occurrences) * 60}%`;
+  rankBar.style.width = `${calcWidth(maxHits, item.hits) * 60}%`;
   rankBar.classList.add("rankBar");
 
-  await assignWordClasses(item, phraseLen, rankBar);
+  await assignWordClasses(item, termLen, rankBar);
 
   rankItem.appendChild(rankText);
   rankItem.appendChild(rankBar);
@@ -99,8 +99,8 @@ async function makeDivEntry(
 async function makeTableEntry(
   item: Rank,
   index: number,
-  maxOccurrences: number,
-  phraseLen: number,
+  maxHits: number,
+  termLen: number,
 ): Promise<HTMLTableRowElement> {
   const tableRow = document.createElement("tr");
 
@@ -109,21 +109,21 @@ async function makeTableEntry(
   tableRow.appendChild(rankData);
   rankData.classList.add("rankData");
 
-  const occurrenceData = document.createElement("td");
-  occurrenceData.textContent = item.occurrences.toString();
-  tableRow.appendChild(occurrenceData);
-  occurrenceData.classList.add("occurrenceData");
+  const hitsData = document.createElement("td");
+  hitsData.textContent = item.hits.toString();
+  tableRow.appendChild(hitsData);
+  hitsData.classList.add("hitsData");
 
   const word = truncateWord(item.term);
 
   const barData = document.createElement("td");
   const barDiv = document.createElement("div");
   barDiv.textContent = word;
-  barDiv.style.width = `${calcWidth(maxOccurrences, item.occurrences) * 100}%`;
+  barDiv.style.width = `${calcWidth(maxHits, item.hits) * 100}%`;
   barData.classList.add("barData");
   barDiv.style.background = await makeGradient(item.term);
 
-  await assignWordClasses(item, phraseLen, barDiv);
+  await assignWordClasses(item, termLen, barDiv);
   barData.appendChild(barDiv);
   tableRow.appendChild(barData);
 
@@ -133,7 +133,7 @@ async function makeTableEntry(
 export async function reloadBarChart(
   div: HTMLDivElement,
   results: Rank[],
-  phraseLen: number,
+  termLen: number,
 ) {
   div.innerHTML = "";
 
@@ -141,16 +141,11 @@ export async function reloadBarChart(
   rankTable.style.width = `100%`;
   div.appendChild(rankTable);
 
-  const maxOccurrences = results[0].occurrences;
+  const maxHits = results[0].hits;
   results.forEach(async (item, index: number) => {
-    // const rankItem = await makeDivEntry(item, index, maxOccurrences, phraseLen);
+    // const rankItem = await makeDivEntry(item, index, maxHits, termLen);
     // div.appendChild(rankItem);
-    const tableRow = await makeTableEntry(
-      item,
-      index,
-      maxOccurrences,
-      phraseLen,
-    );
+    const tableRow = await makeTableEntry(item, index, maxHits, termLen);
     rankTable.append(tableRow);
   });
 }

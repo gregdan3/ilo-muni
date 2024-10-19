@@ -9,16 +9,13 @@ export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
 const ucsurRanges = "\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}";
 const symTokens = "+\\-*/()";
 
-export const PHRASE_DELIMS_RE = new RegExp(
+export const TERM_DELIMS_RE = new RegExp(
   `\\s+|([${ucsurRanges}${symTokens}])`,
   "u",
 );
 
-// wildcard can make up a phrase, but the other syms cannot
-export const PHRASE_RE = new RegExp(
-  `^[a-z0-9* ${ucsurRanges}]+(?:_\\d)?$`,
-  "u",
-);
+// wildcard can make up a term, but the other syms cannot
+export const TERM_RE = new RegExp(`^[a-z0-9* ${ucsurRanges}]+(?:_\\d)?$`, "u");
 export const UCSUR_RE = new RegExp(`^[${ucsurRanges}]$`, "u");
 
 // TODO: fetch from db at init? would make it not so much a constant
@@ -58,13 +55,13 @@ export const SAMPLE_SEARCHES = [
   // duh
   "toki, pona, toki pona",
   "sitelen, pona, sitelen pona",
-  // phrase trends
+  // term trends
   "tomo tawa, ilo tawa",
   "sina seme, sina pilin seme, sina pali e seme",
   // synonyms
   "ale, ali, ale + ali",
-  "ala, x, ala + x",
-  "anu, y, anu + y",
+  // "ala, x, ala + x",
+  // "anu, y, anu + y",
   // word groups
   "laso, loje, walo, jelo, pimeja",
   "soweli, waso, kala, akesi, pipi",
@@ -95,10 +92,10 @@ export const SAMPLE_SEARCHES = [
   "san - kekan san",
   "inli - toki inli, epanja - toki epanja",
   "toki_1 - toki_2, pona_1 - pona_2",
-  // periodic phrases
+  // periodic terms
   "suno pi toki pona",
   "tenpo monsuta",
-  "tenpo pana",
+  "tenpo pana, tenpo santa",
   "tenpo lete, tenpo seli",
   // funney
   "sona kiwen",

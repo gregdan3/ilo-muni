@@ -103,8 +103,8 @@ export function getSearchParams(): SearchURLParams {
 export function getRanksParams(): RanksURLParams {
   const urlParams = new URLSearchParams(window.location.search);
 
-  const phraseLenParam = urlParams.get("phraseLen") || "";
-  const phraseLen = coalesceLength(phraseLenParam);
+  const termLenParam = urlParams.get("termLen") || "";
+  const termLen = coalesceLength(termLenParam);
 
   const minLenParam = urlParams.get("minSentLen") || "";
   const minSentLen = coalesceLength(minLenParam);
@@ -112,7 +112,7 @@ export function getRanksParams(): RanksURLParams {
   const yearParam = urlParams.get("year") || "";
   const year = coalesceTimestamp(yearParam);
 
-  return { phraseLen, minSentLen, year };
+  return { termLen: termLen, minSentLen, year };
 }
 
 export function toURLParams(params: Record<string, string>) {

@@ -20,8 +20,8 @@ function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
   const len = rows.length;
 
   let firstNonZero = 0;
-  while (firstNonZero < len && rows[firstNonZero].occurrences === 0) {
-    smoothed[firstNonZero].occurrences = 0;
+  while (firstNonZero < len && rows[firstNonZero].hits === 0) {
+    smoothed[firstNonZero].hits = 0;
     firstNonZero += 1;
     continue;
   }
@@ -35,11 +35,11 @@ function smoothCenterWindowAvg(rows: Row[], smoothing: number): Row[] {
       j <= Math.min(len - 1, i + smoothing);
       j++
     ) {
-      sum += rows[j].occurrences;
+      sum += rows[j].hits;
       count++;
     }
 
-    smoothed[i].occurrences = sum / count;
+    smoothed[i].hits = sum / count;
   }
 
   return smoothed;
@@ -54,8 +54,8 @@ function smoothExponential(rows: Row[], smoothing: number): Row[] {
   const alpha = 1 / (smoothing + 1);
 
   for (let i = 1; i < rows.length; i++) {
-    smoothed[i].occurrences =
-      alpha * rows[i].occurrences + (1 - alpha) * smoothed[i - 1].occurrences;
+    smoothed[i].hits =
+      alpha * rows[i].hits + (1 - alpha) * smoothed[i - 1].hits;
   }
   return smoothed;
 }
@@ -81,12 +81,12 @@ function smoothGaussian(rows: Row[], smoothing: number): Row[] {
       const index = i + j;
       if (index >= 0 && index < len) {
         const weight = gaussianKernel[j + smoothing];
-        sum += rows[index].occurrences * weight;
+        sum += rows[index].hits * weight;
         kernelSum += weight;
       }
     }
 
-    smoothed[i].occurrences = sum / kernelSum;
+    smoothed[i].hits = sum / kernelSum;
   }
 
   return smoothed;
@@ -103,10 +103,10 @@ function smoothMedian(rows: Row[], smoothing: number): Row[] {
       j <= Math.min(len - 1, i + smoothing);
       j++
     ) {
-      window.push(rows[j].occurrences);
+      window.push(rows[j].hits);
     }
     window.sort((a, b) => a - b);
-    smoothed[i].occurrences = window[Math.floor(window.length / 2)];
+    smoothed[i].hits = window[Math.floor(window.length / 2)];
   }
 
   return smoothed;

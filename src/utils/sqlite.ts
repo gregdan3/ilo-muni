@@ -8,7 +8,7 @@ import {
 import type {
   Scale,
   Length,
-  Phrase,
+  Term,
   Query,
   Separator,
   Smoother,
@@ -27,12 +27,15 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
         // TODO: investigate
         from: "inline",
         config: {
-          serverMode: "chunked",
+          serverMode: "full",
           requestChunkSize: 1024,
-          databaseLengthBytes: 558073856,
-          serverChunkSize: 26214400,
-          urlPrefix: dbUrlPrefix,
-          suffixLength: 3,
+          url: "/ilo-muni/db/2024-10-17-trimmed.sqlite",
+          // serverMode: "chunked",
+          // requestChunkSize: 1024,
+          // databaseLengthBytes: 558073856,
+          // serverChunkSize: 26214400,
+          // urlPrefix: dbUrlPrefix,
+          // suffixLength: 3,
         },
       },
     ],
@@ -54,27 +57,27 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
 }
 
 // inclusive on both ends makes sense for the graph
-const USAGE_QUERY = `SELECT
+const MONTHLY_QUERY = `SELECT
   day,
-  occurrences
+  authors as hits
 FROM
-  frequency
-  JOIN phrase ON frequency.phrase_id = phrase.id
+  monthly mo
+  JOIN term p ON mo.term_id = p.id
 WHERE
-  phrase.text = ?
-  AND min_sent_len = ?
-  AND day >= ?
-  AND day <= ?
+  p.text = ?
+  AND mo.min_sent_len = ?
+  AND mo.day >= ?
+  AND mo.day <= ?
 ORDER BY
   day;`;
 
 const TOTAL_QUERY = `SELECT
   day,
-  occurrences
+  authors as hits
 FROM
   total
 WHERE
-  phrase_len = ?
+  term_len = ?
   AND min_sent_len = ?
   AND day >= ?
   AND day <= ?
@@ -82,32 +85,32 @@ ORDER BY
   day;`;
 
 // but for ranks, we've queried ahead data which is exclusive on the right
-const RANKS_QUERY = `SELECT
+const YEARLY_QUERY = `SELECT
   p.text AS term,
-  r.occurrences
+  yr.authors as hits
 FROM
-  ranks r
-  JOIN phrase p ON r.phrase_id = p.id
+  yearly yr
+  JOIN term p ON yr.term_id = p.id
 WHERE
   p.len = ?
-  AND r.min_sent_len = ?
-  AND r.day = ?
+  AND yr.min_sent_len = ?
+  AND yr.day = ?
 ORDER BY
-  occurrences DESC;`;
+  authors DESC;`;
 
-// NOTE: this query is inefficient because i have to order by occurrences, which means reading the entire table to process the query
+// NOTE: this query is inefficient because i have to order by hits, which means reading the entire table to process the query
 const WILDCARD_QUERY = `SELECT
   p.text AS term
 FROM
-  phrase p
-  JOIN ranks r ON p.id = r.phrase_id
+  term p
+  JOIN yearly yr ON p.id = yr.term_id
 WHERE
   p.len = ?
-  AND r.min_sent_len = ?
-  AND r.day = 0
+  AND yr.min_sent_len = ?
+  AND yr.day = 0
   AND p.text GLOB ?
 ORDER BY
-  r.occurrences DESC
+  yr.authors DESC
 LIMIT
   10;`;
 // day=0 is all time in ranks table
@@ -117,7 +120,7 @@ const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in 
 
 export interface Row {
   day: number; // timestamp representing a date
-  occurrences: number;
+  hits: number;
 }
 export interface Result {
   term: string;
@@ -125,11 +128,11 @@ export interface Result {
 }
 export interface Rank {
   term: string;
-  occurrences: number;
+  hits: number;
 }
 
 export interface QueryParams {
-  phrase: Phrase;
+  term: Term;
   scale: Scale;
   smoothing: number;
   start: number;
@@ -140,7 +143,7 @@ function localizeTimestamp(timestamp: number): number {
   return timestamp * 1000 + DAY_IN_MS;
 }
 
-function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
+function mergeHits(series: Row[][], separators: Separator[]): Row[] {
   if (series.length === 0 || series[0].length === 0) {
     return [];
   }
@@ -149,26 +152,24 @@ function mergeOccurrences(series: Row[][], separators: Separator[]): Row[] {
 
   for (let i = 0; i < series[0].length; i++) {
     const day = series[0][i].day;
-    let totalOccurrences = 0;
+    let totalHits = 0;
 
     for (let j = 0; j < series.length; j++) {
       if (separators[j] === "-") {
-        totalOccurrences -= series[j][i].occurrences;
+        totalHits -= series[j][i].hits;
       } else {
-        totalOccurrences += series[j][i].occurrences;
+        totalHits += series[j][i].hits;
       }
     }
-    result.push({ day, occurrences: totalOccurrences });
+    result.push({ day, hits: totalHits });
   }
   return result;
 }
 
-async function fetchOneOccurrenceSet(
-  params: QueryParams,
-): Promise<Row[] | null> {
-  let resp = await queryDb(USAGE_QUERY, [
-    params.phrase.term,
-    params.phrase.minSentLen,
+async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
+  let resp = await queryDb(MONTHLY_QUERY, [
+    params.term.text,
+    params.term.minSentLen,
     params.start,
     params.end,
   ]);
@@ -177,9 +178,9 @@ async function fetchOneOccurrenceSet(
   }
 
   resp = resp.map(
-    (row: { day: number; occurrences: number }): Row => ({
+    (row: { day: number; hits: number }): Row => ({
       day: localizeTimestamp(row.day),
-      occurrences: row.occurrences,
+      hits: row.hits,
     }),
   );
 
@@ -187,9 +188,9 @@ async function fetchOneOccurrenceSet(
   let iResult = 0;
   let iCompare = 0;
 
-  const totals = await fetchTotalOccurrences(
-    params.phrase.length,
-    params.phrase.minSentLen,
+  const totals = await fetchTotalHits(
+    params.term.len,
+    params.term.minSentLen,
     params.start,
     params.end,
   );
@@ -204,7 +205,7 @@ async function fetchOneOccurrenceSet(
       if (resultDay < comparisonDay) {
         iResult++;
       } else if (resultDay > comparisonDay) {
-        result.push({ day: comparisonDay, occurrences: 0 });
+        result.push({ day: comparisonDay, hits: 0 });
         iCompare++;
       } else {
         result.push(resp[iResult]);
@@ -212,7 +213,7 @@ async function fetchOneOccurrenceSet(
         iCompare++;
       }
     } else {
-      result.push({ day: comparisonDay, occurrences: 0 });
+      result.push({ day: comparisonDay, hits: 0 });
       iCompare++;
     }
   }
@@ -226,7 +227,7 @@ async function fetchOneOccurrenceSet(
   return result;
 }
 
-export async function fetchManyOccurrenceSet(
+export async function fetchManyHitsRows(
   queries: Query[],
   scale: Scale,
   smoother: Smoother,
@@ -239,31 +240,29 @@ export async function fetchManyOccurrenceSet(
   }
 
   const queryPromises = queries.map(async (query: Query) => {
-    const phraseOccurrencesPromises = query.phrases.map(
-      async (phrase: Phrase) => {
-        const rows = await fetchOneOccurrenceSet({
-          phrase,
-          scale,
-          smoothing,
-          start,
-          end,
-        } as QueryParams);
-        return rows !== null ? { rows, separator: phrase.separator } : null;
-      },
-    );
+    const termsHitsPromises = query.terms.map(async (term: Term) => {
+      const rows = await fetchOneHitsRow({
+        term,
+        scale,
+        smoothing,
+        start,
+        end,
+      } as QueryParams);
+      return rows !== null ? { rows, separator: term.separator } : null;
+    });
 
-    const phraseOccurrences = await Promise.all(phraseOccurrencesPromises);
+    const termsHits = await Promise.all(termsHitsPromises);
 
-    if (phraseOccurrences.some((occurrence): boolean => occurrence === null)) {
+    if (termsHits.some((hit): boolean => hit === null)) {
       return null;
     }
 
-    let mergedRows = mergeOccurrences(
-      phraseOccurrences.map((occurrence): Row[] => occurrence!.rows),
-      phraseOccurrences.map((occurrence): Separator => occurrence!.separator),
+    let mergedRows = mergeHits(
+      termsHits.map((hit): Row[] => hit!.rows),
+      termsHits.map((hit): Separator => hit!.separator),
     );
 
-    const totals = await fetchTotalOccurrences(1, 1, start, end);
+    const totals = await fetchTotalHits(1, 1, start, end);
     mergedRows = scaleFunctions[scale](mergedRows, totals);
     if (smoothing > 0 && SCALES[scale].smoothable) {
       const smootherFunction = smootherFunctions[smoother];
@@ -281,14 +280,14 @@ export async function fetchManyOccurrenceSet(
   return resolvedResults.filter((result) => result !== null) as Result[];
 }
 
-async function fetchTotalOccurrences(
-  phraseLen: Length,
+async function fetchTotalHits(
+  termLen: Length,
   minSentLen: Length,
   start: number,
   end: number,
 ): Promise<Row[]> {
-  // const minSentLen = 1; // params.phrase.minSentLen;
-  // const phraseLen = 1; // params.phrase.length;
+  // const minSentLen = 1; // params.term.minSentLen;
+  // const termLen = 1; // params.term.length;
   // NOTE:
   // if (!CANNOT_SMOOTH.includes(params.scale)) {
   // Override minimum sentence length when non-absolute scale is set for totals.
@@ -296,14 +295,14 @@ async function fetchTotalOccurrences(
   // because the percentages are made against the total number of words,
   // rather than among the words in sentences of a specific length.
   // Critically, searches like "toki_2 - toki_1" cannot produce negative values.
-  // minSentLen = params.phrase.length;
-  // phraseLen = params.phrase.length;
+  // minSentLen = params.term.length;
+  // termLen = params.term.length;
   // minSentLen = 1;
-  // phraseLen = 1;
+  // termLen = 1;
   // }
 
-  // NOTE: Why not override phraseLen too?
-  // Google measures percentages by their number of occurrences among same-length ngrams
+  // NOTE: Why not override termLen too?
+  // Google measures percentages by their hits among same-length ngrams
   // This means percentages for different-length ngrams are **not** comparable
   // Demonstrating: https://books.google.com/ngrams/graph?content=%28kindergarten+-+child+care%29&year_start=1800
   // Granted, it is differently misleading to take them as a percentage of unigrams
@@ -312,35 +311,35 @@ async function fetchTotalOccurrences(
   // And this could be useful because in the above search, the resultant line would be "Percentage prevalence of 'tenpo ni' without the prevalence of 'tenpo ni la' or 'lon tenpo ni'"
   // Which right now you can only get in absolute mode
 
-  let result = await queryDb(TOTAL_QUERY, [phraseLen, minSentLen, start, end]);
+  let result = await queryDb(TOTAL_QUERY, [termLen, minSentLen, start, end]);
   result = result.map(
-    (row: { day: number; occurrences: number }): Row => ({
+    (row: { day: number; hits: number }): Row => ({
       day: localizeTimestamp(row.day),
-      occurrences: row.occurrences,
+      hits: row.hits,
     }),
   );
   return result as Row[];
 }
 
-export async function fetchTopPhrases(phrase: Phrase): Promise<string[]> {
-  // phrase which has an attached wildcard
+export async function fetchTopTerms(term: Term): Promise<string[]> {
+  // term which has an attached wildcard
   const result = await queryDb(WILDCARD_QUERY, [
-    phrase.length,
-    phrase.minSentLen,
-    phrase.term,
+    term.len,
+    term.minSentLen,
+    term.text,
   ]);
   return result.map((term: { term: string }) => term.term);
-  // yes this is silly
+  // yes this is silly TODO: maybe wrong now
 }
 
-export async function fetchRanks(
-  phraseLen: Length,
+export async function fetchYearly(
+  termLen: Length,
   minSentLen: Length,
   start: number,
   // end: number,
 ): Promise<Rank[]> {
-  const result = await queryDb(RANKS_QUERY, [
-    phraseLen,
+  const result = await queryDb(YEARLY_QUERY, [
+    termLen,
     minSentLen,
     start,
     // end,

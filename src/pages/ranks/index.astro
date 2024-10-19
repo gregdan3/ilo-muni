@@ -10,14 +10,14 @@ const frontmatter = { title: "Rank by Frequency" };
 
 <script>
   import type { Length } from "@utils/types";
-  import { fetchRanks } from "@utils/sqlite";
+  import { fetchYearly } from "@utils/sqlite";
   import { reloadBarChart } from "@utils/ranks";
   import { getRanksParams, toURLParams } from "@utils/urlparams";
 
   let ranksDiv: HTMLDivElement;
   let yearDropdown: HTMLInputElement;
   let searchBox: HTMLInputElement;
-  let phraseLenDropdown: HTMLInputElement;
+  let termLenDropdown: HTMLInputElement;
   let sentLenDropdown: HTMLInputElement;
   let loader: HTMLSpanElement;
   let errorBin: HTMLDivElement;
@@ -28,8 +28,8 @@ const frontmatter = { title: "Rank by Frequency" };
 
     searchBox = document.getElementById("searchBox")! as HTMLInputElement;
 
-    phraseLenDropdown = document.getElementById(
-      "phraseLenDropdown",
+    termLenDropdown = document.getElementById(
+      "termLenDropdown",
     )! as HTMLInputElement;
     sentLenDropdown = document.getElementById(
       "sentLenDropdown",
@@ -43,35 +43,35 @@ const frontmatter = { title: "Rank by Frequency" };
 
   async function updateChart(
     ranksDiv: HTMLDivElement,
-    phraseLen: Length,
+    termLen: Length,
     minSentLen: Length,
     year: number,
   ) {
-    let data = await fetchRanks(phraseLen, minSentLen, year);
+    let data = await fetchYearly(termLen, minSentLen, year);
 
-    await reloadBarChart(ranksDiv, data, phraseLen);
+    await reloadBarChart(ranksDiv, data, termLen);
   }
 
   async function updatePage(event: Event | null) {
-    let phraseLen = Number(phraseLenDropdown.value) as Length;
+    let termLen = Number(termLenDropdown.value) as Length;
     let sentLen = Number(sentLenDropdown.value) as Length;
     const year = Number(yearDropdown.value);
 
-    if (event?.target === phraseLenDropdown && sentLen < phraseLen) {
-      sentLenDropdown.value = phraseLenDropdown.value;
-      sentLen = phraseLen;
+    if (event?.target === termLenDropdown && sentLen < termLen) {
+      sentLenDropdown.value = termLenDropdown.value;
+      sentLen = termLen;
     }
-    if (event?.target === sentLenDropdown && phraseLen > sentLen) {
-      phraseLenDropdown.value = sentLenDropdown.value;
-      phraseLen = sentLen;
+    if (event?.target === sentLenDropdown && termLen > sentLen) {
+      termLenDropdown.value = sentLenDropdown.value;
+      termLen = sentLen;
     }
 
     loader.style.visibility = "visible";
-    await updateChart(ranksDiv, phraseLen, sentLen, year);
+    await updateChart(ranksDiv, termLen, sentLen, year);
     loader.style.visibility = "hidden";
 
     let usedParams: Record<string, string> = {
-      phraseLen: phraseLenDropdown.value,
+      termLen: termLenDropdown.value,
       minSentLen: sentLenDropdown.value,
       year: yearDropdown.value,
     };
@@ -80,25 +80,25 @@ const frontmatter = { title: "Rank by Frequency" };
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
-    // initFetch();
-    //
-    // let initialParams = getRanksParams();
-    // if (initialParams.minSentLen) {
-    //   sentLenDropdown.value = initialParams.minSentLen;
-    // }
-    // if (initialParams.phraseLen) {
-    //   phraseLenDropdown.value = initialParams.phraseLen;
-    // }
-    // if (initialParams.year) {
-    //   yearDropdown.value = initialParams.year;
-    // }
-    //
-    // await updatePage(null);
-    //
-    // const form = document.getElementById("ranksForm")! as HTMLFormElement;
-    // form.addEventListener("change", async (event) => {
-    //   await updatePage(event);
-    // });
+    initFetch();
+
+    let initialParams = getRanksParams();
+    if (initialParams.minSentLen) {
+      sentLenDropdown.value = initialParams.minSentLen;
+    }
+    if (initialParams.termLen) {
+      termLenDropdown.value = initialParams.termLen;
+    }
+    if (initialParams.year) {
+      yearDropdown.value = initialParams.year;
+    }
+
+    await updatePage(null);
+
+    const form = document.getElementById("ranksForm")! as HTMLFormElement;
+    form.addEventListener("change", async (event) => {
+      await updatePage(event);
+    });
   });
 </script>
 
@@ -128,7 +128,7 @@ const frontmatter = { title: "Rank by Frequency" };
             options={LENGTHS}
             singularText="1 word"
             pluralText=" word phrases"
-            id="phraseLenDropdown"
+            id="termLenDropdown"
           />
         </div>
         <!-- TODO: all time picker -->

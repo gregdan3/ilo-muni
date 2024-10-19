@@ -30,7 +30,7 @@ export interface SearchURLParams {
 }
 
 export interface RanksURLParams {
-  phraseLen: LengthParam | null;
+  termLen: LengthParam | null;
   minSentLen: LengthParam | null;
   year: string | null;
 }
@@ -39,23 +39,23 @@ export interface RanksURLParams {
 export type Separator = "+" | "-" | null;
 export type Length = (typeof lengths)[number];
 
-// searchable words/phrases after split by separator and stripped of whitespace
-export interface Phrase {
-  raw: string; // the user's given input for the phrase
+// searchable term after split by separator and stripped of whitespace
+export interface Term {
+  raw: string; // the user's given input for the term
   repr: string; // the way we will print the input on the legend
 
-  term: string; // a single word or phrase, no separators or annotations
-  length: Length; // how many words are in the phrase
+  text: string; // a single term, no separators or annotations
+  len: Length; // how many words are in the term
   minSentLen: Length; // specified by user or overridden
-  separator: Separator; // how the current phrase connects to the previous phrase
+  separator: Separator; // how the current term connects to the previous term
   hasWildcard: boolean; // whether a single * exists in raw/
 }
 
 // searches after split by , and stripped of whitespace
 export interface Query {
-  raw: string; // unaltered user input, per-phrase
+  raw: string; // unaltered user input, per term
   repr: string; // to be printed later
-  phrases: Phrase[];
+  terms: Term[];
   // error: string[];
 }
 
@@ -64,8 +64,8 @@ export interface QueryError {
   error: string;
 }
 
-export interface PackagedPhrases {
-  phrases: Phrase[];
+export interface PackagedTerms {
+  terms: Term[];
   errors: string[];
 }
 

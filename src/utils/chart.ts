@@ -96,7 +96,7 @@ async function initUsageChart(
       },
       parsing: {
         xAxisKey: "day",
-        yAxisKey: "occurrences",
+        yAxisKey: "hits",
       },
       hover: {
         mode: "nearest",
@@ -137,7 +137,7 @@ async function initUsageChart(
             b: TooltipItem<keyof ChartTypeRegistry>,
           ): number {
             // @ts-expect-error: it doesn't know about `raw`
-            return b.raw.occurrences - a.raw.occurrences;
+            return b.raw.hits - a.raw.hits;
           },
           callbacks: {
             label: (ctx: TooltipItem<keyof ChartTypeRegistry>) =>
@@ -155,7 +155,7 @@ function formatLabel(
   format: FormatterFn,
 ): string {
   // @ts-expect-error: it doesn't know about `raw`
-  const data = format(ctx.raw.occurrences);
+  const data = format(ctx.raw.hits);
   return `${ctx.dataset.label}: ${data}`;
 }
 

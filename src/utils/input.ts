@@ -1,30 +1,30 @@
-import { PHRASE_RE, PHRASE_DELIMS_RE } from "@utils/constants";
-import { fetchTopPhrases } from "@utils/sqlite";
+import { TERM_RE, TERM_DELIMS_RE } from "@utils/constants";
+import { fetchTopTerms } from "@utils/sqlite";
 
 import type {
   Separator,
   Length,
-  Phrase,
+  Term,
   Query,
   QueryError,
   ProcessedQueries,
-  PackagedPhrases,
+  PackagedTerms,
 } from "@utils/types";
 
-function queryRepr(phrases: Phrase[]): string {
-  return phrases
-    .map((phrase) => {
-      if (phrase.separator) {
-        return phrase.separator + " " + phrase.repr;
+function queryRepr(terms: Term[]): string {
+  return terms
+    .map((term) => {
+      if (term.separator) {
+        return term.separator + " " + term.repr;
       }
-      return phrase.repr;
+      return term.repr;
     })
     .join(" ");
 }
 
-function countWords(phrase: string): number {
+function countWords(term: string): number {
   // NOTE: this would fail to count UCSUR, but it is only used after split
-  return phrase.split(/\s+/).length;
+  return term.split(/\s+/).length;
 }
 
 function cleanInput(input: string): string {
@@ -43,15 +43,15 @@ function splitOnDelim(input: string, delimiter: string): string[] {
 }
 
 function toQueryTokens(query: string): string[] {
-  const result = query.trim().split(PHRASE_DELIMS_RE);
+  const result = query.trim().split(TERM_DELIMS_RE);
   return result.filter((token) => token !== undefined && token.length > 0);
 }
 
-function toPhrases(query: string, givenMinSentLen: Length): PackagedPhrases {
-  const phrases: Phrase[] = [];
+function toTerms(query: string, givenMinSentLen: Length): PackagedTerms {
+  const terms: Term[] = [];
   const errors: string[] = [];
   let separator: Separator = null;
-  let currentPhrase: string[] = [];
+  let currentTerm: string[] = [];
   let hasWildcard = false;
 
   const tokens = toQueryTokens(query);
@@ -61,45 +61,45 @@ function toPhrases(query: string, givenMinSentLen: Length): PackagedPhrases {
   // TODO: finally on for loop?
   tokens.forEach((token) => {
     if (token === "+" || token === "-") {
-      if (currentPhrase.length > 0) {
+      if (currentTerm.length > 0) {
         // throws out trailing operators
-        phrases.push(
-          createPhrase(
-            currentPhrase.join(" "),
+        terms.push(
+          createTerm(
+            currentTerm.join(" "),
             separator,
             givenMinSentLen,
             hasWildcard,
           ),
         );
         // reset
-        currentPhrase = [];
+        currentTerm = [];
         hasWildcard = false;
       }
       separator = token as Separator;
     } else if (token.startsWith("*")) {
-      if (currentPhrase.length == 0) {
-        const error = `phrase may not begin with a wildcard`;
+      if (currentTerm.length == 0) {
+        const error = `term may not begin with a wildcard`;
         errors.push(error);
       }
       if (hasWildcard) {
-        const error = `phrases may not have more than one wildcard`;
+        const error = `term may not have more than one wildcard`;
         errors.push(error);
       }
 
       hasWildcard = true;
-      currentPhrase.push(token);
-    } else if (PHRASE_RE.test(token)) {
-      currentPhrase.push(token);
+      currentTerm.push(token);
+    } else if (TERM_RE.test(token)) {
+      currentTerm.push(token);
     } else {
-      const error = `phrases must be letters, numbers, or UCSUR text`;
+      const error = `term must be letters, numbers, or UCSUR text`;
       errors.push(error);
     }
   });
 
-  if (currentPhrase.length > 0) {
-    phrases.push(
-      createPhrase(
-        currentPhrase.join(" "),
+  if (currentTerm.length > 0) {
+    terms.push(
+      createTerm(
+        currentTerm.join(" "),
         separator,
         givenMinSentLen,
         hasWildcard,
@@ -107,20 +107,20 @@ function toPhrases(query: string, givenMinSentLen: Length): PackagedPhrases {
     );
   }
 
-  return { phrases, errors };
+  return { terms, errors };
 }
 
-function createPhrase(
-  combinedPhrase: string,
+function createTerm(
+  combinedTerm: string,
   separator: Separator,
   givenMinSentLen: Length,
   hasWildcard: boolean,
-): Phrase {
-  const [termWithMin, minLen] = combinedPhrase.split("_");
+): Term {
+  const [termWithMin, minLen] = combinedTerm.split("_");
   const term = termWithMin.trim();
   const length = countWords(term) as Length;
   const parsedMinLen = minLen ? (parseInt(minLen, 10) as Length) : length;
-  let repr = combinedPhrase;
+  let repr = combinedTerm;
   let minSentLen = Math.max(length, givenMinSentLen) as Length;
 
   if (minLen && parsedMinLen != minSentLen) {
@@ -130,10 +130,10 @@ function createPhrase(
   }
 
   return {
-    raw: combinedPhrase,
+    raw: combinedTerm,
     repr,
-    term,
-    length,
+    text: term,
+    len: length,
     minSentLen,
     separator,
     hasWildcard,
@@ -141,21 +141,21 @@ function createPhrase(
 }
 
 function toQueries(input: string, givenMinSentLen: Length): ProcessedQueries {
-  const rawPhrases = splitOnDelim(input, ",");
+  const rawTerms = splitOnDelim(input, ",");
   const queries: Query[] = [];
   const errors: QueryError[] = [];
-  rawPhrases.map((query: string) => {
-    const { phrases, errors: phraseErrors } = toPhrases(query, givenMinSentLen);
+  rawTerms.map((query: string) => {
+    const { terms, errors: termErrors } = toTerms(query, givenMinSentLen);
     const constructedQuery = {
       raw: query,
-      repr: queryRepr(phrases),
-      phrases: phrases,
+      repr: queryRepr(terms),
+      terms: terms,
     };
 
-    if (phraseErrors.length > 0) {
+    if (termErrors.length > 0) {
       errors.push({
         query: constructedQuery.raw,
-        error: phraseErrors.join("; "),
+        error: termErrors.join("; "),
       });
       return;
     }
@@ -187,17 +187,15 @@ async function expandWildcards(queries: Query[]): Promise<ProcessedQueries> {
   const errors: QueryError[] = [];
 
   for (const query of queries) {
-    // Find all phrases with wildcards
-    const wildcardPhrases = query.phrases.filter(
-      (phrase) => phrase.hasWildcard,
-    );
+    // Find all terms with wildcards
+    const wildcardTerms = query.terms.filter((term) => term.hasWildcard);
 
-    if (wildcardPhrases.length === 0) {
+    if (wildcardTerms.length === 0) {
       expandedQueries.push(query);
-    } else if (wildcardPhrases.length === 1) {
-      const wildcardPhrase = wildcardPhrases[0];
-      const topPhrases = await fetchTopPhrases(wildcardPhrase);
-      if (topPhrases.length === 0) {
+    } else if (wildcardTerms.length === 1) {
+      const wildcardTerm = wildcardTerms[0];
+      const topTerms = await fetchTopTerms(wildcardTerm);
+      if (topTerms.length === 0) {
         errors.push({
           query: query.raw,
           error: "No results for this wildcard.",
@@ -205,18 +203,18 @@ async function expandWildcards(queries: Query[]): Promise<ProcessedQueries> {
         continue;
       }
 
-      for (const topPhrase of topPhrases) {
+      for (const topTerm of topTerms) {
         const newQuery = {
           ...query,
-          phrases: query.phrases.map(
-            (phrase: Phrase): Phrase =>
-              phrase === wildcardPhrase
-                ? { ...phrase, term: topPhrase, repr: topPhrase }
-                : phrase,
+          terms: query.terms.map(
+            (term: Term): Term =>
+              term === wildcardTerm
+                ? { ...term, text: topTerm, repr: topTerm }
+                : term,
           ),
         };
         // TODO: kinda a mixed responsibility thing right
-        newQuery.repr = queryRepr(newQuery.phrases);
+        newQuery.repr = queryRepr(newQuery.terms);
         expandedQueries.push(newQuery);
       }
     } else {
