@@ -1,16 +1,18 @@
 import type { Row } from "@utils/sqlite.ts";
 import type { Axis } from "@utils/types.ts";
 
-type AbsoluteScaler = (rows: Row[]) => Row[];
-type RelativeScaler = (rows: Row[], totals: Row[]) => Row[];
-type Scaler = AbsoluteScaler | RelativeScaler;
+type Scaler = (rows: Row[], totals: Row[], key: keyof Row) => Row[];
 
-const getTotalHits = (rows: Row[]): number =>
-  rows.reduce((sum, row) => sum + row.hits, 0);
+const getTotalOfRow = (rows: Row[], key: keyof Row = "hits"): number =>
+  rows.reduce((sum, row) => sum + row[key], 0);
 
-const getStandardDeviation = (rows: Row[], mean: number): number => {
+const getStandardDeviation = (
+  rows: Row[],
+  mean: number,
+  key: keyof Row = "hits",
+): number => {
   const powerSum = rows.reduce((sum, row) => {
-    const deviation = row.hits - mean;
+    const deviation = row[key] - mean;
     return sum + deviation * deviation;
   }, 0);
 
@@ -18,114 +20,149 @@ const getStandardDeviation = (rows: Row[], mean: number): number => {
   return Math.sqrt(variance);
 };
 
-const absoluteScale: AbsoluteScaler = (rows: Row[]) => rows;
+const absoluteScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => rows;
 
-const relativeScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
+const relativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) =>
   rows.map((row: Row, i: number) => {
-    const total = totals[i].hits;
-    const hits = total > 0 ? row.hits / total : 0;
+    const total = totals[i][key];
+    const percentage = total > 0 ? row[key] / total : 0;
 
     return {
       ...row,
-      hits,
+      [key]: percentage,
     };
   });
 
-const logarithmicAbsoluteScale: AbsoluteScaler = (rows: Row[]) =>
-  rows.map((row: Row) => ({
-    ...row,
-    hits: Math.log(row.hits + 1),
-  }));
-
-const logarithmicRelativeScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
-  relativeScale(
-    logarithmicAbsoluteScale(rows),
-    logarithmicAbsoluteScale(totals),
-  );
-
-const normalizedScale: AbsoluteScaler = (rows: Row[]) => {
-  const min = Math.min(...rows.map((row) => row.hits));
-  const max = Math.max(...rows.map((row) => row.hits));
+const normalizedScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => {
+  const min = Math.min(...rows.map((row) => row[key]));
+  const max = Math.max(...rows.map((row) => row[key]));
 
   if (min === max) {
-    return rows.map((row: Row) => ({ ...row, hits: 0 }));
+    return rows.map((row: Row) => ({ ...row, [key]: 0 }));
   }
 
   return rows.map((row: Row) => ({
     ...row,
-    hits: (row.hits - min) / (max - min),
+    [key]: (row[key] - min) / (max - min),
   }));
 };
 
-const normalizedRelativeScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
-  normalizedScale(relativeScale(rows, totals));
+const normalizedRelativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => normalizedScale(relativeScale(rows, totals, key), totals, key);
 
-const absoluteDerivativeScale: AbsoluteScaler = (rows: Row[]) =>
+const derivativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) =>
   rows.map((row, i) => {
-    const diff = i > 0 ? row.hits - rows[i - 1].hits : 0;
+    const diff = i > 0 ? row[key] - rows[i - 1][key] : 0;
 
     return {
       ...row,
-      hits: diff,
+      [key]: diff,
     };
   });
 
-const absoluteSecondDerivativeScale: AbsoluteScaler = (rows: Row[]) =>
-  absoluteDerivativeScale(absoluteDerivativeScale(rows));
-
-const relativeDerivativeScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
-  absoluteDerivativeScale(relativeScale(rows, totals));
-
-const relativeSecondDerivativeScale: RelativeScaler = (
+const secondDerivativeScale: Scaler = (
   rows: Row[],
   totals: Row[],
-) => absoluteSecondDerivativeScale(relativeScale(rows, totals));
+  key: keyof Row = "hits",
+) => derivativeScale(derivativeScale(rows, totals, key), totals, key);
 
-const cumulativeScale: AbsoluteScaler = (rows: Row[]) => {
+const relativeDerivativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => derivativeScale(relativeScale(rows, totals, key), totals, key);
+
+const relativeSecondDerivativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => secondDerivativeScale(relativeScale(rows, totals, key), totals, key);
+
+const cumulativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => {
   let cumSum = 0;
 
   return rows.map((row) => {
-    cumSum += row.hits;
+    cumSum += row[key];
 
     return {
       ...row,
-      hits: cumSum,
+      [key]: cumSum,
     };
   });
 };
 
-const normalizedCumulativeScale: AbsoluteScaler = (rows: Row[]) =>
-  normalizedScale(cumulativeScale(rows));
+const normalizedCumulativeScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => normalizedScale(cumulativeScale(rows, totals, key), totals, key);
 
-const absoluteEntropyScale: AbsoluteScaler = (rows: Row[]) => {
-  const totalHits = getTotalHits(rows);
+const absoluteEntropyScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits", // TODO:
+) => {
+  const total = getTotalOfRow(rows, key);
 
   return rows.map((row) => {
-    const probability = row.hits / totalHits;
+    const probability = row[key] / total;
     const entropy = probability ? -probability * Math.log2(probability) : 0;
 
     return {
       ...row,
-      hits: entropy,
+      [key]: entropy,
     };
   });
 };
 
-const relativeEntropyScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
-  absoluteEntropyScale(relativeScale(rows, totals));
+const relativeEntropyScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => absoluteEntropyScale(relativeScale(rows, totals, key), totals, key);
 
-const absoluteZScoreScale: AbsoluteScaler = (rows: Row[]) => {
-  const average = getTotalHits(rows) / rows.length;
+const absoluteZScoreScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => {
+  const average = getTotalOfRow(rows) / rows.length;
   const stdDeviation = getStandardDeviation(rows, average);
 
   return rows.map((row: Row) => ({
     ...row,
-    hits: (row.hits - average) / stdDeviation,
+    [key]: (row[key] - average) / stdDeviation,
   }));
 };
 
-const relativeZScoreScale: RelativeScaler = (rows: Row[], totals: Row[]) =>
-  absoluteZScoreScale(relativeScale(rows, totals));
+const relativeZScoreScale: Scaler = (
+  rows: Row[],
+  totals: Row[],
+  key: keyof Row = "hits",
+) => absoluteZScoreScale(relativeScale(rows, totals, key), totals, key);
 
 export const scaleFunctions: {
   [key: string]: Scaler;
@@ -136,8 +173,8 @@ export const scaleFunctions: {
   logrel: relativeScale,
   normabs: normalizedScale,
   normrel: normalizedRelativeScale,
-  deriv1: absoluteDerivativeScale,
-  deriv2: absoluteSecondDerivativeScale,
+  deriv1: derivativeScale,
+  deriv2: secondDerivativeScale,
   relderiv1: relativeDerivativeScale,
   relderiv2: relativeSecondDerivativeScale,
   cmsum: cumulativeScale,

@@ -15,6 +15,26 @@ async function initUsageChart(
 ) {
   const chart = new Chart(canvas, {
     type: "line",
+    // data: {
+    //   datasets: [
+    //     ...data.map((result: Result) => ({
+    //       label: result.term,
+    //       data: result.data,
+    //       parsing: {
+    //         xAxisKey: "day",
+    //         yAxisKey: "hits",
+    //       },
+    //     })),
+    //     ...data.map((result: Result) => ({
+    //       label: `${result.term} (authors)`,
+    //       data: result.data,
+    //       parsing: {
+    //         xAxisKey: "day",
+    //         yAxisKey: "authors",
+    //       },
+    //     })),
+    //   ],
+    // },
     data: {
       datasets: data.map((result: Result) => ({
         label: result.term,
@@ -115,7 +135,7 @@ async function initUsageChart(
         //   annotations: {
         //     label1: {
         //       type: "label",
-        //       xValue: 1675256400,
+        //       xValue: "50%",
         //       yValue: "50%",
         //       backgroundColor: "rgba(245,245,245)",
         //       content: ["This is my text", "This is my text, second line"],
@@ -155,8 +175,18 @@ function formatLabel(
   format: FormatterFn,
 ): string {
   // @ts-expect-error: it doesn't know about `raw`
-  const data = format(ctx.raw.hits);
-  return `${ctx.dataset.label}: ${data}`;
+  const formattedHits = format(ctx.raw.hits);
+  // @ts-expect-error: it doesn't know about `raw`
+  const formattedAuthors = format(ctx.raw.authors);
+  // TODO: switch between "n hits among n authors" and "n% of hits among n% of authors"
+
+  let label = `${ctx.dataset.label}: ${formattedHits} hits`;
+  if (ctx.raw.authors !== NaN) {
+    // if a sum or difference is used, authors will be NaN
+    label = `${label}, ${formattedAuthors} authors`;
+  }
+
+  return label;
 }
 
 export async function reloadUsageChart(

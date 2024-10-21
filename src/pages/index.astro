@@ -36,11 +36,12 @@ const frontmatter = { title: "ilo Muni" };
   } from "@utils/types";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
-  import { fetchManyHitsRows } from "@utils/sqlite";
+  import { fetchManyRows } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { countQuery } from "@utils/analytics";
   import { SCALES } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
+  import { consoleLogAsync } from "@utils/debug";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
@@ -183,7 +184,7 @@ const frontmatter = { title: "ilo Muni" };
       return { queries, errors };
     }
 
-    const results = await fetchManyHitsRows(
+    const results = await fetchManyRows(
       queries,
       scale,
       smoother,
