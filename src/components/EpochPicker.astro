@@ -34,7 +34,7 @@ const valueDate = makeAugust(valueYear);
         selected={date.getTime() === valueDate.getTime()}
       >
         {renderAs === "date"
-          ? `Aug ${date.getUTCFullYear()}`
+          ? `${date.getUTCFullYear()}`
           : `${index} years old`}
       </option>
     ))
