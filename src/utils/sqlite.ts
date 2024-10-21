@@ -12,6 +12,10 @@ import type {
   Query,
   Separator,
   Smoother,
+  Row,
+  Rank,
+  Result,
+  QueryParams,
 } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
@@ -120,29 +124,6 @@ LIMIT
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in milliseconds
-
-export interface Row {
-  day: number; // timestamp representing a date
-  hits: number;
-  authors: number;
-}
-export interface Result {
-  term: string;
-  data: Row[];
-}
-export interface Rank {
-  term: string;
-  hits: number;
-  authors: number;
-}
-
-export interface QueryParams {
-  term: Term;
-  scale: Scale;
-  smoothing: number;
-  start: number;
-  end: number;
-}
 
 function localizeTimestamp(timestamp: number): number {
   return timestamp * 1000 + DAY_IN_MS;

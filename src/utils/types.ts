@@ -10,6 +10,29 @@ export const smoothings = SMOOTHINGS.map((n: string): number => {
   return parseInt(n, 10);
 });
 
+export interface Row {
+  day: number; // timestamp representing a date
+  hits: number;
+  authors: number;
+}
+export interface Result {
+  term: string;
+  data: Row[];
+}
+export interface Rank {
+  term: string;
+  hits: number;
+  authors: number;
+}
+
+export interface QueryParams {
+  term: Term;
+  scale: Scale;
+  smoothing: number;
+  start: number;
+  end: number;
+}
+
 export type Formatter = keyof typeof FORMATTERS;
 export type FormatterFn = (typeof FORMATTERS)[Formatter];
 export type Scale = keyof typeof SCALES;
@@ -18,6 +41,7 @@ export type LengthParam = (typeof LENGTHS)[number];
 export type Smoother = keyof typeof SMOOTHERS;
 export type SmoothingParam = (typeof SMOOTHINGS)[number];
 export type Axis = "linear" | "logarithmic";
+export type Field = keyof Row;
 
 export interface SearchURLParams {
   query: string;
