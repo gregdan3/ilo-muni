@@ -59,7 +59,8 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
 // inclusive on both ends makes sense for the graph
 const MONTHLY_QUERY = `SELECT
   day,
-  authors as hits
+  hits,
+  authors
 FROM
   monthly mo
   JOIN term p ON mo.term_id = p.id
@@ -73,7 +74,8 @@ ORDER BY
 
 const TOTAL_QUERY = `SELECT
   day,
-  authors as hits
+  hits,
+  authors
 FROM
   total
 WHERE
@@ -87,7 +89,8 @@ ORDER BY
 // but for ranks, we've queried ahead data which is exclusive on the right
 const YEARLY_QUERY = `SELECT
   p.text AS term,
-  yr.authors as hits
+  yr.hits,
+  yr.authors,
 FROM
   yearly yr
   JOIN term p ON yr.term_id = p.id
@@ -96,7 +99,7 @@ WHERE
   AND yr.min_sent_len = ?
   AND yr.day = ?
 ORDER BY
-  authors DESC;`;
+  hits DESC;`;
 
 // NOTE: this query is inefficient because i have to order by hits, which means reading the entire table to process the query
 const WILDCARD_QUERY = `SELECT
@@ -121,6 +124,7 @@ const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in 
 export interface Row {
   day: number; // timestamp representing a date
   hits: number;
+  authors: number;
 }
 export interface Result {
   term: string;
@@ -129,6 +133,7 @@ export interface Result {
 export interface Rank {
   term: string;
   hits: number;
+  authors: number;
 }
 
 export interface QueryParams {
@@ -143,9 +148,13 @@ function localizeTimestamp(timestamp: number): number {
   return timestamp * 1000 + DAY_IN_MS;
 }
 
-function mergeHits(series: Row[][], separators: Separator[]): Row[] {
+function mergeRows(series: Row[][], separators: Separator[]): Row[] {
   if (series.length === 0 || series[0].length === 0) {
     return [];
+  }
+  // do not merge if it would be a no-op
+  if (series.length === 1) {
+    return series[0];
   }
 
   const result: Row[] = [];
@@ -161,12 +170,14 @@ function mergeHits(series: Row[][], separators: Separator[]): Row[] {
         totalHits += series[j][i].hits;
       }
     }
-    result.push({ day, hits: totalHits });
+
+    // NOTE: there are at least 2 items in `series` and authors cannot be summed
+    result.push({ day, hits: totalHits, authors: NaN });
   }
   return result;
 }
 
-async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
+async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
   let resp = await queryDb(MONTHLY_QUERY, [
     params.term.text,
     params.term.minSentLen,
@@ -178,9 +189,10 @@ async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
   }
 
   resp = resp.map(
-    (row: { day: number; hits: number }): Row => ({
+    (row: Row): Row => ({
       day: localizeTimestamp(row.day),
       hits: row.hits,
+      authors: row.authors,
     }),
   );
 
@@ -188,7 +200,7 @@ async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
   let iResult = 0;
   let iCompare = 0;
 
-  const totals = await fetchTotalHits(
+  const totals = await fetchTotals(
     params.term.len,
     params.term.minSentLen,
     params.start,
@@ -205,7 +217,7 @@ async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
       if (resultDay < comparisonDay) {
         iResult++;
       } else if (resultDay > comparisonDay) {
-        result.push({ day: comparisonDay, hits: 0 });
+        result.push({ day: comparisonDay, hits: 0, authors: 0 });
         iCompare++;
       } else {
         result.push(resp[iResult]);
@@ -213,7 +225,7 @@ async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
         iCompare++;
       }
     } else {
-      result.push({ day: comparisonDay, hits: 0 });
+      result.push({ day: comparisonDay, hits: 0, authors: 0 });
       iCompare++;
     }
   }
@@ -227,7 +239,7 @@ async function fetchOneHitsRow(params: QueryParams): Promise<Row[] | null> {
   return result;
 }
 
-export async function fetchManyHitsRows(
+export async function fetchManyRows(
   queries: Query[],
   scale: Scale,
   smoother: Smoother,
@@ -241,7 +253,7 @@ export async function fetchManyHitsRows(
 
   const queryPromises = queries.map(async (query: Query) => {
     const termsHitsPromises = query.terms.map(async (term: Term) => {
-      const rows = await fetchOneHitsRow({
+      const rows = await fetchOneRow({
         term,
         scale,
         smoothing,
@@ -257,13 +269,14 @@ export async function fetchManyHitsRows(
       return null;
     }
 
-    let mergedRows = mergeHits(
+    let mergedRows = mergeRows(
       termsHits.map((hit): Row[] => hit!.rows),
       termsHits.map((hit): Separator => hit!.separator),
     );
 
-    const totals = await fetchTotalHits(1, 1, start, end);
-    mergedRows = scaleFunctions[scale](mergedRows, totals);
+    const totals = await fetchTotals(1, 1, start, end);
+    mergedRows = scaleFunctions[scale](mergedRows, totals, "hits");
+    mergedRows = scaleFunctions[scale](mergedRows, totals, "authors");
     if (smoothing > 0 && SCALES[scale].smoothable) {
       const smootherFunction = smootherFunctions[smoother];
       mergedRows = smootherFunction(mergedRows, smoothing);
@@ -280,7 +293,7 @@ export async function fetchManyHitsRows(
   return resolvedResults.filter((result) => result !== null) as Result[];
 }
 
-async function fetchTotalHits(
+async function fetchTotals(
   termLen: Length,
   minSentLen: Length,
   start: number,
@@ -312,10 +325,12 @@ async function fetchTotalHits(
   // Which right now you can only get in absolute mode
 
   let result = await queryDb(TOTAL_QUERY, [termLen, minSentLen, start, end]);
+  // await consoleLogAsync("totals", result);
   result = result.map(
-    (row: { day: number; hits: number }): Row => ({
+    (row: Row): Row => ({
       day: localizeTimestamp(row.day),
       hits: row.hits,
+      authors: row.authors,
     }),
   );
   return result as Row[];
