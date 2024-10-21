@@ -39,18 +39,26 @@ const groupedSmoothers = Object.entries(options).reduce<GroupedOptions>(
 <select id={id} class={class_}>
   {
     Object.entries(groupedSmoothers).map(([category, smoothers]) => (
-      <optgroup label={category}>
+      <>
+        <option disabled class="category">
+          {category}
+        </option>
         {smoothers.map((smoother) => (
           <option value={smoother.key} selected={smoother.key === selected}>
             {smoother.label}
           </option>
         ))}
-      </optgroup>
+      </>
     ))
   }
 </select>
 
 <style>
+  .category {
+    color: white;
+    background-color: black;
+  }
+
   .inline {
     display: inline;
   }
