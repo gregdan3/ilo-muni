@@ -117,7 +117,9 @@ export function getRanksParams(): RanksURLParams {
 
 export function toURLParams(params: Record<string, string>) {
   const urlParams = new URLSearchParams();
+  // const sortedKeys = Object.keys(params).sort();
 
+  // for (const key of sortedKeys) {
   for (const key in params) {
     if (params[key]) {
       urlParams.append(key, params[key]);
