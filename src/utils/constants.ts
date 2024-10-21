@@ -130,7 +130,7 @@ export const SCALES = {
     tooltipNums: "raw",
   },
   logabs: {
-    label: "Absolute Log",
+    label: "Abs. Log",
     category: "useful",
     smoothable: false,
     axis: "logarithmic",
@@ -138,7 +138,7 @@ export const SCALES = {
     tooltipNums: "raw",
   },
   logrel: {
-    label: "Relative Log",
+    label: "Rel. Log",
     category: "useful",
     smoothable: true,
     axis: "logarithmic",
@@ -146,7 +146,7 @@ export const SCALES = {
     tooltipNums: "longPercent",
   },
   logcm: {
-    label: "Cumulative Log",
+    label: "Cml. Log",
     category: "useful",
     smoothable: false,
     axis: "logarithmic",
@@ -154,7 +154,7 @@ export const SCALES = {
     tooltipNums: "raw",
   },
   normabs: {
-    label: "Absolute Minmax",
+    label: "Abs. Minmax",
     category: "useful",
     smoothable: false,
     axis: "linear",
@@ -162,7 +162,7 @@ export const SCALES = {
     tooltipNums: "longRaw",
   },
   normrel: {
-    label: "Relative Minmax",
+    label: "Rel. Minmax",
     category: "useful",
     smoothable: true,
     axis: "linear",
@@ -170,7 +170,7 @@ export const SCALES = {
     tooltipNums: "longRaw",
   },
   normcm: {
-    label: "Cumulative Minmax",
+    label: "Cml. Minmax",
     category: "useful",
     smoothable: false,
     axis: "linear",
@@ -178,7 +178,7 @@ export const SCALES = {
     tooltipNums: "longRaw",
   },
   entropy: {
-    label: "Absolute Entropy",
+    label: "Abs. Entropy",
     category: "weird",
     smoothable: true,
     axis: "linear",
@@ -186,7 +186,7 @@ export const SCALES = {
     tooltipNums: "raw",
   },
   relentropy: {
-    label: "Relative Entropy",
+    label: "Rel. Entropy",
     category: "weird",
     smoothable: true,
     axis: "linear",
@@ -194,7 +194,7 @@ export const SCALES = {
     tooltipNums: "raw",
   },
   deriv1: {
-    label: "Absolute 1st Deriv",
+    label: "Abs. 1st Deriv",
     category: "weird",
     smoothable: false,
     axis: "linear",
@@ -210,7 +210,7 @@ export const SCALES = {
   //   tooltipNums: "raw",
   // },
   relderiv1: {
-    label: "Relative 1st Deriv",
+    label: "Rel. 1st Deriv",
     category: "weird",
     smoothable: false,
     axis: "linear",
@@ -226,7 +226,7 @@ export const SCALES = {
   //   tooltipNums: "longPercent",
   // },
   zscore: {
-    label: "Relative Z-Score",
+    label: "Rel. Z-Score",
     category: "weird",
     smoothable: true,
     axis: "linear",
