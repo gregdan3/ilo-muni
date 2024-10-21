@@ -158,6 +158,7 @@ async function initUsageChart(
           ): number {
             // @ts-expect-error: it doesn't know about `raw`
             return b.raw.hits - a.raw.hits;
+            // TODO: order by shown field
           },
           callbacks: {
             label: (ctx: TooltipItem<keyof ChartTypeRegistry>) =>
