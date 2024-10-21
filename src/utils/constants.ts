@@ -50,6 +50,7 @@ export const SMOOTHINGS = [
   "40",
   "50",
 ];
+export const FIELDS = ["hits", "authors"];
 
 export const SAMPLE_SEARCHES = [
   // duh

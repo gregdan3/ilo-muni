@@ -49,6 +49,7 @@ export interface SearchURLParams {
   scale: Scale | null;
   smoothing: SmoothingParam | null;
   smoother: Smoother | null;
+  field: Field | null;
   start: string | null;
   end: string | null;
 }
