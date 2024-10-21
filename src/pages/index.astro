@@ -3,6 +3,7 @@ import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
 import IntDropdown from "@components/IntDropdown.astro";
+import Dropdown from "@components/Dropdown.astro";
 import CategorizedDropdown from "@components/CategorizedDropdown.astro";
 import IconButton from "@components/IconButton.astro";
 import InfoModal from "@components/InfoModal.astro";
@@ -11,6 +12,7 @@ import { Icon } from "astro-icon/components";
 
 import {
   EARLIEST_YEAR,
+  FIELDS,
   LATEST_YEAR,
   LENGTHS,
   SCALES,
@@ -21,6 +23,7 @@ import {
 const defaultScale = "rel";
 const defaultSmoother = "cwin";
 const defaultSmoothing = "2";
+const defaultField = "hits";
 
 const frontmatter = { title: "ilo Muni" };
 ---
@@ -33,6 +36,7 @@ const frontmatter = { title: "ilo Muni" };
     Query,
     ProcessedQueries,
     QueryError,
+    Field,
   } from "@utils/types";
   import { inputToQueries } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
@@ -41,7 +45,6 @@ const frontmatter = { title: "ilo Muni" };
   import { countQuery } from "@utils/analytics";
   import { SCALES } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
-  import { consoleLogAsync } from "@utils/debug";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
@@ -49,6 +52,7 @@ const frontmatter = { title: "ilo Muni" };
   let scaleDropdown: HTMLInputElement;
   let smootherDropdown: HTMLInputElement;
   let smoothingDropdown: HTMLInputElement;
+  let fieldDropdown: HTMLInputElement;
   let startDropdown: HTMLInputElement;
   let endDropdown: HTMLInputElement;
   let loader: HTMLSpanElement;
@@ -75,6 +79,10 @@ const frontmatter = { title: "ilo Muni" };
     )! as HTMLInputElement;
     smoothingDropdown = document.getElementById(
       "smoothingDropdown",
+    )! as HTMLInputElement;
+
+    fieldDropdown = document.getElementById(
+      "fieldDropdown",
     )! as HTMLInputElement;
 
     startDropdown = document.getElementById(
@@ -113,6 +121,7 @@ const frontmatter = { title: "ilo Muni" };
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
     const scale = scaleDropdown.value as Scale;
+    const field = fieldDropdown.value as Field;
     const smoother = smootherDropdown.value as Smoother;
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
@@ -133,6 +142,7 @@ const frontmatter = { title: "ilo Muni" };
       queryText,
       sentLen,
       scale,
+      field,
       smoother,
       smoothing,
       start,
@@ -156,6 +166,7 @@ const frontmatter = { title: "ilo Muni" };
       query: query,
       minSentLen: sentLenDropdown.value,
       scale: scaleDropdown.value,
+      field: fieldDropdown.value,
       start: startDropdown.value,
       end: endDropdown.value,
     };
@@ -174,6 +185,7 @@ const frontmatter = { title: "ilo Muni" };
     input: string,
     minSentLen: Length,
     scale: Scale,
+    field: Field,
     smoother: Smoother,
     smoothing: number,
     start: number,
@@ -220,7 +232,7 @@ const frontmatter = { title: "ilo Muni" };
 
     const scaleData = SCALES[scale];
 
-    await reloadUsageChart(usageCanvas, results, scaleData);
+    await reloadUsageChart(usageCanvas, results, scaleData, field);
     return { queries, errors };
   }
 
@@ -232,6 +244,9 @@ const frontmatter = { title: "ilo Muni" };
     searchBox.value = initialParams.query;
     if (initialParams.minSentLen) {
       sentLenDropdown.value = initialParams.minSentLen;
+    }
+    if (initialParams.field) {
+      fieldDropdown.value = initialParams.field;
     }
     if (initialParams.scale) {
       scaleDropdown.value = initialParams.scale;
@@ -302,6 +317,8 @@ const frontmatter = { title: "ilo Muni" };
         selected={defaultSmoothing}
         pluralText=" smoothing"
       />
+
+      <Dropdown id="fieldDropdown" selected={defaultField} options={FIELDS} />
 
       <CategorizedDropdown
         id="smootherDropdown"

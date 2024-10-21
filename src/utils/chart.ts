@@ -1,6 +1,6 @@
 import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import { FORMATTERS } from "@utils/ui.ts";
-import type { ScaleData, FormatterFn } from "@utils/types";
+import type { ScaleData, FormatterFn, Field } from "@utils/types";
 import type { Result, Row } from "@utils/sqlite";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
@@ -193,6 +193,7 @@ export async function reloadUsageChart(
   canvas: HTMLCanvasElement,
   data: Result[],
   scale: ScaleData,
+  field: Field,
 ) {
   if (!existingChart) {
     existingChart = await initUsageChart(canvas, data, scale);
@@ -201,6 +202,7 @@ export async function reloadUsageChart(
       label: result.term,
       data: result.data,
     }));
+    existingChart.options.parsing.yAxisKey! = field;
     existingChart.options.scales!.y!.type = scale.axis;
     // @ts-expect-error: value can apparently be string but it never is
     existingChart.options.scales!.y!.ticks!.callback =
