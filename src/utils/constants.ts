@@ -61,21 +61,24 @@ export const SAMPLE_SEARCHES = [
   "sina seme, sina pilin seme, sina pali e seme",
   // synonyms
   "ale, ali, ale + ali",
-  // "ala, x, ala + x",
-  // "anu, y, anu + y",
+  "lukin, oko, lukin + oko",
   // word groups
   "laso, loje, walo, jelo, pimeja",
   "soweli, waso, kala, akesi, pipi",
+  "mu, kalama",
+  "kasi, soko",
+  "anpa, noka",
   "sewi, anpa",
-  "sinpin, monsi",
+  "sewi, lawa",
   "meli, mije, tonsi",
   "pu, ku, su",
-  "lukin, oko",
   "sin, namako",
   "selo, sijelo",
+  "noka, luka",
   // modifier usage
   "wawa a, wawa mute",
   "tenpo ni, tenpo lon",
+  "tenpo weka, tenpo pini",
   "tenpo kama, tenpo pini",
   "tenpo weka, tenpo poka",
   "tenpo suno, tenpo pimeja",
@@ -98,8 +101,8 @@ export const SAMPLE_SEARCHES = [
   "tenpo monsuta",
   "tenpo pana, tenpo santa",
   "tenpo lete, tenpo seli",
-  // funney
-  "sona kiwen",
+  // messages
+  "ni kin li, sona kiwen",
 ];
 
 // absolutes should be preserved
