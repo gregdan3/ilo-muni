@@ -155,8 +155,11 @@ async function initUsageChart(
             a: TooltipItem<keyof ChartTypeRegistry>,
             b: TooltipItem<keyof ChartTypeRegistry>,
           ): number {
+            // @ts-expect-error: why let me reference the config then
+            const key = a.chart.config._config!.options.parsing.yAxisKey;
+
             // @ts-expect-error: it doesn't know about `raw`
-            return b.raw.hits - a.raw.hits;
+            return b.raw[key] - a.raw[key];
             // TODO: order by shown field
           },
           callbacks: {
