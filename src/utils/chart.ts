@@ -1,7 +1,6 @@
 import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import { FORMATTERS } from "@utils/ui.ts";
-import type { ScaleData, FormatterFn, Field } from "@utils/types";
-import type { Result, Row } from "@utils/sqlite";
+import type { ScaleData, FormatterFn, Field, Result, Row } from "@utils/types";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
@@ -177,12 +176,13 @@ function formatLabel(
 ): string {
   // @ts-expect-error: it doesn't know about `raw`
   const formattedHits = format(ctx.raw.hits);
-  // @ts-expect-error: it doesn't know about `raw`
+  // @ts-expect-error: same
   const formattedAuthors = format(ctx.raw.authors);
   // TODO: switch between "n hits among n authors" and "n% of hits among n% of authors"
 
   let label = `${ctx.dataset.label}: ${formattedHits} hits`;
-  if (ctx.raw.authors !== NaN) {
+  // @ts-expect-error: same
+  if (!isNaN(ctx.raw.authors)) {
     // if a sum or difference is used, authors will be NaN
     label = `${label}, ${formattedAuthors} authors`;
   }
@@ -203,7 +203,8 @@ export async function reloadUsageChart(
       label: result.term,
       data: result.data,
     }));
-    existingChart.options.parsing.yAxisKey! = field;
+    // @ts-expect-error: value can apparently be `false` but it never is
+    existingChart.options.parsing!.yAxisKey! = field;
     existingChart.options.scales!.y!.type = scale.axis;
     // @ts-expect-error: value can apparently be string but it never is
     existingChart.options.scales!.y!.ticks!.callback =

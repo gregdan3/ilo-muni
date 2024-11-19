@@ -1,4 +1,4 @@
-import type { Rank } from "@utils/sqlite";
+import type { Rank } from "@utils/types";
 import { isUCSUR } from "@utils/other";
 import { getLinkuCategories } from "@utils/linku";
 
