@@ -1,6 +1,6 @@
 import type { Axis, Row, Field } from "@utils/types.ts";
 
-type Scaler = (rows: Row[], totals: Row[], key: Field) => Row[];
+type ScalerFn = (rows: Row[], totals: Row[], key: Field) => Row[];
 
 const getTotalOfRow = (rows: Row[], key: Field): number =>
   rows.reduce((sum: number, row: Row): number => sum + row[key], 0);
@@ -19,10 +19,17 @@ const getStandardDeviation = (
   return Math.sqrt(variance);
 };
 
-const absoluteScale: Scaler = (rows: Row[], totals: Row[], key: Field): Row[] =>
-  rows;
+const absoluteScale: ScalerFn = (
+  rows: Row[],
+  totals: Row[],
+  key: Field,
+): Row[] => rows;
 
-const relativeScale: Scaler = (rows: Row[], totals: Row[], key: Field): Row[] =>
+const relativeScale: ScalerFn = (
+  rows: Row[],
+  totals: Row[],
+  key: Field,
+): Row[] =>
   rows.map((row: Row, i: number): Row => {
     const total = totals[i][key];
     const percentage = total > 0 ? row[key] / total : 0;
@@ -33,7 +40,7 @@ const relativeScale: Scaler = (rows: Row[], totals: Row[], key: Field): Row[] =>
     };
   });
 
-const normalizedScale: Scaler = (
+const normalizedScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
@@ -53,13 +60,13 @@ const normalizedScale: Scaler = (
   );
 };
 
-const normalizedRelativeScale: Scaler = (
+const normalizedRelativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] => normalizedScale(relativeScale(rows, totals, key), totals, key);
 
-const derivativeScale: Scaler = (
+const derivativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
@@ -73,26 +80,26 @@ const derivativeScale: Scaler = (
     };
   });
 
-const secondDerivativeScale: Scaler = (
+const secondDerivativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] => derivativeScale(derivativeScale(rows, totals, key), totals, key);
 
-const relativeDerivativeScale: Scaler = (
+const relativeDerivativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] => derivativeScale(relativeScale(rows, totals, key), totals, key);
 
-const relativeSecondDerivativeScale: Scaler = (
+const relativeSecondDerivativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] =>
   secondDerivativeScale(relativeScale(rows, totals, key), totals, key);
 
-const cumulativeScale: Scaler = (
+const cumulativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
@@ -109,13 +116,13 @@ const cumulativeScale: Scaler = (
   });
 };
 
-const normalizedCumulativeScale: Scaler = (
+const normalizedCumulativeScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] => normalizedScale(cumulativeScale(rows, totals, key), totals, key);
 
-const absoluteEntropyScale: Scaler = (
+const absoluteEntropyScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
@@ -133,13 +140,13 @@ const absoluteEntropyScale: Scaler = (
   });
 };
 
-const relativeEntropyScale: Scaler = (
+const relativeEntropyScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] => absoluteEntropyScale(relativeScale(rows, totals, key), totals, key);
 
-const absoluteZScoreScale: Scaler = (
+const absoluteZScoreScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
@@ -155,14 +162,14 @@ const absoluteZScoreScale: Scaler = (
   );
 };
 
-const relativeZScoreScale: Scaler = (
+const relativeZScoreScale: ScalerFn = (
   rows: Row[],
   totals: Row[],
   key: Field,
 ): Row[] => absoluteZScoreScale(relativeScale(rows, totals, key), totals, key);
 
 export const scaleFunctions: {
-  [key: string]: Scaler;
+  [key: string]: ScalerFn;
 } = {
   abs: absoluteScale,
   rel: relativeScale,

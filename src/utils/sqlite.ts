@@ -16,6 +16,7 @@ import type {
   Rank,
   Result,
   QueryParams,
+  Field,
 } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
@@ -223,6 +224,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
 export async function fetchManyRows(
   queries: Query[],
   scale: Scale,
+  field: Field,
   smoother: Smoother,
   smoothing: number,
   start: number,
@@ -260,7 +262,7 @@ export async function fetchManyRows(
     mergedRows = scaleFunctions[scale](mergedRows, totals, "authors");
     if (smoothing > 0 && SCALES[scale].smoothable) {
       const smootherFunction = smootherFunctions[smoother];
-      mergedRows = smootherFunction(mergedRows, smoothing);
+      mergedRows = smootherFunction(mergedRows, smoothing, field);
     }
 
     return {
