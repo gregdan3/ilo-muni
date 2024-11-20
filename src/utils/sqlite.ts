@@ -262,7 +262,8 @@ export async function fetchManyRows(
     mergedRows = scaleFunctions[scale](mergedRows, totals, "authors");
     if (smoothing > 0 && SCALES[scale].smoothable) {
       const smootherFunction = smootherFunctions[smoother];
-      mergedRows = smootherFunction(mergedRows, smoothing, field);
+      mergedRows = smootherFunction(mergedRows, smoothing, "hits");
+      mergedRows = smootherFunction(mergedRows, smoothing, "authors");
     }
 
     return {
