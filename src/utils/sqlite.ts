@@ -212,19 +212,12 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
     }
   }
 
-  // result = scaleFunctions[params.scale](result, totals);
-  //
-  // if (params.smoothing > 0 && SMOOTHABLE.includes(params.scale)) {
-  //   result = makeSmooth(result, params.smoothing);
-  // }
-
   return result;
 }
 
 export async function fetchManyRows(
   queries: Query[],
   scale: Scale,
-  field: Field,
   smoother: Smoother,
   smoothing: number,
   start: number,
@@ -235,7 +228,7 @@ export async function fetchManyRows(
   }
 
   const queryPromises = queries.map(async (query: Query) => {
-    const termsHitsPromises = query.terms.map(async (term: Term) => {
+    const termDataPromises = query.terms.map(async (term: Term) => {
       const rows = await fetchOneRow({
         term,
         scale,
@@ -246,15 +239,15 @@ export async function fetchManyRows(
       return rows !== null ? { rows, separator: term.separator } : null;
     });
 
-    const termsHits = await Promise.all(termsHitsPromises);
+    const termsData = await Promise.all(termDataPromises);
 
-    if (termsHits.some((hit): boolean => hit === null)) {
+    if (termsData.some((term): boolean => term === null)) {
       return null;
     }
 
     let mergedRows = mergeRows(
-      termsHits.map((hit): Row[] => hit!.rows),
-      termsHits.map((hit): Separator => hit!.separator),
+      termsData.map((hit): Row[] => hit!.rows),
+      termsData.map((hit): Separator => hit!.separator),
     );
 
     const totals = await fetchTotals(1, 1, start, end);
@@ -309,7 +302,6 @@ async function fetchTotals(
   // Which right now you can only get in absolute mode
 
   let result = await queryDb(TOTAL_QUERY, [termLen, minSentLen, start, end]);
-  // await consoleLogAsync("totals", result);
   result = result.map(
     (row: Row): Row => ({
       day: localizeTimestamp(row.day),

@@ -15,26 +15,6 @@ async function initUsageChart(
 ) {
   const chart = new Chart(canvas, {
     type: "line",
-    // data: {
-    //   datasets: [
-    //     ...data.map((result: Result) => ({
-    //       label: result.term,
-    //       data: result.data,
-    //       parsing: {
-    //         xAxisKey: "day",
-    //         yAxisKey: "hits",
-    //       },
-    //     })),
-    //     ...data.map((result: Result) => ({
-    //       label: `${result.term} (authors)`,
-    //       data: result.data,
-    //       parsing: {
-    //         xAxisKey: "day",
-    //         yAxisKey: "authors",
-    //       },
-    //     })),
-    //   ],
-    // },
     data: {
       datasets: data.map((result: Result) => ({
         label: result.term,
