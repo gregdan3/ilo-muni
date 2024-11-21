@@ -11,6 +11,7 @@ async function initUsageChart(
   canvas: HTMLCanvasElement,
   data: Result[],
   scale: ScaleData,
+  field: Field,
 ) {
   const chart = new Chart(canvas, {
     type: "line",
@@ -115,7 +116,7 @@ async function initUsageChart(
       },
       parsing: {
         xAxisKey: "day",
-        yAxisKey: "hits",
+        yAxisKey: field,
       },
       hover: {
         mode: "nearest",
@@ -200,7 +201,7 @@ export async function reloadUsageChart(
   field: Field,
 ) {
   if (!existingChart) {
-    existingChart = await initUsageChart(canvas, data, scale);
+    existingChart = await initUsageChart(canvas, data, scale, field);
   } else {
     existingChart.data.datasets = data.map((result: Result) => ({
       label: result.term,
