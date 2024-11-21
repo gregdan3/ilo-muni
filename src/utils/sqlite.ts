@@ -16,7 +16,6 @@ import type {
   Rank,
   Result,
   QueryParams,
-  Field,
 } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
@@ -154,7 +153,7 @@ function mergeRows(series: Row[][], separators: Separator[]): Row[] {
     }
 
     // NOTE: there are at least 2 items in `series` and authors cannot be summed
-    result.push({ day, hits: totalHits, authors: NaN });
+    result.push({ day, hits: totalHits, authors: NaN, hpa: NaN });
   }
   return result;
 }
@@ -175,6 +174,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
       day: localizeTimestamp(row.day),
       hits: row.hits,
       authors: row.authors,
+      hpa: row.authors ? row.hits / row.authors : 0,
     }),
   );
 
@@ -199,7 +199,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
       if (resultDay < comparisonDay) {
         iResult++;
       } else if (resultDay > comparisonDay) {
-        result.push({ day: comparisonDay, hits: 0, authors: 0 });
+        result.push({ day: comparisonDay, hits: 0, authors: 0, hpa: 0 });
         iCompare++;
       } else {
         result.push(resp[iResult]);
@@ -207,7 +207,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
         iCompare++;
       }
     } else {
-      result.push({ day: comparisonDay, hits: 0, authors: 0 });
+      result.push({ day: comparisonDay, hits: 0, authors: 0, hpa: 0 });
       iCompare++;
     }
   }
@@ -315,6 +315,7 @@ async function fetchTotals(
       day: localizeTimestamp(row.day),
       hits: row.hits,
       authors: row.authors,
+      hpa: 0,
     }),
   );
   return result as Row[];

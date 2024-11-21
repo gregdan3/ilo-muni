@@ -45,7 +45,7 @@ function coalesceSmoother(maybeSmoother: string | null): Smoother | null {
 
 function coalesceField(maybeField: string | null): Field | null {
   let field: Field | null = null;
-  if (maybeField && FIELDS.includes(maybeField)) {
+  if (maybeField && maybeField in FIELDS) {
     field = maybeField as Field;
   }
   return field;

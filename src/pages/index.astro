@@ -319,7 +319,11 @@ const frontmatter = { title: "ilo Muni" };
         pluralText=" smoothing"
       />
 
-      <Dropdown id="fieldDropdown" selected={defaultField} options={FIELDS} />
+      <CategorizedDropdown
+        id="fieldDropdown"
+        options={FIELDS}
+        selected={defaultField}
+      />
 
       <CategorizedDropdown
         id="smootherDropdown"

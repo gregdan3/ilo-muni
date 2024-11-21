@@ -1,5 +1,11 @@
 // URL params
-import { SCALES, SMOOTHERS, LENGTHS, SMOOTHINGS } from "@utils/constants";
+import {
+  SCALES,
+  SMOOTHERS,
+  LENGTHS,
+  SMOOTHINGS,
+  FIELDS,
+} from "@utils/constants";
 
 import { FORMATTERS } from "@utils/ui.ts";
 
@@ -14,6 +20,7 @@ export interface Row {
   day: number; // timestamp representing a date
   hits: number;
   authors: number;
+  hpa: number;
 }
 export interface Result {
   term: string;
@@ -41,7 +48,7 @@ export type LengthParam = (typeof LENGTHS)[number];
 export type Smoother = keyof typeof SMOOTHERS;
 export type SmoothingParam = (typeof SMOOTHINGS)[number];
 export type Axis = "linear" | "logarithmic";
-export type Field = keyof Row;
+export type Field = keyof typeof FIELDS;
 
 export interface SearchURLParams {
   query: string;
