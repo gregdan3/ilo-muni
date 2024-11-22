@@ -309,7 +309,15 @@ async function fetchTotals(
       day: localizeTimestamp(row.day),
       hits: row.hits,
       authors: row.authors,
-      hpa: 0,
+      hpa: row.hits,
+      // WARNING:
+      // Technically, this should be (h/a) / (H/A) according to how the field is
+      // defined. Here, I assign hpa to hits directly, because what I actually
+      // want to display is "The hits/author of this word is what percent of the
+      // entire language?" Which is (h/a) / (H).
+      // The original function would yield "This word's hits/author is what percent of
+      // the average hits per author?"
+      // Total data is never directly visible to the user, so this *works*.
     }),
   );
   return result as Row[];
