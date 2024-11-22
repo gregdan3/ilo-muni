@@ -54,7 +54,7 @@ export const SMOOTHINGS = [
 export const FIELDS = {
   hits: { label: "Hits", category: "data" },
   authors: { label: "Authors", category: "data" },
-  hpa: { label: "Hits/Authors", category: "data" },
+  hpa: { label: "Hits/Author", category: "data" },
 };
 
 export const SAMPLE_SEARCHES = [
