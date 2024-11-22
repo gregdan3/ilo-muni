@@ -1,5 +1,6 @@
 import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import { FORMATTERS } from "@utils/ui.ts";
+import { FIELDS } from "@utils/constants.ts";
 import type { ScaleData, FormatterFn, Field, Result, Row } from "@utils/types";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
@@ -158,19 +159,12 @@ function formatLabel(
   ctx: TooltipItem<keyof ChartTypeRegistry>,
   format: FormatterFn,
 ): string {
+  // @ts-expect-error: why let me reference the config then
+  const key: Field = ctx.chart.config._config!.options.parsing.yAxisKey;
+  const field: string = FIELDS[key]["label"].toLowerCase();
   // @ts-expect-error: it doesn't know about `raw`
-  const formattedHits = format(ctx.raw.hits);
-  // @ts-expect-error: same
-  const formattedAuthors = format(ctx.raw.authors);
-  // TODO: switch between "n hits among n authors" and "n% of hits among n% of authors"
-
-  let label = `${ctx.dataset.label}: ${formattedHits} hits`;
-  // @ts-expect-error: same
-  if (!isNaN(ctx.raw.authors)) {
-    // if a sum or difference is used, authors will be NaN
-    label = `${label}, ${formattedAuthors} authors`;
-  }
-
+  const formattedData = format(ctx.raw[key]);
+  const label = `${ctx.dataset.label}: ${formattedData} ${field}`;
   return label;
 }
 
