@@ -4,6 +4,7 @@ import {
   BASE_URL,
   DB_URL_PREFIX,
   LATEST_ALLOWED_TIMESTAMP,
+  FIELDS,
 } from "@utils/constants";
 import type {
   Scale,
@@ -251,12 +252,13 @@ export async function fetchManyRows(
     );
 
     const totals = await fetchTotals(1, 1, start, end);
-    mergedRows = scaleFunctions[scale](mergedRows, totals, "hits");
-    mergedRows = scaleFunctions[scale](mergedRows, totals, "authors");
-    if (smoothing > 0 && SCALES[scale].smoothable) {
-      const smootherFunction = smootherFunctions[smoother];
-      mergedRows = smootherFunction(mergedRows, smoothing, "hits");
-      mergedRows = smootherFunction(mergedRows, smoothing, "authors");
+
+    for (const key of Object.keys(FIELDS)) {
+      mergedRows = scaleFunctions[scale](mergedRows, totals, key);
+      if (smoothing > 0 && SCALES[scale].smoothable) {
+        const smootherFunction = smootherFunctions[smoother];
+        mergedRows = smootherFunction(mergedRows, smoothing, key);
+      }
     }
 
     return {
