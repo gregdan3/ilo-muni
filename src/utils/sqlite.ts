@@ -253,6 +253,12 @@ export async function fetchManyRows(
 
     const totals = await fetchTotals(1, 1, start, end);
 
+    // NOTE:
+    // If I later want to show more than one field in the tooltip,
+    // processing all fields is necessary so that values don't appear
+    // to change when the user changes from one view to another.
+    // Right now, only the currently chosen field is displayed,
+    // so this is wasted work technically.
     for (const key of Object.keys(FIELDS)) {
       mergedRows = scaleFunctions[scale](mergedRows, totals, key);
       if (smoothing > 0 && SCALES[scale].smoothable) {
