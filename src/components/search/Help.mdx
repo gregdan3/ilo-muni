@@ -4,31 +4,28 @@
 import { Icon } from "astro-icon/components";
 
 <h3 style="margin: 0;">What is this?</h3>
-
-This is ilo Muni pi mute nimi, "word-frequency tool named Muni." It's a graphing
-tool like [Google Ngrams](https://books.google.com/ngrams/), but for [Toki
-Pona](https://tokipona.org), a constructed language with 120-130 words.
+This is **ilo Muni pi mute nimi**, "word-frequency tool named Muni." It graphs how words are used over time, like [Google Ngrams](https://books.google.com/ngrams/) but for [Toki
+Pona](https://tokipona.org).
 If you don't know what to search, press <Icon name="mingcute:refresh-3-line" /> to
 make a random query!
 
-<h3 style="line-height: 0.5em;">Search</h3>
-
-- Search **1 to 6 word phrases**: "toki pona"
-- Search **multiple phrases** with commas: "soweli, waso"
-- Use a **wildcard** `*` to get top matching phrases: "ona li \*"
-- **Add** phrases with `+`: "ale + ali"
-- **Subtract** phrases with `-`: "toki - toki pona"
-- Limit **minimum sentence length** with `_1-6` on a phrase: "toki_2, toki_3"
+<h3 style="margin-bottom: 0; line-height: 0.5em;">Search</h3>
+- Search **1 to 6 word terms**: "toki pona"
+- Search **multiple terms** with commas: "soweli, waso"
+- Use a **wildcard** `*` to get top matching terms: "ona li \*"
+- **Add** terms with `+`: "ale + ali"
+- **Subtract** terms with `-`: "toki - toki pona"
+- Limit **minimum sentence length** with `_1-6` on a term: "toki_2, toki_3"
 
 <h3 style="margin-bottom: 0; line-height: 0.5em;">Options</h3>
-
-- **Relative** shows what % of all words are the searched word
-- **Absolute** shows how many times the searched word appeared
-- **Smoothing** averages out noisy graphs, but too much can be misleading
+- **Relative+Hits**: What % of all terms are this term?
+- **Absolute+Hits**: How many times did this term appear?
+- **Relative+Authors**: What % of authors used this term?
+- **Absolute+Authors**: How many authors used this term?
+- **Smoothing**: averages out noisy graphs, but too much can be misleading
 - The rest is complicated! [See the help page for more.](/ilo-muni/help)
 
 <h3 style="margin-bottom: 0; line-height: 0.5em;">Buttons</h3>
-
 - <Icon name="mingcute:question-line" />: Open this help dialog
 - <Icon name="mingcute:tool-line" />: Show advanced options
 - <Icon name="mingcute:copy-line" />: Copy the current URL
