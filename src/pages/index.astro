@@ -334,17 +334,17 @@ const frontmatter = { title: "ilo Muni" };
         selected={defaultScale}
       />
 
+      <CategorizedDropdown
+        id="fieldDropdown"
+        options={FIELDS}
+        selected={defaultField}
+      />
+
       <IntDropdown
         id="smoothingDropdown"
         options={SMOOTHINGS}
         selected={defaultSmoothing}
         pluralText=" smoothing"
-      />
-
-      <CategorizedDropdown
-        id="fieldDropdown"
-        options={FIELDS}
-        selected={defaultField}
       />
 
       <CategorizedDropdown
