@@ -67,24 +67,42 @@ export const SAMPLE_SEARCHES = [
   // term trends
   "tomo tawa, ilo tawa",
   "sina seme, sina pilin seme, sina pali e seme",
+  "kepeken ilo, kepeken e ilo",
   // synonyms
   "ale, ali, ale + ali",
   "lukin, oko, lukin + oko",
   // word groups
   "laso, loje, walo, jelo, pimeja",
   "soweli, waso, kala, akesi, pipi",
+  "mi, ni, sina, ona",
+  "li, e, la, pi",
+  "pona, ike",
   "mu, kalama",
+  "sinpin, monsi",
   "kasi, soko",
   "anpa, noka",
   "sewi, anpa",
   "sewi, lawa",
   "meli, mije, tonsi",
+  "mute, wawa, sewi",
   "pu, ku, su",
   "sin, namako",
   "selo, sijelo",
   "noka, luka",
+  "noka, anpa",
+  "lawa, sewi",
+  // phrase groups
+  "pali e, lon e",
+  "li seme, e seme, la seme",
+  "seme li, seme e, seme la",
+  "lon seme, tan seme, nasin seme, tenpo seme",
+  "lon seme, ma seme",
+  "kin la, poka la, sama la",
+  "sona e toki, toki e toki, sona toki, toki sona",
   // modifier usage
-  "wawa a, wawa mute",
+  "mi wan, mi mute, mi ale",
+  "sina wan, sina mute, sina ale",
+  "wawa a, wawa mute, wawa sewi",
   "tenpo ni, tenpo lon",
   "tenpo weka, tenpo pini",
   "tenpo kama, tenpo pini",
@@ -92,22 +110,29 @@ export const SAMPLE_SEARCHES = [
   "tenpo suno, tenpo pimeja",
   "tenpo suli, tenpo lili",
   // grammatical things
-  "kepeken ilo, kepeken e ilo",
-  "kin la, poka la, sama la",
-  "pali e, lon e",
   // names
   "jan kekan, mun kekan",
   "epanja, kanse, tosi",
   "sonja, jan sonja",
-  "inli, toki inli",
+  //langs + places
+  "toki inli, ma inli",
+  "toki sonko, ma sonko",
+  "toki kanse, ma kanse",
+  "toki epanja, ma epanja",
+  "toki tosi, ma tosi",
+  // alternate spellings
+  "ma mesiko, ma mekiko",
+  "ma losi, ma lusi",
   // disambiguation
   "san - kekan san",
   "inli - toki inli, epanja - toki epanja",
   "toki_1 - toki_2, pona_1 - pona_2",
+  // correlations
+  "ku, kijetesantakalu, epiku, misikeke",
   // periodic terms
   "suno pi toki pona",
   "tenpo monsuta",
-  "tenpo pana, tenpo santa",
+  "tenpo pana, tenpo santa, tenpo sike sin",
   "tenpo lete, tenpo seli",
   // messages
   "ni kin li, sona kiwen",
