@@ -41,7 +41,14 @@ const frontmatter = { title: "ilo Muni" };
   import { fetchManyRows } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { countQuery } from "@utils/analytics";
-  import { SCALES } from "@utils/constants";
+  import {
+    SCALES,
+    defaultScale,
+    defaultSmoother,
+    defaultSmoothing,
+    defaultField,
+    FIELDS,
+  } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
 
   let usageCanvas: HTMLCanvasElement;
@@ -115,15 +122,33 @@ const frontmatter = { title: "ilo Muni" };
     errorBin.appendChild(ul);
   }
 
+  function shouldDisableScale(id: Scale | undefined) {
+    return id && SCALES[id] && SCALES[id].sums;
+  }
+
   async function updatePage() {
     const queryText = searchBox.value;
     const sentLen = Number(sentLenDropdown.value) as Length;
-    const scale = scaleDropdown.value as Scale;
+    let scale = scaleDropdown.value as Scale;
     const field = fieldDropdown.value as Field;
     const smoother = smootherDropdown.value as Smoother;
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
     const end = Number(endDropdown.value);
+
+    const summable = FIELDS[field].summable;
+    const options = Array.from(scaleDropdown.querySelectorAll("option"));
+    options.forEach((option) => {
+      const id = option.id as Scale | undefined;
+      if (shouldDisableScale(id)) {
+        option.disabled = !summable;
+      }
+    });
+    // bounce user back to default scale
+    if (!summable && SCALES[scale].sums) {
+      scale = defaultScale;
+      scaleDropdown.value = defaultScale;
+    }
 
     if (SCALES[scale].smoothable) {
       smootherDropdown.disabled = false;
