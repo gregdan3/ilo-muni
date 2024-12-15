@@ -32,6 +32,11 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 // no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
 export const LATEST_ALLOWED_TIMESTAMP = 1720569600; // 10 jul 2024 -> 7 aug 2024
 
+export const defaultScale = "rel";
+export const defaultSmoother = "cwin";
+export const defaultSmoothing = "2";
+export const defaultField = "hits";
+
 export const LENGTHS = ["1", "2", "3", "4", "5", "6"];
 export const SMOOTHINGS = [
   "0",
