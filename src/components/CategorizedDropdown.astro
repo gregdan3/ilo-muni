@@ -23,7 +23,7 @@ type GroupedOptions = {
   [category: string]: Array<{ key: string } & DropdownItem>;
 };
 
-const groupedSmoothers = Object.entries(options).reduce<GroupedOptions>(
+const groupedOptions = Object.entries(options).reduce<GroupedOptions>(
   (acc, [key, value]) => {
     const item = value as DropdownItem;
     if (!acc[item.category]) {
@@ -38,14 +38,18 @@ const groupedSmoothers = Object.entries(options).reduce<GroupedOptions>(
 
 <select id={id} class={class_}>
   {
-    Object.entries(groupedSmoothers).map(([category, smoothers]) => (
+    Object.entries(groupedOptions).map(([category, options]) => (
       <>
         <option disabled class="category">
           {category}
         </option>
-        {smoothers.map((smoother) => (
-          <option value={smoother.key} selected={smoother.key === selected}>
-            {smoother.label}
+        {options.map((option) => (
+          <option
+            id={option.key}
+            value={option.key}
+            selected={option.key === selected}
+          >
+            {option.label}
           </option>
         ))}
       </>
