@@ -1,9 +1,7 @@
 import { makeAugust } from "@utils/other";
-import type { Axis } from "@utils/types";
 
 export const BASE_URL = "/ilo-muni";
 export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
-// export const DB_URL = `https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite`;
 
 // these consts are just to build the important regexes
 const ucsurRanges = "\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}";
