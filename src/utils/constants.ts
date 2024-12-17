@@ -31,7 +31,7 @@ export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
 export const LATEST_ALLOWED_TIMESTAMP = 1720569600; // 10 jul 2024 -> 7 aug 2024
 
 export const defaultScale = "rel";
-export const defaultSmoother = "cwin";
+export const defaultSmoother = "gauss";
 export const defaultSmoothing = "2";
 export const defaultField = "hits";
 
