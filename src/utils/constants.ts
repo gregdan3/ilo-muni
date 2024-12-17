@@ -289,8 +289,8 @@ export const SCALES = {
 
 export const SMOOTHERS = {
   cwin: { label: "Window Avg", category: "recommended" },
+  gauss: { label: "Gaussian", category: "recommended" },
   exp: { label: "Exponential", category: "weird" },
-  gauss: { label: "Gaussian", category: "weird" },
   med: { label: "Median", category: "weird" },
   tri: { label: "Triangular", category: "weird" },
 };
