@@ -8,6 +8,7 @@ import {
 } from "@utils/constants";
 import type {
   Scale,
+  Field,
   Length,
   Term,
   Query,
@@ -219,6 +220,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
 export async function fetchManyRows(
   queries: Query[],
   scale: Scale,
+  field: Field,
   smoother: Smoother,
   smoothing: number,
   start: number,
@@ -254,17 +256,22 @@ export async function fetchManyRows(
     const totals = await fetchTotals(1, 1, start, end);
 
     // NOTE:
-    // If I later want to show more than one field in the tooltip,
-    // processing all fields is necessary so that values don't appear
-    // to change when the user changes from one view to another.
-    // Right now, only the currently chosen field is displayed,
-    // so this is wasted work technically.
-    for (const key of Object.keys(FIELDS)) {
-      mergedRows = scaleFunctions[scale](mergedRows, totals, key);
-      if (smoothing > 0 && SCALES[scale].smoothable) {
-        const smootherFunction = smootherFunctions[smoother];
-        mergedRows = smootherFunction(mergedRows, smoothing, key);
-      }
+    // If I want to show more fields in the tooltip later on, this will be
+    // needed so the data doesn't appear to change from one graph view to
+    // another. Right now I only show the current graph's data on the tooltip,
+    // so no harm done.
+    // for (const key of Object.keys(FIELDS)) {
+    //   mergedRows = scaleFunctions[scale](mergedRows, totals, key);
+    //   if (smoothing > 0 && SCALES[scale].smoothable) {
+    //     const smootherFunction = smootherFunctions[smoother];
+    //     mergedRows = smootherFunction(mergedRows, smoothing, key);
+    //   }
+    // }
+
+    mergedRows = scaleFunctions[scale](mergedRows, totals, field);
+    if (smoothing > 0 && SCALES[scale].smoothable) {
+      const smootherFunction = smootherFunctions[smoother];
+      mergedRows = smootherFunction(mergedRows, smoothing, field);
     }
 
     return {
