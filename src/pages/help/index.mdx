@@ -319,12 +319,12 @@ vastly more popular than the others, check again using the
 
 #### Relative
 
-The **relative scale** is the default scale, and when graphing hits on it, it
-shows you what **percentage of all words** are the searched term in each time
-period on the graph. This also applies to phrases, for which you would interpret
-as follows: "What portion of all words are **any one word** from this phrase?"
-This is to say, the number of times a phrase appears can stand in for any of the
-words in the phrase, from a math standpoint.
+The **relative scale** is the default scale, and when graphing **hits** on it,
+it shows you the **percentage of all words** which are the searched term in each
+time period on the graph. This also applies to phrases, for which you would
+interpret as follows: "What portion of all words are **any one word** from this
+phrase?" This is to say, the number of times a phrase appears can stand in for
+any of the words in the phrase, from a math standpoint.
 
 If you're interested in **why** I do the math this way, you can read about it in
 the discussion below. Spoiler: I dunk on Google, who admits they are doing their
@@ -480,27 +480,27 @@ use set notation.
 The relative scale is the most generally useful scale, as it implicitly tells
 you the relationship of your search term to all other terms by showing a
 percentage instead of a raw number. For example, you can compare
-[**the grammatical particles**](/ilo-muni/?query=li,+e,+la,+o,+a&scale=rel) or
-[**the colors**](/ilo-muni/?query=laso%2C+loje%2C+jelo%2C+walo%2C+pimeja&scale=rel),
+[the grammatical particles](/ilo-muni/?query=li,+e,+la,+o,+a&scale=rel) or
+[the colors](/ilo-muni/?query=laso%2C+loje%2C+jelo%2C+walo%2C+pimeja&scale=rel),
 determining how much of the entire language is these terms.
 
 It can be difficult to compare relative graphs for words which are in different
 magnitudes, such as
-[**kijetesantakalu, soweli**](/ilo-muni/?query=kijetesantakalu%2C+soweli&scale=rel).
+[kijetesantakalu, soweli](/ilo-muni/?query=kijetesantakalu%2C+soweli&scale=rel).
 I recommend the [Relative Minmax scale](#minmax) for cases like these, which can
 help to identify words which trend in the same way no matter their magnitude.
 
 #### Cumulative
 
-The **Cumulative scale** shows you how many times a given word has been said up
-to a point in time, increasing to the total number of times the word has been
-said by the present. This is handy for
-[**observing the point where a word or phrase becomes more spoken than another**](/ilo-muni/?query=sina+seme,+sina+pali+e+seme&scale=cmsum),
+When graphing hits on the **cumulative scale**, you'll see how many times a
+given word has been said up to a point in time, increasing to the total number
+of times the word has been said by the present. This is handy for
+[observing the point where a word or phrase becomes more spoken than another](/ilo-muni/?query=sina+seme,+sina+pali+e+seme&scale=cmsum),
 or
-[**differently examining periodic phrases**](/ilo-muni/?query=suno+pi+toki+pona&minSentLen=1&scale=cmsum).
+[differently examining periodic phrases](/ilo-muni/?query=suno+pi+toki+pona&minSentLen=1&scale=cmsum).
 It can also help to clarify the fact that, while one word has become more
-popular than another in the recent past,
-[**it may not have done so all-time**](/ilo-muni/?query=kokosila,+penpo&scale=cmsum)
+popular than another [recently](/ilo-muni/?query=kokosila%2C+penpo&scale=rel),
+it may not have done so [all-time](/ilo-muni/?query=kokosila,+penpo&scale=cmsum)
 
 ### Authors
 
@@ -536,6 +536,19 @@ this is incorrect.
 
 I'm considering a new database backend which would let me do the set math when
 performing such a query, but for the time being that cannot be done.
+
+### Hits per Author
+
+#### Absolute
+
+On the absolute graph, **hits per author** is the average number of hits per
+author, graphed over time. For example, if there were 100 authors, and 1,000
+hits for the word **toki**, then the hits per author would be 10 (10 / 1000).
+
+#### Relative
+
+On the relative graph, **hits per author** is the **percentage of the language**
+which is made up of the average author saying a given word.
 
 ---
 
