@@ -31,7 +31,7 @@ help button on the main page, and
 
 > Hi! This page is going through a rewrite due to the new features on the
 > [search page](/ilo-muni/). If something is incomplete, out of date, or
-> confusing, that would be why! This notice is dated 2024-12-16. If you're
+> confusing, that would be why! This notice is dated 2024-12-17. If you're
 > reading this more than a week after that date, please complain loudly at me!
 
 ## Table of Contents
@@ -222,29 +222,46 @@ data on:
   selected={defaultScale}
 />
 
-While it looks like there is a mess of too many options, there are categories in
-the dropdown which indicate their importance to you ("simple", "useful", and
-"weird"), and there only four different types of scale in the first place:
-**Linear**, **Logarithmic**, **Minmax**, and **Other**.
+The categories in the dropdown ("simple", "useful", and "weird") indicate the
+importance of the scale to you- if you're not interested in the details, then
+stick to the simple category and you'll be fine! Otherwise, read on.
 
-If you're not interested in the details, then stick to the simple category and
-you'll be fine! Otherwise, read on.
+Beyond the categories, you'll note there are four types of scale listed:
+**Linear**, **Logarithmic**, **Minmax**, and **Other**. I'll go over each in
+detail below.
 
 ### Linear
 
-The linear scales are going to be the most familiar and obvious. They include
-the [absolute](#absolute), [relative](#relative), and [cumulative](#cumulative)
+The linear scales will be the most familiar and obvious. They include the
+[absolute](#absolute), [relative](#relative), and [cumulative](#cumulative)
 scales, and in each, you have a series of exact numbers which are graphed over
-time without changing the left axis or the magnitude of the numbers.
+time without changing the left axis or the magnitude of the numbers- this means
+the visual distance from 10 to 20 will be the same as the distance from 20 to
+30, and so on. In other words, this is how graphs normally work!
 
 ### Logarithmic
 
-For example, the **Relative Log scale** is the natural logarithm of the
-[relative scale](#relative), and it is useful for comparing trends in words of
-different magnitudes while preserving their popularity order. For example,
+The logarithmic scales squish all the data on the graph closer together by
+rendering every power of ten at the same size. This means that the visual
+distance from 10 to 100 will be the same as the visual distance from 100 to
+1,000, and so on for 1,000 to 10,000 and beyond.
+
+The benefit of this is that you can visually compare two graphs that a linear
+scale could not, because the graphs would be drawn closer together. On a linear
+scale, a word with 10,000 monthly uses would make a word with only 100 monthly
+uses essentially invisible,
+[which you can see here](/ilo-muni?query=toki%2C+selo&scale=abs). On the
+logarithmic scale though, the trend line of the less common word
+[becomes visible](/ilo-muni?query=toki%2C+selo&scale=logabs), letting you see
+that it still trends the same way as the much more popular word!
+
+Another benefit of the logarithmic scale is that the original data, and
+therefore the original ordering of the data, is preserved. For example, in the
+**relative log scale**,
 [kijetesantakalu, soweli](/ilo-muni/?query=kijetesantakalu,+soweli&scale=logrel)
-are now much closer in scale while not errantly implying that kijetesantakalu
-exceeded soweli in popularity as [Relative Minmax](relative-minmax) would.
+are much closer together while not errantly implying that kijetesantakalu
+exceeded soweli in popularity as the equivalent
+[minmax scale](/ilo-muni/?query=kijetesantakalu,+soweli&scale=normrel) would.
 
 ### Minmax
 
@@ -313,7 +330,7 @@ If you're interested in **why** I do the math this way, you can read about it in
 the discussion below. Spoiler: I dunk on Google, who admits they are doing their
 math incorrectly.
 
-<details open>
+<details>
 <summary>**Discussion**</summary>
 
 The challenge of doing appropriate math with the different term lengths is that
@@ -470,9 +487,8 @@ determining how much of the entire language is these terms.
 It can be difficult to compare relative graphs for words which are in different
 magnitudes, such as
 [**kijetesantakalu, soweli**](/ilo-muni/?query=kijetesantakalu%2C+soweli&scale=rel).
-I recommend the [Relative Minmax scale](#minmax-scales) for cases like these,
-which can help to identify words which trend in the same way no matter their
-magnitude.
+I recommend the [Relative Minmax scale](#minmax) for cases like these, which can
+help to identify words which trend in the same way no matter their magnitude.
 
 #### Cumulative
 
@@ -520,10 +536,6 @@ this is incorrect.
 
 I'm considering a new database backend which would let me do the set math when
 performing such a query, but for the time being that cannot be done.
-
-### Hits per Author
-
-\*\*
 
 ---
 
@@ -619,7 +631,7 @@ about:
 <summary>**Historical note**</summary>
 
 The database dated 2024-09-07, which was available on ilo Muni from 2024-09-12
-to 2024-12-16, does not use monthly buckets of data. Instead, it uses 4-weekly
+to 2024-12-17, does not use monthly buckets of data. Instead, it uses 4-weekly
 buckets of data, with the 4-weekly period starting from 2001-08-08. The purpose
 of this was to solve the following problem:
 
@@ -642,7 +654,7 @@ All of this said, [the relative scale](#relative) was never affected in the
 first place. It represents datapoints as a percentage of the words said- this
 corrects for the differing totals you may get on a month to month basis.
 
-As of 2024-12-16, I have switched back to monthly buckets.
+As of 2024-12-17, I have switched back to monthly buckets.
 
 </details>
 
@@ -742,26 +754,41 @@ default unless you're aware of what change you're making and why. The different
 smoothers have different properties, but almost all of them boil down to making
 the data more readable when the month-to-month values are messy.
 
+#### Gaussian
+
+The **Gaussian** smoother is the default smoother as of 2024-12-17. It makes
+highly smooth and presentable curves, and does a better job of preserving the
+locations of peaks and troughs than either Window Average or Exponential.
+
 #### Window Avg
 
-The **Window Avg** smoother is the default smoother, and the most recommended.
-It averages
+The **Window Avg** smoother was previously the default smoother, and is the only
+one offered by Google Ngrams. It averages the neighbors of a given point, which
+will flatten the graph toward a smoother one with the same characteristic curve
+as the original noisy data, but preserving a bit of the noise along the way. In
+data with high peaks, you'll notice a
+[characteristic plateau shape](/ilo-muni/?query=suno+pi+toki+pona&smoothing=3&smoother=cwin)
+form around where the peak would be. With extremely high smoothing, all of the
+data will
+[tend toward a flat line](/ilo-muni/?query=toki%2C+pona%2C+toki+pona&smoothing=50&smoother=cwin)
+as all datapoints are set to the average of the entire graph, although data with
+regular peaks will exhibit
+[phantom peaks](/ilo-muni?query=suno+pi+toki+pona&smoothing=7&smoother=cwin)
+with sufficiently high smoothing.
 
 #### Exponential
 
 The **Exponential** smoother preserves the curve of activity while moving peaks
 and troughs closer to the average of their neighbors. This is helpful for
-preserving the occurrence of large peaks, but still smears them forward in time
-rather than
-
-#### Gaussian
-
-The **Gaussian** smoother makes highly smooth and presentable curves, and does a
-better job of preserving peaks than job
+preserving the occurrence of large peaks, but it does smear them forward in time
+due to weighting later events more heavily than earlier ones.
 
 #### Median
 
-The **median** smoother finds the median of every value in the smoothing window
+The **median** smoother finds the median of every value in the smoothing window,
+which results in a very square-looking graph. It occasionally exhibits the same
+[phantom peaks](/ilo-muni?query=suno+pi+toki+pona&smoothing=7&smoother=med) as
+Window Average
 
 #### Triangular
 
