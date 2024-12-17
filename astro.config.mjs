@@ -25,7 +25,7 @@ export default defineConfig({
         remarkToc,
         {
           heading: "Table of Contents",
-          maxDepth: 3,
+          maxDepth: 4,
         },
       ],
     ],
