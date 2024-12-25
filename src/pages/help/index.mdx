@@ -1001,8 +1001,9 @@ silly goofy abounds.
 
 Sometimes this means you'll see a word organically spike in usage, because it
 was just made and people are excited to use it! Other times, you'll see a word
-spike in usage due to a word game being played, which I try to identify and omit
-(since the goal is to measure "real" toki pona).
+spike in usage due to a word game being played, which I try to identify and
+omit- because the goal is to measure "real" toki pona, and word games fall
+_just_ outside of this bound.
 
 This used to affect mu, wan, tu, luka, mute, and ale, but I've since removed
 those- that was from a single person counting from 1 to over 2,000 all on their
@@ -1012,16 +1013,18 @@ Relatedly, there was a time during development where "mu" had a spike to **over
 40,000 uses** because of a day in which a handful of messages were nothing but
 "mu" to the text limit of Discord. Because of this, I added a nonsense filter to
 skip sentences before they get counted, which works like so: If a sentence is
-more than 10x the **average sentence length (4.13557)** and more than 50% a
-single word, it gets thrown out. Similarly, if a sentence is more than 100x the
-average sentence length, it gets thrown out immediately. This filter isn't
-perfect though, because somebody can say "mu. mu. mu." to similar effect, and
-each of those will be counted as individual sentences. Working on it!
+more than 10x the **average sentence length (4.13557)** and more than 50% of the
+message is a single word, it gets thrown out. Similarly, if a sentence is more
+than 100x the average sentence length, it gets thrown out immediately. This
+filter isn't perfect though, because somebody can say "mu. mu. mu." to similar
+effect, and each of those will be counted as individual sentences. Working on
+it!
 
 Ultimately, I would like this data to reflect how toki pona is actually used-
 and, granted, somebody sending hundreds of "mu" is using toki pona. But I think
 most people would agree that those messages are not reflective of how toki pona
-is used, and they otherwise make it difficult to examine the rest of the data.
+is used in either media or conversation, and these sorts of sentences otherwise
+make it difficult to examine the rest of the data.
 
 ### Why is do hits and authors drop so much between Feb and Aug 2023?
 
