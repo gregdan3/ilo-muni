@@ -35,7 +35,7 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
         config: {
           // serverMode: "full",
           // requestChunkSize: 1024,
-          // url: "/ilo-muni/db/2024-11-29-trimmed.sqlite",
+          // url: "/db/2024-11-29-trimmed.sqlite",
           serverMode: "chunked",
           requestChunkSize: 1024,
           databaseLengthBytes: 569713664,
