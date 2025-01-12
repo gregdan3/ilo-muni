@@ -1,6 +1,6 @@
 import { makeAugust } from "@utils/other";
 
-export const BASE_URL = "/ilo-muni";
+export const BASE_URL = "";
 export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
 
 // these consts are just to build the important regexes
