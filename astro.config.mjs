@@ -9,8 +9,8 @@ import icon from "astro-icon";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://gregdan3.github.io/ilo-muni/",
-  base: "/ilo-muni",
+  site: "https://ilo.muni.la/",
+  base: "",
   publicDir: "./static",
   integrations: [
     mdx(),

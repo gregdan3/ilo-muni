@@ -9,11 +9,11 @@ depends on and exists because of two prior tools I made,
 [sona toki "language knowledge"](https://github.com/gregdan3/sona-toki) and
 [sona mute "frequency knowledge"](https://github.com/gregdan3/sona-mute).
 
-## [More about ilo Muni](https://gregdan3.github.io/ilo-muni/about/)
+## [More about ilo Muni](https://ilo.muni.la/about/)
 
-## [How to use ilo Muni](https://gregdan3.github.io/ilo-muni/help/)
+## [How to use ilo Muni](https://ilo.muni.la//help/)
 
-## [Acknowledgements and Thanks](https://gregdan3.github.io/ilo-muni/about/#thank-you-to)
+## [Acknowledgements and Thanks](https://ilo.muni.la/about/#thank-you-to)
 
 ## Future Work
 
@@ -81,6 +81,9 @@ Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
 - static/db/
 - https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz
 - https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz
+- https://gregdan3.com/sqlite/2024-11-01-trimmed.sqlite.gz
+- https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz
+
 
 Copyright (C) 2024 Nia (@nia.co, @yknowlikenia)
 
