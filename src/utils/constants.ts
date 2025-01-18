@@ -165,7 +165,7 @@ export const SAMPLE_SEARCHES = [
   "weka e sona, weka sona",
   "weka e sona, weka sona e ni, weka sona - weka sona e ni",
   "ni kin li, sona kiwen",
-  'o luka e kasi',
+  "o luka e kasi",
 ];
 
 // absolutes should be preserved
