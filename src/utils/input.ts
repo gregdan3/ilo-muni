@@ -237,14 +237,14 @@ export async function inputToQueries(
 
   const { queries, errors: initErrors } = toQueries(input, givenMinSentLen);
 
-  const { queries: dedupedQueries, errors: dupeErrors } =
-    dedupeQueries(queries);
-
   const { queries: expandedQueries, errors: wildcardErrors } =
-    await expandWildcards(dedupedQueries);
+    await expandWildcards(queries);
+
+  const { queries: dedupedQueries, errors: dupeErrors } =
+    dedupeQueries(expandedQueries);
 
   return {
-    queries: expandedQueries,
+    queries: dedupedQueries,
     errors: initErrors.concat(dupeErrors, wildcardErrors),
   };
 }
