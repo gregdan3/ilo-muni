@@ -165,7 +165,7 @@ function formatLabel(
   const field: string = FIELDS[key]["label"].toLowerCase();
   // @ts-expect-error: it doesn't know about `raw`
   const formattedData = format(ctx.raw[key]);
-  const truncLabel = truncateLabel(ctx.dataset.label);
+  const truncLabel = truncateLabel(ctx.dataset.label!);
   const label = `${truncLabel}: ${formattedData} ${field}`;
   return label;
 }
