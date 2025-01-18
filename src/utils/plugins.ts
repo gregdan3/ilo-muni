@@ -6,6 +6,7 @@ import type {
 } from "chart.js/auto";
 import Chart, { Element, Tooltip } from "chart.js/auto";
 import annotationPlugin from "chartjs-plugin-annotation";
+import { truncateLabel } from "@utils/other.ts";
 
 // i slapped a bunch of ignores in here because it's chart.js's code
 const getOrCreateLegendList = (chart: Chart, id: string) => {
@@ -81,7 +82,8 @@ export const htmlLegendPlugin = {
       textContainer.style.padding = "0";
       textContainer.style.textDecoration = item.hidden ? "line-through" : "";
 
-      const text = document.createTextNode(item.text);
+      const truncLabel = truncateLabel(item.text);
+      const text = document.createTextNode(truncLabel);
       textContainer.appendChild(text);
 
       li.appendChild(boxSpan);

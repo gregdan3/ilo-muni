@@ -1,5 +1,9 @@
 import { UCSUR_RE } from "@utils/constants";
-import { EARLIEST_TIMESTAMP, LATEST_TIMESTAMP } from "@utils/constants";
+import {
+  EARLIEST_TIMESTAMP,
+  LATEST_TIMESTAMP,
+  MAX_LABEL_LEN,
+} from "@utils/constants";
 
 export function randomElem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -43,4 +47,11 @@ export function countSubstring(toSearch: string, substring: string): number {
   }
 
   return count;
+}
+
+export function truncateLabel(
+  label: string,
+  maxLen: number = MAX_LABEL_LEN,
+): string {
+  return label.length > maxLen ? label.slice(0, maxLen) + "..." : label;
 }
