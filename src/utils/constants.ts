@@ -1,5 +1,6 @@
 import { makeAugust } from "@utils/other";
 
+export const MAX_LABEL_LEN = 33;
 export const BASE_URL = "";
 export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
 

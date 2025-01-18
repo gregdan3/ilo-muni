@@ -41,6 +41,7 @@ const frontmatter = { title: "ilo Muni" };
   import { fetchManyRows } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { countQuery } from "@utils/analytics";
+  import { truncateLabel } from "@utils/other.ts";
   import {
     SCALES,
     defaultScale,
@@ -115,7 +116,8 @@ const frontmatter = { title: "ilo Muni" };
 
     errors.forEach((err) => {
       const li = document.createElement("li");
-      li.textContent = `${err.query}: ${err.error}`;
+      const truncLabel = truncateLabel(err.query);
+      li.textContent = `${truncLabel}: ${err.error}`;
       ul.appendChild(li);
     });
 

@@ -1,6 +1,7 @@
 import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import { FORMATTERS } from "@utils/ui.ts";
 import { FIELDS } from "@utils/constants.ts";
+import { truncateLabel } from "@utils/other.ts";
 import type { ScaleData, FormatterFn, Field, Result, Row } from "@utils/types";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
@@ -164,7 +165,8 @@ function formatLabel(
   const field: string = FIELDS[key]["label"].toLowerCase();
   // @ts-expect-error: it doesn't know about `raw`
   const formattedData = format(ctx.raw[key]);
-  const label = `${ctx.dataset.label}: ${formattedData} ${field}`;
+  const truncLabel = truncateLabel(ctx.dataset.label);
+  const label = `${truncLabel}: ${formattedData} ${field}`;
   return label;
 }
 
