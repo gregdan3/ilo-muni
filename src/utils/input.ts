@@ -171,7 +171,7 @@ function dedupeQueries(queries: Query[]): ProcessedQueries {
   const errors: QueryError[] = [];
   queries = queries.filter((query) => {
     if (seen.has(query.repr)) {
-      errors.push({ query: query.raw, error: "Duplicate query" });
+      errors.push({ query: query.repr, error: "Duplicate query" });
       return false;
     } else {
       seen.add(query.repr);
