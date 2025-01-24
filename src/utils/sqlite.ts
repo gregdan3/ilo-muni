@@ -96,7 +96,7 @@ ORDER BY
 const YEARLY_QUERY = `SELECT
   p.text AS term,
   yr.hits,
-  yr.authors,
+  yr.authors
 FROM
   yearly yr
   JOIN term p ON yr.term_id = p.id
