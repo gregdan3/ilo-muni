@@ -1,5 +1,5 @@
 import type { Rank } from "@utils/types";
-import { isUCSUR } from "@utils/other";
+import { isUCSUR, truncateLabel } from "@utils/other";
 import { getLinkuCategories } from "@utils/linku";
 
 const colorMap: { [key: string]: string } = {
@@ -19,14 +19,6 @@ function calcWidth(maxHits: number, thisHits: number): number {
 
   return adjustedThisHits / adjustedMaxHits;
   // return thisHits / maxHits;
-}
-
-function truncateWord(word: string, maxLength: number = 40): string {
-  if (word.length > maxLength) {
-    return word.slice(0, maxLength - 2) + "...";
-  }
-
-  return word;
 }
 
 async function makeGradient(term: string) {
@@ -81,7 +73,7 @@ async function makeDivEntry(
   rankItem.classList.add("rankItem");
 
   const rankText = document.createElement("span");
-  const word = truncateWord(item.term);
+  const word = truncateLabel(item.term);
   rankText.textContent = `${index + 1}. ${word}: ${item.hits}`;
 
   const rankBar = document.createElement("span");
@@ -114,7 +106,7 @@ async function makeTableEntry(
   tableRow.appendChild(hitsData);
   hitsData.classList.add("hitsData");
 
-  const word = truncateWord(item.term);
+  const word = truncateLabel(item.term);
 
   const barData = document.createElement("td");
   const barDiv = document.createElement("div");
