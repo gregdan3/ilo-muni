@@ -53,5 +53,5 @@ export function truncateLabel(
   label: string,
   maxLen: number = MAX_LABEL_LEN,
 ): string {
-  return label.length > maxLen ? label.slice(0, maxLen) + "..." : label;
+  return label.length > maxLen ? label.slice(0, maxLen - 2) + "..." : label;
 }
