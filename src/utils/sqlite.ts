@@ -94,14 +94,14 @@ ORDER BY
 
 // but for ranks, we've queried ahead data which is exclusive on the right
 const YEARLY_QUERY = `SELECT
-  p.text AS term,
+  t.text AS term,
   yr.hits,
   yr.authors
 FROM
   yearly yr
-  JOIN term p ON yr.term_id = p.id
+  JOIN term t ON yr.term_id = t.id
 WHERE
-  p.len = ?
+  t.len = ?
   AND yr.min_sent_len = ?
   AND yr.day = ?
 ORDER BY
@@ -109,15 +109,15 @@ ORDER BY
 
 // NOTE: this query is inefficient because i have to order by hits, which means reading the entire table to process the query
 const WILDCARD_QUERY = `SELECT
-  p.text AS term
+  t.text AS term
 FROM
-  term p
-  JOIN yearly yr ON p.id = yr.term_id
+  term t
+  JOIN yearly yr ON t.id = yr.term_id
 WHERE
-  p.len = ?
+  t.len = ?
   AND yr.min_sent_len = ?
   AND yr.day = 0
-  AND p.text GLOB ?
+  AND t.text GLOB ?
 ORDER BY
   yr.authors DESC
 LIMIT
