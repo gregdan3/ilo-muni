@@ -134,10 +134,13 @@ export async function reloadBarChart(
   div.appendChild(rankTable);
 
   const maxHits = results[0].hits;
-  results.forEach(async (item, index: number) => {
-    // const rankItem = await makeDivEntry(item, index, maxHits, termLen);
-    // div.appendChild(rankItem);
+  const tableRows: HTMLElement[] = [];
+  for (const [index, item] of results.entries()) {
+    // if (item.term[0] !== "^" && item.term.slice(-1) !== "$") {
+    //   continue;
+    // }
     const tableRow = await makeTableEntry(item, index, maxHits, termLen);
-    rankTable.append(tableRow);
-  });
+    tableRows.push(tableRow);
+  }
+  rankTable.append(...tableRows);
 }
