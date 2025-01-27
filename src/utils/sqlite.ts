@@ -83,7 +83,7 @@ const TOTAL_QUERY = `SELECT
   hits,
   authors
 FROM
-  total
+  total_monthly
 WHERE
   term_len = ?
   AND min_sent_len = ?
