@@ -119,7 +119,7 @@ WHERE
   AND yr.day = 0
   AND t.text GLOB ?
 ORDER BY
-  yr.authors DESC
+  yr.hits DESC
 LIMIT
   10;`;
 // day=0 is all time in ranks table
