@@ -3,7 +3,7 @@ import type { WorkerHttpvfs } from "sql.js-httpvfs";
 import {
   BASE_URL,
   DB_URL_PREFIX,
-  LATEST_ALLOWED_TIMESTAMP,
+  LATEST_TIMESTAMP,
   FIELDS,
 } from "@utils/constants";
 import type {
@@ -18,6 +18,7 @@ import type {
   Rank,
   Result,
   QueryParams,
+  Attribute,
 } from "@utils/types";
 import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
@@ -33,15 +34,16 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
         // TODO: investigate
         from: "inline",
         config: {
-          // serverMode: "full",
-          // requestChunkSize: 1024,
-          // url: "/db/2024-11-29-trimmed.sqlite",
-          serverMode: "chunked",
+          serverMode: "full",
           requestChunkSize: 1024,
-          databaseLengthBytes: 569713664,
-          serverChunkSize: 26214400,
-          urlPrefix: dbUrlPrefix,
-          suffixLength: 3,
+          url: "/db/2025-09-30-trimmed.sqlite",
+          //
+          // serverMode: "chunked",
+          // requestChunkSize: 1024,
+          // databaseLengthBytes: 569713664,
+          // serverChunkSize: 26214400,
+          // urlPrefix: dbUrlPrefix,
+          // suffixLength: 3,
         },
       },
     ],
@@ -59,7 +61,8 @@ export async function queryDb(query: string, params: any[]): Promise<any[]> {
   const worker = await workerPromise;
 
   await consoleLogAsync(query, params);
-  return await worker.db.query(query, params);
+  let result = await worker.db.query(query, params);
+  return result;
 }
 
 // inclusive on both ends makes sense for the graph
@@ -69,14 +72,14 @@ const MONTHLY_QUERY = `SELECT
   authors
 FROM
   monthly mo
-  JOIN term p ON mo.term_id = p.id
+  JOIN term t ON mo.term_id = t.id
 WHERE
-  p.text = ?
-  AND mo.min_sent_len = ?
+  t.text = ?
+  AND mo.attr = ?
   AND mo.day >= ?
   AND mo.day <= ?
 ORDER BY
-  day;`;
+  mo.day;`;
 
 const TOTAL_QUERY = `SELECT
   day,
@@ -86,7 +89,7 @@ FROM
   total_monthly
 WHERE
   term_len = ?
-  AND min_sent_len = ?
+  AND attr = ?
   AND day >= ?
   AND day <= ?
 ORDER BY
@@ -102,7 +105,7 @@ FROM
   JOIN term t ON yr.term_id = t.id
 WHERE
   t.len = ?
-  AND yr.min_sent_len = ?
+  AND yr.attr = ?
   AND yr.day = ?
 ORDER BY
   hits DESC;`;
@@ -115,7 +118,7 @@ FROM
   JOIN yearly yr ON t.id = yr.term_id
 WHERE
   t.len = ?
-  AND yr.min_sent_len = ?
+  AND yr.attr = ?
   AND yr.day = 0
   AND t.text GLOB ?
 ORDER BY
@@ -163,7 +166,7 @@ function mergeRows(series: Row[][], separators: Separator[]): Row[] {
 async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
   let resp = await queryDb(MONTHLY_QUERY, [
     params.term.text,
-    params.term.minSentLen,
+    params.term.attr,
     params.start,
     params.end,
   ]);
@@ -186,7 +189,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
 
   const totals = await fetchTotals(
     params.term.len,
-    params.term.minSentLen,
+    0, // TODO: attr
     params.start,
     params.end,
   );
@@ -226,8 +229,8 @@ export async function fetchManyRows(
   start: number,
   end: number,
 ): Promise<Result[]> {
-  if (end > LATEST_ALLOWED_TIMESTAMP) {
-    end = LATEST_ALLOWED_TIMESTAMP;
+  if (end > LATEST_TIMESTAMP) {
+    end = LATEST_TIMESTAMP;
   }
 
   const queryPromises = queries.map(async (query: Query) => {
@@ -287,7 +290,7 @@ export async function fetchManyRows(
 
 async function fetchTotals(
   termLen: Length,
-  minSentLen: Length,
+  attr: Attribute,
   start: number,
   end: number,
 ): Promise<Row[]> {
@@ -316,7 +319,7 @@ async function fetchTotals(
   // And this could be useful because in the above search, the resultant line would be "Percentage prevalence of 'tenpo ni' without the prevalence of 'tenpo ni la' or 'lon tenpo ni'"
   // Which right now you can only get in absolute mode
 
-  let result = await queryDb(TOTAL_QUERY, [termLen, minSentLen, start, end]);
+  let result = await queryDb(TOTAL_QUERY, [termLen, attr, start, end]);
   result = result.map(
     (row: Row): Row => ({
       day: localizeTimestamp(row.day),
@@ -340,7 +343,7 @@ export async function fetchTopTerms(term: Term): Promise<string[]> {
   // term which has an attached wildcard
   const result = await queryDb(WILDCARD_QUERY, [
     term.len,
-    term.minSentLen,
+    0, // TODO: attr
     term.text,
   ]);
   return result.map((term: { term: string }) => term.term);
@@ -349,13 +352,13 @@ export async function fetchTopTerms(term: Term): Promise<string[]> {
 
 export async function fetchYearly(
   termLen: Length,
-  minSentLen: Length,
+  attr: Attribute,
   start: number,
   // end: number,
 ): Promise<Rank[]> {
   const result = await queryDb(YEARLY_QUERY, [
     termLen,
-    minSentLen,
+    attr,
     start,
     // end,
   ]);

@@ -6,30 +6,35 @@ export const DB_URL_PREFIX = `${BASE_URL}/db/tp.`;
 
 // these consts are just to build the important regexes
 const ucsurRanges = "\u{F1900}-\u{F1977}\u{F1978}-\u{F1988}\u{F19A0}-\u{F19A3}";
-const symTokens = "+\\-*/()";
+const symTokens = "+\\-"; // these can be separated without space
+// const symTokens = "+\\-/()"; // these can be separated without space
 
-export const TERM_DELIMS_RE = new RegExp(
+// split query
+export const TERM_DELIMS_RE = new RegExp(`([${symTokens}])`, "u");
+
+export const TOKEN_DELIMS_RE = new RegExp(
   `\\s+|([${ucsurRanges}${symTokens}])`,
   "u",
 );
 
-// wildcard can make up a term, but the other syms cannot
-export const TERM_RE = new RegExp(`^[a-z0-9* ${ucsurRanges}]+(?:_\\d)?$`, "u");
+// TODO: make underscore marking more exact
+
+export const TOKEN_RE = new RegExp(`^([a-z0-9*]+|[${ucsurRanges}])$`, "u");
+
+export const TERM_RE = new RegExp(
+  `^[a-z0-9* ${ucsurRanges}]+(?:_(ALL|START|END|FULL|LONG)|_[0-9])?$`,
+  "u",
+);
 export const UCSUR_RE = new RegExp(`^[${ucsurRanges}]$`, "u");
 
 // TODO: fetch from db at init? would make it not so much a constant
 export const EARLIEST_YEAR = 2001;
 // NOTE: the data goes back to 2010 but there is almost nothing there
 // export const EARLIEST_YEAR = 2010;
-export const LATEST_YEAR = 2024;
+export const LATEST_YEAR = 2025;
 
 export const EARLIEST_TIMESTAMP = makeAugust(EARLIEST_YEAR).getTime() / 1000;
 export const LATEST_TIMESTAMP = makeAugust(LATEST_YEAR).getTime() / 1000;
-
-// start of june 1 in epoch time
-// avoids the fact that july is incomplete in my dataset
-// no equivalent EARLIEST because i can hand-pick a specific August that is acceptable
-export const LATEST_ALLOWED_TIMESTAMP = 1720569600; // 10 jul 2024 -> 7 aug 2024
 
 export const defaultScale = "rel";
 export const defaultSmoother = "gauss";
@@ -54,6 +59,17 @@ export const SMOOTHINGS = [
   "40",
   "50",
 ];
+
+export const ATTRIBUTES = {
+  // implicit relationships
+  // [undefined]: 0,
+  // [null]: 0,
+  ALL: 0,
+  START: 1,
+  END: 2,
+  FULL: 3,
+  LONG: 4,
+};
 
 export const FIELDS = {
   hits: { label: "Hits", category: "data", summable: true },
@@ -151,7 +167,7 @@ export const SAMPLE_SEARCHES = [
   "tenpo wan la, tenpo suno wan la",
   "tenpo weka, tenpo pini",
   "tenpo weka, tenpo poka",
-  "toki_1 - toki_2, pona_1 - pona_2",
+  // "toki_1 - toki_2, pona_1 - pona_2",
   "toki epanja, ma epanja",
   "toki inli, ma inli",
   "toki kanse, ma kanse",

@@ -29,11 +29,6 @@ There's also a quick reference under the <Icon name="mingcute:question-line" />
 help button on the main page, and
 [a section for frequently asked questions.](#frequently-asked-questions)
 
-> Hi! This page is going through a rewrite due to the new features on the
-> [search page](/). If something is incomplete, out of date, or
-> confusing, that would be why! This notice is dated 2024-12-17. If you're
-> reading this more than a week after that date, please complain loudly at me!
-
 ## Table of Contents
 
 ## Search
@@ -41,22 +36,21 @@ help button on the main page, and
 ### Words
 
 Search for a **[toki pona word](https://linku.la/)** such as
-[**pona**](/?query=pona). If it appeared at least 40 times across all
-the places and times I checked, you'll get a graph showing how that word has
-been used over time! By default, you'll see what percentage of all words were
-the searched word with monthly datapoints.
+[**pona**](/?query=pona). If it appeared at least 40 times across all the places
+and times I checked, you'll get a graph showing how that word has been used over
+time! By default, you'll see what percentage of all words were the searched word
+with monthly datapoints.
 
 You can also search for proper names like [**Sonko**](/?query=sonko),
-[**Inli**](/?query=inli), or [**Siko**](/?query=Siko). There
-are lots of very rare words in the database too. You might be surprised by what
-you find, so try lots of things!
+[**Inli**](/?query=inli), or [**Siko**](/?query=Siko). There are lots of very
+rare words in the database too. You might be surprised by what you find, so try
+lots of things!
 
 <details>
   <summary>**Examples**</summary>
 
 - See the start and growth of words coined only a few years ago like
-  [**tonsi**](/?query=tonsi) or
-  [**misikeke**](/?query=misikeke)
+  [**tonsi**](/?query=tonsi) or [**misikeke**](/?query=misikeke)
 - Explore the use of rarer words like [**majuna**](/?query=majuna),
   [**linluwi**](/?query=linluwi), or [**kiki**](/?query=kiki)
 
@@ -65,17 +59,15 @@ you find, so try lots of things!
 ### Terms
 
 You can search for **up to 6 words in one term**, such as
-[**mi kama sona e toki pona**](/?query=mi+kama+sona+e+toki+pona). Note
-that the more words are in a term, the fewer times it is likely to appear- so
-don't be surprised if you don't get a result. Try searching for shorter terms,
-like [**kama pona**](/?query=kama+pona) or
-[**anu seme**](/?query=anu+seme).
+[**mi kama sona e toki pona**](/?query=mi+kama+sona+e+toki+pona). Note that the
+more words are in a term, the fewer times it is likely to appear- so don't be
+surprised if you don't get a result. Try searching for shorter terms, like
+[**kama pona**](/?query=kama+pona) or [**anu seme**](/?query=anu+seme).
 
 <details>
   <summary>**Examples**</summary>
 
-- Watch the rising popularity of terms like
-  [**kin la**](/?query=kin+la)
+- Watch the rising popularity of terms like [**kin la**](/?query=kin+la)
 - Watch terms come and go over time as the things they reference do, like
   [**tenpo pana**](/?query=tenpo+pana&smoothing=0),
   [**tenpo monsuta**](/?query=tenpo+monsuta&smoothing=0), or
@@ -108,8 +100,7 @@ tutorial.
   [**sona toki pona, sona e toki pona, sona pi toki pona**](/?query=sona+toki+pona,+sona+e+toki+pona,+sona+pi+toki+pona)
 - Compare greetings over time, like
   [**sina seme, sina pali e seme**](/?query=sina+seme,+sina+pali+e+seme)
-- See how popular Sonja's books are with
-  [**pu, ku, su**](/?query=pu,+ku,+su)
+- See how popular Sonja's books are with [**pu, ku, su**](/?query=pu,+ku,+su)
 
 </details>
 
@@ -133,8 +124,8 @@ per search term, and you cannot start a term with a wildcard.
 ### Adding terms
 
 You can **add terms together** by putting a `+` between them. This is helpful
-for combining synonyms, like [**ale + ali**](/?query=ale+%2B+ali). You
-can also use it to compare multiple related words to another one, like
+for combining synonyms, like [**ale + ali**](/?query=ale+%2B+ali). You can also
+use it to compare multiple related words to another one, like
 [**pan + kili, moku**](/?query=pan+%2B+kili,+moku).
 
 It often helps to graph some or all of the summed terms separately from the sum
@@ -149,8 +140,7 @@ so you can see how much the graph has been shifted by the sum, such as in
 - Combine multiple ways to write the same word, like
   [**ala + x**](/?query=ala+%2B+x) or
   [**anu + y, anu, y**](/?query=anu+%2B+y,+anu,+y)
-- Do that with UCSUR text specifically:
-  [**toki + 󱥬**](/?query=toki+%2B+󱥬)
+- Do that with UCSUR text specifically: [**toki + 󱥬**](/?query=toki+%2B+󱥬)
 - Combine related words to compare to others:
   [**a + n, pona**](/?query=a+%2B+n,+pona)
 
@@ -163,8 +153,8 @@ field, adding terms is disabled.
 
 You can **subtract terms from other terms** by putting a `-` between them. This
 is helpful when you'd like to omit a specific use of a word, such as in
-[**toki - toki pona**](/?query=toki+-+toki+pona). This gives you all
-the uses of the word "toki" which are not in the term "toki pona".
+[**toki - toki pona**](/?query=toki+-+toki+pona). This gives you all the uses of
+the word "toki" which are not in the term "toki pona".
 
 <details>
   <summary>**Examples**</summary>
@@ -179,35 +169,35 @@ the uses of the word "toki" which are not in the term "toki pona".
 **Note**: If you're currently viewing the **authors** or **hits per author**
 field, subtracting terms is disabled.
 
-### Minimum Sentence Length
-
-You can **set a minimum sentence length** for a term by adding an underscore `_`
-and a number from 1 to 6 **to the end of that term**. For example,
-[**toki_1, toki_6**](/?query=toki,+toki_6) will show you the percentage
-of times toki appeared in any sentence, versus the smaller percentage of times
-that it was in specifically sentences of length 6. You can do this with any
-length of term: [**ona li, ona li_6**](/?query=ona+li,+ona+li_6)
-
-You can use this with subtraction to **isolate a term**: Searching
-[**toki - toki_2**](/?query=toki+-+toki_2) will show you every time
-"toki" appeared, except for the times it appeared in sentences with 2 or more
-words. This means means you have all the times "toki" was the only word in the
-sentence!
-
-Read ahead to the options section on
-[minimum sentence length](#minimum-sentence-length-1) for more details.
-
-<details>
-  <summary>**Examples**</summary>
-
-- Get even more accurate information about greetings:
-  [**sina seme - sina seme_3, sina pali e seme - sina pali e seme_5**](/?query=sina+seme+-+sina+seme_3,+sina+pali+e+seme+-+sina+pali+e+seme_5)
-- See if there is a difference in relative use of words:
-  [**toki, pona, toki_6, pona_6**](/?query=toki,+pona,+toki_6,+pona_6).
-  (there is! "pona" is more common in short sentences; "toki" is more common in
-  long sentences!)
-
-</details>
+<!-- ### Minimum Sentence Length -->
+<!---->
+<!-- You can **set a minimum sentence length** for a term by adding an underscore `_` -->
+<!-- and a number from 1 to 6 **to the end of that term**. For example, -->
+<!-- [**toki_1, toki_6**](/?query=toki,+toki_6) will show you the percentage of times -->
+<!-- toki appeared in any sentence, versus the smaller percentage of times that it -->
+<!-- was in specifically sentences of length 6. You can do this with any length of -->
+<!-- term: [**ona li, ona li_6**](/?query=ona+li,+ona+li_6) -->
+<!---->
+<!-- You can use this with subtraction to **isolate a term**: Searching -->
+<!-- [**toki - toki_2**](/?query=toki+-+toki_2) will show you every time "toki" -->
+<!-- appeared, except for the times it appeared in sentences with 2 or more words. -->
+<!-- This means means you have all the times "toki" was the only word in the -->
+<!-- sentence! -->
+<!---->
+<!-- Read ahead to the options section on -->
+<!-- [minimum sentence length](#minimum-sentence-length-1) for more details. -->
+<!---->
+<!-- <details> -->
+<!--   <summary>**Examples**</summary> -->
+<!---->
+<!-- - Get even more accurate information about greetings: -->
+<!--   [**sina seme - sina seme_3, sina pali e seme - sina pali e seme_5**](/?query=sina+seme+-+sina+seme_3,+sina+pali+e+seme+-+sina+pali+e+seme_5) -->
+<!-- - See if there is a difference in relative use of words: -->
+<!--   [**toki, pona, toki_6, pona_6**](/?query=toki,+pona,+toki_6,+pona_6). (there -->
+<!--   is! "pona" is more common in short sentences; "toki" is more common in long -->
+<!--   sentences!) -->
+<!---->
+<!-- </details> -->
 
 ---
 
@@ -258,9 +248,9 @@ that it still trends the same way as the much more popular word!
 Another benefit of the logarithmic scale is that the original data, and
 therefore the original ordering of the data, is preserved. For example, in the
 **relative log scale**,
-[kijetesantakalu, soweli](/?query=kijetesantakalu,+soweli&scale=logrel)
-are much closer together while not errantly implying that kijetesantakalu
-exceeded soweli in popularity as the equivalent
+[kijetesantakalu, soweli](/?query=kijetesantakalu,+soweli&scale=logrel) are much
+closer together while not errantly implying that kijetesantakalu exceeded soweli
+in popularity as the equivalent
 [minmax scale](/?query=kijetesantakalu,+soweli&scale=normrel) would.
 
 ### Minmax
@@ -268,8 +258,8 @@ exceeded soweli in popularity as the equivalent
 For example, the **Relative Minmax scale** normalizes all the points in the
 **relative** graph to be between 0 and 1 while preserving the original curve of
 the graph. This is excellent for demonstrating that words like
-[**ona, li**](/?query=ona%2C+li&scale=normrel) trend similarly with use
-while being in different magnitudes.
+[**ona, li**](/?query=ona%2C+li&scale=normrel) trend similarly with use while
+being in different magnitudes.
 
 The **Absolute Minmax scale** normalizes all the points in the **absolute**
 graph to be between 0 and 1 while preserving the original curve of the graph.
@@ -309,8 +299,8 @@ toki pona Discord servers.
 or phrase was said in each time period. This is useful for observing
 [trends in the activity of the community](/?query=li+%2B+mi+%2B+e+%2B+ni+%2B+la+%2B+toki+%2B+pona+%2B+lon+%2B+ala+%2B+sina&scale=abs),
 but can make it difficult to compare words which are
-[of very different magnitude](/?query=a,+kin&scale=abs), or to study
-the use of toki pona
+[of very different magnitude](/?query=a,+kin&scale=abs), or to study the use of
+toki pona
 [before March 2020](/?query=toki,+pona,+toki+pona&scale=abs&start=1438387200&end=1564617600).
 
 If you're interested in comparing two or more absolute graphs, but one word is
@@ -486,8 +476,8 @@ determining how much of the entire language is these terms.
 
 It can be difficult to compare relative graphs for words which are in different
 magnitudes, such as
-[kijetesantakalu, soweli](/?query=kijetesantakalu%2C+soweli&scale=rel).
-I recommend the [Relative Minmax scale](#minmax) for cases like these, which can
+[kijetesantakalu, soweli](/?query=kijetesantakalu%2C+soweli&scale=rel). I
+recommend the [Relative Minmax scale](#minmax) for cases like these, which can
 help to identify words which trend in the same way no matter their magnitude.
 
 #### Cumulative
@@ -499,8 +489,8 @@ of times the word has been said by the present. This is handy for
 or
 [differently examining periodic phrases](/?query=suno+pi+toki+pona&minSentLen=1&scale=cmsum).
 It can also help to clarify the fact that, while one word has become more
-popular than another [recently](/?query=kokosila%2C+penpo&scale=rel),
-it may not have done so [all-time](/?query=kokosila,+penpo&scale=cmsum)
+popular than another [recently](/?query=kokosila%2C+penpo&scale=rel), it may not
+have done so [all-time](/?query=kokosila,+penpo&scale=cmsum)
 
 ### Authors
 
@@ -572,8 +562,8 @@ Smoothing is helpful for making noisy graphs more readable while preserving the
 trend line of the original graph. Compare the graphs of **wawa, nasa, suwi,
 sewi, suli** with
 [**0 smoothing**](/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=0) and
-[**5 smoothing**](/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=5).
-Tip: Double check the axis on the left!
+[**5 smoothing**](/?query=wawa,+nasa,+suwi,+sewi,+suli&smoothing=5). Tip: Double
+check the axis on the left!
 
 Note that smoothing can produce misleading graphs with respect to the time axis,
 such as
@@ -611,7 +601,7 @@ non-zero element of a graph.
   renderAs="date"
 />
 
-By default, the date range for the graph is set from **2016** to **2024**. You
+By default, the date range for the graph is set from **2016** to **2025**. You
 can select any start or end you want, but there are some caveats to warn you
 about:
 
@@ -650,18 +640,19 @@ of this was to solve the following problem:
 
 > Some months are shorter than others, so [the absolute scale](#absolute) may be
 > misleading for those periods by implying they were less active than
-> neighboring months. Relatedly, weeks are not evenly distributed over months,
-> so some months will have more weekends and therefore more active periods than
-> others. 4-weekly buckets solves both of these problems at once.
+> neighboring months. Relatedly, days of the week are not evenly distributed
+> over months, so some months will have more weekends and therefore more active
+> periods than others. 4-weekly buckets solves both of these problems at once.
 
 By switching to 4-weekly periods for ilo Muni's data, the represented periods of
 time were now all the same size. This made datapoints in the absolute graph
 directly comparable, but it also meant that the user interface was obnoxious:
 Each datapoint would be labeled with an exact day, implying it represented only
-that day. It wasn't possible to reduce it to a month because the represented
-period of time could cross months, and even if I had changed it to a range,
-there would have been that much more interpretation complexity for an incredibly
-minor, single gain.
+that day, when it actually represented that day _and_ the following four week
+period. The given date couldn't be rounded to a month since that 4-weekly period
+could cross months, and even if I had changed it to a range, there would have
+been that much more interpretation complexity for an incredibly minor, single
+gain.
 
 All of this said, [the relative scale](#relative) was never affected in the
 first place. It represents datapoints as a percentage of the words said- this
@@ -671,85 +662,85 @@ As of 2024-12-17, I have switched back to monthly buckets.
 
 </details>
 
-### Minimum Sentence Length
-
-**Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to
-show it.
-
-<IntDropdown
-  options={LENGTHS}
-  singularText="All sentences"
-  pluralText="+ words per sentence"
-  id="sentLenDropdown"
-/>
-
-This option is also called **words per sentence** in its dropdown. By default,
-**All sentences** is set, meaning you will see how words or phrases appear in
-any length of sentence. If you set this option to **3+ words per sentence**,
-you'll see how words or phrases appear in sentences which have **at least 3
-words**. This can be helpful if you want to study more "substantial" uses of
-words, i.e. those that appear in longer sentences.
-
-If one of your searches
-[sets the minimum sentence length for a term](#set-minimum-sentence-length), pay
-attention to the legend below the graph: If the legend shows the term without an
-underscore, it means the length you chose was already being searched. This can
-happen with a search like [**toki pona_2**](/?query=toki+pona_2)
-normally, or [**wawa_3**](/?query=wawa_3&minSentLen=3) while the
-minimum sentence length dropdown is set to 3.
-
-This happens to the phrase **toki pona** with a minimum sentence length of 2
-because phrases have a minimum sentence length equal to how many words are in
-them. That is, "toki pona" can only appear in sentences with at least two words-
-which I hope makes sense! Because of this, the minimum sentence length is always
-implicitly set to at least the length of the phrase. You can always set it to be
-higher, of course.
-
-Note that when graphing on any **relative scale**, the percentage is derived by
-dividing the number of occurrences for the search term by the total number of
-words in the same time period.
-
-If you're curious why this is done instead of dividing by the number of words in
-sentences of the appropriate minimum length, here's a simplified example:
-
-<details>
-<summary>**Demonstration**</summary>
-
-Imagine the following scenario:
-
-- There are 10,000 words in total
-- 9,000 of those words are in sentences with at least 2 words
-- 100 of the words are **toki**
-- 90 of those **toki** are in sentences with at least 2 words
-
-With this data, asking "What percentage of words are toki?" means we get 1% (100
-/ 10,000), which makes sense, and this is the only reasonable question to
-measure toki on its own.
-
-However, there are two ways to measure toki in sentences with at least 2 words
-(**toki_2**): You could measure it as a portion of all words, or as a portion of
-words from sentences with at least 2 words. These two different choices have
-different results: **toki_2** is **0.9%** (90 / 10,000) of all words, but **1%**
-(90 / 9,000) of the words in sentences with at least 2 words.
-
-We can use this information to determine which answer is best for this graphing
-tool by exploring what happens when you search **toki - toki_2**.
-
-In the sample data, graphing **toki - toki_2** with toki_2 measured as a portion
-of all words means we get **0.1%**: ((100 - 90) / 10,000). That is, toki appears
-exactly 10 times on its own in this data. Graphing instead with **toki_2**
-measured as a portion of words in sentences with 2 or more words means we get
-**0%**: ((100 / 10,000) - (90 / 9,000)). In other words, we get a misleading
-outcome because we're subtracting two incomparable percentages.
-
-There is value in knowing what portion of sentences with at least 2 words are
-some specific word. This graphing tool does not offer that information because
-doing so would produce misleading graphs for both side-by-side comparison and
-for adding or subtracting specific results. If you're interested in that
-alternate data,
-[download the database!](https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz)
-
-</details>
+<!-- ### Minimum Sentence Length -->
+<!---->
+<!-- **Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to -->
+<!-- show it. -->
+<!---->
+<!-- <IntDropdown -->
+<!--   options={LENGTHS} -->
+<!--   singularText="All sentences" -->
+<!--   pluralText="+ words per sentence" -->
+<!--   id="sentLenDropdown" -->
+<!-- /> -->
+<!---->
+<!-- This option is also called **words per sentence** in its dropdown. By default, -->
+<!-- **All sentences** is set, meaning you will see how words or phrases appear in -->
+<!-- any length of sentence. If you set this option to **3+ words per sentence**, -->
+<!-- you'll see how words or phrases appear in sentences which have **at least 3 -->
+<!-- words**. This can be helpful if you want to study more "substantial" uses of -->
+<!-- words, i.e. those that appear in longer sentences. -->
+<!---->
+<!-- If one of your searches -->
+<!-- [sets the minimum sentence length for a term](#set-minimum-sentence-length), pay -->
+<!-- attention to the legend below the graph: If the legend shows the term without an -->
+<!-- underscore, it means the length you chose was already being searched. This can -->
+<!-- happen with a search like [**toki pona_2**](/?query=toki+pona_2) normally, or -->
+<!-- [**wawa_3**](/?query=wawa_3&minSentLen=3) while the minimum sentence length -->
+<!-- dropdown is set to 3. -->
+<!---->
+<!-- This happens to the phrase **toki pona** with a minimum sentence length of 2 -->
+<!-- because phrases have a minimum sentence length equal to how many words are in -->
+<!-- them. That is, "toki pona" can only appear in sentences with at least two words- -->
+<!-- which I hope makes sense! Because of this, the minimum sentence length is always -->
+<!-- implicitly set to at least the length of the phrase. You can always set it to be -->
+<!-- higher, of course. -->
+<!---->
+<!-- Note that when graphing on any **relative scale**, the percentage is derived by -->
+<!-- dividing the number of occurrences for the search term by the total number of -->
+<!-- words in the same time period. -->
+<!---->
+<!-- If you're curious why this is done instead of dividing by the number of words in -->
+<!-- sentences of the appropriate minimum length, here's a simplified example: -->
+<!---->
+<!-- <details> -->
+<!-- <summary>**Demonstration**</summary> -->
+<!---->
+<!-- Imagine the following scenario: -->
+<!---->
+<!-- - There are 10,000 words in total -->
+<!-- - 9,000 of those words are in sentences with at least 2 words -->
+<!-- - 100 of the words are **toki** -->
+<!-- - 90 of those **toki** are in sentences with at least 2 words -->
+<!---->
+<!-- With this data, asking "What percentage of words are toki?" means we get 1% (100 -->
+<!-- / 10,000), which makes sense, and this is the only reasonable question to -->
+<!-- measure toki on its own. -->
+<!---->
+<!-- However, there are two ways to measure toki in sentences with at least 2 words -->
+<!-- (**toki_2**): You could measure it as a portion of all words, or as a portion of -->
+<!-- words from sentences with at least 2 words. These two different choices have -->
+<!-- different results: **toki_2** is **0.9%** (90 / 10,000) of all words, but **1%** -->
+<!-- (90 / 9,000) of the words in sentences with at least 2 words. -->
+<!---->
+<!-- We can use this information to determine which answer is best for this graphing -->
+<!-- tool by exploring what happens when you search **toki - toki_2**. -->
+<!---->
+<!-- In the sample data, graphing **toki - toki_2** with toki_2 measured as a portion -->
+<!-- of all words means we get **0.1%**: ((100 - 90) / 10,000). That is, toki appears -->
+<!-- exactly 10 times on its own in this data. Graphing instead with **toki_2** -->
+<!-- measured as a portion of words in sentences with 2 or more words means we get -->
+<!-- **0%**: ((100 / 10,000) - (90 / 9,000)). In other words, we get a misleading -->
+<!-- outcome because we're subtracting two incomparable percentages. -->
+<!---->
+<!-- There is value in knowing what portion of sentences with at least 2 words are -->
+<!-- some specific word. This graphing tool does not offer that information because -->
+<!-- doing so would produce misleading graphs for both side-by-side comparison and -->
+<!-- for adding or subtracting specific results. If you're interested in that -->
+<!-- alternate data, -->
+<!-- [download the database!](https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz) -->
+<!---->
+<!-- </details> -->
 
 ### Smoother
 
@@ -811,8 +802,10 @@ Window Average
 
 In previous sections, I discussed how [smoothing](#smoothing) can create
 misleading graphs, and how the math works for
-[phrases with 2 or more words](#relative) and
-[words as they appear in sentences with a minimum length](#minimum-sentence-length)
+[phrases with 2 or more words](#relative)
+
+<!-- and [words as they appear in sentences with a minimum length](#minimum-sentence-length) -->
+
 to create a consistent interpretation across the dataset. However, these are not
 the only interpretation challenges. Most of the remaining bias is in where and
 how the data is collected, which I describe the specifics of below.
@@ -977,7 +970,7 @@ haven't seen that happen personally-
 
 In short, there is much less data to examine from before 2020, and even less
 before 2017. This is why I set the default start date to August 2016, rather
-than the actual start of my data in March 2002. For reference, this roughly
+than the actual start of the data in March 2002. For reference, this roughly
 aligns to the creation of the first toki pona groups on Telegram.
 
 So the next question is, why 2020? Although I probably don't need to answer
@@ -993,30 +986,30 @@ easier to read while preserving its original shape.
 
 ### Why is there a huge spike on [date] for [word]?
 
-This data isn't from **_professional_** sources, unlike Google Ngrams which is
-sourced entirely from published books. In **_professional_** sources, you
-wouldn't expect an editor to let a paragraph like **woo yeah! woo yeah! woo
-yeah! woo yeah! woo yeah! woo yeah!** remain in the final product. But in
-Discord and any other social media platform, there is no editorial oversight-
-silly goofy abounds.
+This data isn't from "professional" sources, unlike Google Ngrams which is
+sourced entirely from published books. In "professional" sources, you wouldn't
+expect an editor to let a paragraph like **woo yeah! woo yeah! woo yeah! woo
+yeah! woo yeah! woo yeah!** remain in the final product. Usually. But in Discord
+and any other social media platform, there is no editorial oversight- silly
+goofy abounds.
 
 Sometimes this means you'll see a word organically spike in usage, because it
 was just made and people are excited to use it! Other times, you'll see a word
 spike in usage due to a word game being played, which I try to identify and
-omit- because the goal is to measure "real" toki pona, and word games fall
-_just_ outside of this bound.
+omit. After all, the purpose of ilo Muni is to measure "real" toki pona, and
+word games fall _just_ outside of this bound.
 
 This used to affect mu, wan, tu, luka, mute, and ale, but I've since removed
 those- that was from a single person counting from 1 to over 2,000 all on their
-own.
+own over the course of a day!
 
 Relatedly, there was a time during development where "mu" had a spike to **over
 40,000 uses** because of a day in which a handful of messages were nothing but
 "mu" to the text limit of Discord. Because of this, I added a nonsense filter to
 skip sentences before they get counted, which works like so: If a sentence is
-more than 10x the **average sentence length (4.13557)** and more than 50% of the
+more than 5x the **average sentence length (4.13557)** and more than 50% of the
 message is a single word, it gets thrown out. Similarly, if a sentence is more
-than 100x the average sentence length, it gets thrown out immediately. This
+than 25x the average sentence length, it gets thrown out immediately. This
 filter isn't perfect though, because somebody can say "mu. mu. mu." to similar
 effect, and each of those will be counted as individual sentences. Working on
 it!
@@ -1044,7 +1037,7 @@ channels of the server, in the form of the following conversation:
 > (11:04) jan Wan: mi pilin pona. sina pilin seme?
 
 In short, somebody would say "hello," but not get a response very quickly. They
-would wander off, eventually see that somebody else responses, but their own
+would wander off, eventually see that somebody else responsed, but their own
 response would be too late to catch them. No conversation would actually occur.
 
 We saw this pattern playing out so frequently that we decided to try and help
@@ -1053,7 +1046,7 @@ seeing one another because they had too many channels to dig through to find
 conversation. So we archived **most of the channels which had a built-in
 topic.**
 
-We chose to restore the archived channels in August, but we wouldn't actually
+We chose to restore the archived channels that August, but we wouldn't actually
 see the results of this change until **July 2024** when I began creating the
 first graphs with ilo Muni. When I realized the connection between **The Dip**
 and the archived channels, I realized what we were missing at the time:

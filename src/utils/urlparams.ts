@@ -85,6 +85,8 @@ export function getSearchParams(): SearchURLParams {
   const queryParam = urlParams.get("query");
   const query = coalesceRandomly(queryParam, SAMPLE_SEARCHES);
 
+  // TODO: no longer a supported option!
+  // what do we do with it?
   const minLenParam = urlParams.get("minSentLen") || "";
   const minSentLen = coalesceLength(minLenParam);
 

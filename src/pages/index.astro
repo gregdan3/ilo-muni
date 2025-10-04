@@ -32,11 +32,10 @@ const frontmatter = { title: "ilo Muni" };
     Scale,
     Smoother,
     Query,
-    ProcessedQueries,
-    QueryError,
     Field,
+    Error,
   } from "@utils/types";
-  import { inputToQueries } from "@utils/input";
+  import { parseInput } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { fetchManyRows } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
@@ -54,7 +53,6 @@ const frontmatter = { title: "ilo Muni" };
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
-  let sentLenDropdown: HTMLInputElement;
   let scaleDropdown: HTMLInputElement;
   let smootherDropdown: HTMLInputElement;
   let smoothingDropdown: HTMLInputElement;
@@ -73,9 +71,6 @@ const frontmatter = { title: "ilo Muni" };
 
     searchBox = document.getElementById("searchBox")! as HTMLInputElement;
 
-    sentLenDropdown = document.getElementById(
-      "sentLenDropdown",
-    )! as HTMLInputElement;
     scaleDropdown = document.getElementById(
       "scaleDropdown",
     )! as HTMLInputElement;
@@ -106,22 +101,24 @@ const frontmatter = { title: "ilo Muni" };
     advancedButton = document.getElementById("advancedButton")! as HTMLElement;
   }
 
-  function dumpErrors(errorBin: HTMLDivElement, errors: QueryError[]) {
+  function dumpErrors(queries: Query[]) {
     errorBin.innerHTML = "";
-    if (errors.length === 0) {
-      errorBin.textContent = "";
-      return;
+    errorBin.textContent = "";
+    for (const q of queries) {
+      if (q.errors.length === 0) {
+        continue;
+      }
+      const ul = document.createElement("ul");
+
+      q.errors.forEach((err) => {
+        const li = document.createElement("li");
+        const truncLabel = truncateLabel(q.raw);
+        li.textContent = `${truncLabel}: ${err.message}`;
+        ul.appendChild(li);
+      });
+
+      errorBin.appendChild(ul);
     }
-    const ul = document.createElement("ul");
-
-    errors.forEach((err) => {
-      const li = document.createElement("li");
-      const truncLabel = truncateLabel(err.query);
-      li.textContent = `${truncLabel}: ${err.error}`;
-      ul.appendChild(li);
-    });
-
-    errorBin.appendChild(ul);
   }
 
   function shouldDisableScale(id: Scale | undefined) {
@@ -130,7 +127,6 @@ const frontmatter = { title: "ilo Muni" };
 
   async function updatePage() {
     const queryText = searchBox.value;
-    const sentLen = Number(sentLenDropdown.value) as Length;
     let scale = scaleDropdown.value as Scale;
     const field = fieldDropdown.value as Field;
     const smoother = smootherDropdown.value as Smoother;
@@ -163,9 +159,8 @@ const frontmatter = { title: "ilo Muni" };
     }
 
     loader.style.visibility = "visible";
-    let { queries, errors } = await updateChart(
+    let queries = await updateChart(
       queryText,
-      sentLen,
       scale,
       field,
       smoother,
@@ -178,18 +173,19 @@ const frontmatter = { title: "ilo Muni" };
     if (!queries) {
       return;
     }
-    dumpErrors(errorBin, errors);
+    console.log(queries);
+    dumpErrors(queries);
 
     // valid queries are given stable syntax
+    // TODO: filter out queries with errors
     let queryReprs = queries.map((query: Query) => query.repr);
     // errors are preserved as is
-    queryReprs.push(...errors.map((error: QueryError) => error.query));
+    // queryReprs.push(...queries.map((error: Query) => error.query));
     let query = queryReprs.join(", ");
     // the space is technically wasteful but looks better
 
     let usedParams: Record<string, string> = {
       query: query,
-      minSentLen: sentLenDropdown.value,
       scale: scaleDropdown.value,
       field: fieldDropdown.value,
       start: startDropdown.value,
@@ -208,19 +204,20 @@ const frontmatter = { title: "ilo Muni" };
 
   async function updateChart(
     input: string,
-    minSentLen: Length,
     scale: Scale,
     field: Field,
     smoother: Smoother,
     smoothing: number,
     start: number,
     end: number,
-  ): Promise<ProcessedQueries> {
-    const { queries, errors } = await inputToQueries(input, minSentLen);
+  ): Promise<Query[]> {
+    const queries = await parseInput(input);
     if (queries.length === 0) {
-      return { queries, errors };
+      return queries;
     }
 
+    // TODO: do this once per query
+    let error: Error;
     const results = await fetchManyRows(
       queries,
       scale,
@@ -230,36 +227,27 @@ const frontmatter = { title: "ilo Muni" };
       start,
       end,
     );
+
     if (results.length === 0) {
       queries.forEach((query) => {
-        const error: QueryError = {
-          query: query.raw,
-          error: "No results for this query.",
-        };
-
-        errors.push(error);
+        error = { message: "No results for this query." };
+        query.errors.push(error);
       });
-      return { queries: [], errors };
+      return queries;
     }
     if (results.length < queries.length) {
       const resultTerms = new Set(results.map((result) => result.term));
-
       queries.forEach((query) => {
         if (!resultTerms.has(query.repr)) {
-          const error: QueryError = {
-            query: query.repr,
-            error: "No results for this query.",
-          };
-
-          errors.push(error);
+          error = { message: "No results for this query." };
+          query.errors.push(error);
         }
       });
     }
 
     const scaleData = SCALES[scale];
-
     await reloadUsageChart(usageCanvas, results, scaleData, field);
-    return { queries, errors };
+    return queries;
   }
 
   document.addEventListener("DOMContentLoaded", async () => {
@@ -269,7 +257,7 @@ const frontmatter = { title: "ilo Muni" };
     // aside from query which starts empty, allow defaults of form
     searchBox.value = initialParams.query;
     if (initialParams.minSentLen) {
-      sentLenDropdown.value = initialParams.minSentLen;
+      // TODO: set all terms to be long?
     }
     if (initialParams.field) {
       fieldDropdown.value = initialParams.field;
@@ -302,15 +290,11 @@ const frontmatter = { title: "ilo Muni" };
       await copyUrlToClipboard();
     });
     advancedButton.addEventListener("click", async () => {
-      let state =
-        sentLenDropdown.className === "nodisplay" &&
-        smootherDropdown.className === "nodisplay";
+      let state = smootherDropdown.className === "nodisplay";
 
       if (state) {
-        sentLenDropdown.className = "inline";
         smootherDropdown.className = "inline";
       } else {
-        sentLenDropdown.className = "nodisplay";
         smootherDropdown.className = "nodisplay";
       }
     });
@@ -357,14 +341,6 @@ const frontmatter = { title: "ilo Muni" };
         id="smootherDropdown"
         options={SMOOTHERS}
         selected={defaultSmoother}
-        style="nodisplay"
-      />
-
-      <IntDropdown
-        options={LENGTHS}
-        singularText="All sentences"
-        pluralText="+ words per sentence"
-        id="sentLenDropdown"
         style="nodisplay"
       />
 
