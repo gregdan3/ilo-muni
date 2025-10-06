@@ -10,7 +10,7 @@ const symTokens = "+\\-"; // these can be separated without space
 // const symTokens = "+\\-/()"; // these can be separated without space
 
 // split query
-export const TERM_DELIMS_RE = new RegExp(`([${symTokens}])`, "u");
+export const TERM_DELIMS_RE = new RegExp(`(?=[${symTokens}])`, "u");
 
 export const TOKEN_DELIMS_RE = new RegExp(
   `\\s+|([${ucsurRanges}${symTokens}])`,
@@ -64,6 +64,7 @@ export const ATTRIBUTES = {
   // implicit relationships
   // [undefined]: 0,
   // [null]: 0,
+  "": 0,
   ALL: 0,
   START: 1,
   END: 2,

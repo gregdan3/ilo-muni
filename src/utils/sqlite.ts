@@ -12,7 +12,7 @@ import type {
   Length,
   Term,
   Query,
-  Separator,
+  Operator,
   Smoother,
   Row,
   Rank,
@@ -20,10 +20,10 @@ import type {
   QueryParams,
   Attribute,
 } from "@utils/types";
-import { consoleLogAsync } from "@utils/debug";
 import { SCALES } from "@utils/constants";
 import { scaleFunctions } from "@utils/post_processing/scaling.ts";
 import { smootherFunctions } from "@utils/post_processing/smoothing.ts";
+import { consoleLogAsync } from "./debug";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -134,7 +134,7 @@ function localizeTimestamp(timestamp: number): number {
   return timestamp * 1000 + DAY_IN_MS;
 }
 
-function mergeRows(series: Row[][], separators: Separator[]): Row[] {
+function mergeRows(series: Row[][], operators: Operator[]): Row[] {
   if (series.length === 0 || series[0].length === 0) {
     return [];
   }
@@ -150,7 +150,7 @@ function mergeRows(series: Row[][], separators: Separator[]): Row[] {
     let totalHits = 0;
 
     for (let j = 0; j < series.length; j++) {
-      if (separators[j] === "-") {
+      if (operators[j] === "-") {
         totalHits -= series[j][i].hits;
       } else {
         totalHits += series[j][i].hits;
@@ -166,7 +166,7 @@ function mergeRows(series: Row[][], separators: Separator[]): Row[] {
 async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
   let resp = await queryDb(MONTHLY_QUERY, [
     params.term.text,
-    params.term.attr,
+    params.term.attrId,
     params.start,
     params.end,
   ]);
@@ -242,7 +242,7 @@ export async function fetchManyRows(
         start,
         end,
       } as QueryParams);
-      return rows !== null ? { rows, separator: term.separator } : null;
+      return rows !== null ? { rows, operator: term.operator } : null;
     });
 
     const termsData = await Promise.all(termDataPromises);
@@ -253,7 +253,7 @@ export async function fetchManyRows(
 
     let mergedRows = mergeRows(
       termsData.map((hit): Row[] => hit!.rows),
-      termsData.map((hit): Separator => hit!.separator),
+      termsData.map((hit): Operator => hit!.operator),
     );
 
     const totals = await fetchTotals(1, 1, start, end);

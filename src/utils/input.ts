@@ -1,17 +1,15 @@
 import {
   TERM_RE,
   TOKEN_DELIMS_RE,
-  ATTRIBUTES,
   TERM_DELIMS_RE,
+  ATTRIBUTES,
 } from "@utils/constants";
 import { fetchTopTerms } from "@utils/sqlite";
 
-import type { Separator, Length, Term, Query, Error } from "@utils/types";
+import type { Operator, Term, Query, Attribute } from "@utils/types";
 
-function countWords(term: string): number {
-  // NOTE: this would fail to count UCSUR, but it is only used after split
-  return term.split(/\s+/).length;
-}
+import { makeError } from "@utils/errors";
+import type { QueryError } from "@utils/errors";
 
 function splitOnDelim(input: string, delimiter: string): string[] {
   return input
@@ -35,48 +33,25 @@ function countSubstring(s: string, match: string): number {
   return count;
 }
 
-function queryRepr(terms: Term[]): string {
-  return terms
-    .map((term) => {
-      if (term.separator) {
-        return term.separator + " " + term.repr;
-      }
-      return term.repr;
-    })
-    .join(" ");
+// TODO
+function termRepr(): string {
+  return "";
 }
 
-function createTerm(
-  rawTerm: string,
-  separator: Separator,
-  hasWildcard: boolean,
-): Term {
-  let [text, rawAttr] = rawTerm.split("_");
-  text = text.trim();
-
-  const length = countWords(text) as Length;
-  const repr = rawTerm;
-
-  let attr = ATTRIBUTES[rawAttr]!;
-  if (!attr) {
-    attr = ATTRIBUTES.all;
-  }
-
-  return {
-    raw: rawTerm,
-    repr,
-    text: text,
-    len: length,
-    attr: attr,
-    separator,
-    hasWildcard,
-    errors: [],
-  };
+function queryRepr(query: Query): string;
+function queryRepr(terms: Term[]): string;
+function queryRepr(arg: Query | Term[]): string {
+  const terms = Array.isArray(arg) ? arg : arg.terms;
+  return terms
+    .map((term) =>
+      term.operator ? term.operator + " " + term.repr : term.repr,
+    )
+    .join(" ");
 }
 
 function dedupeQueries(queries: Query[]): ProcessedQueries {
   const seen = new Set<string>();
-  const errors: Error[] = [];
+  const errors: QueryError[] = [];
   queries = queries.filter((query) => {
     if (seen.has(query.repr)) {
       errors.push({ query: query.repr, error: "Duplicate query" });
@@ -130,155 +105,140 @@ async function expandWildcards(queries: Query[]): Promise<Query[]> {
   return queries;
 }
 
-function errCheckTerm(term: Term) {
-  const errs: Error[] = [];
-  const text = term.repr!;
-  if (countSubstring(text, "_") > 1) {
-    errs.push({ message: "Only one one attribute allowed per query." });
-  }
-  if (countSubstring(text, "*") > 1) {
-    errs.push({ message: "Only one wildcard allowed per query." });
-  }
+function parseTerm(input: string): Term {
+  const raw = input;
+  let rawAttr: string = "";
+  let attr: Attribute = "";
+  let operator: Operator | null = null;
+  let hasWildcard = false;
+  const errors: QueryError[] = [];
 
-  if (text.indexOf("_") === 0) {
-    errs.push({ message: "Query may not begin with attribute." });
-  }
-  if (text.indexOf("_") === text.length) {
-    errs.push({ message: "No attribute is specified." });
-  }
-  if (text.indexOf("*") === 0) {
-    errs.push({ message: "Query may not begin with wildcard." });
-  }
-  term.errors.push(...errs);
-}
+  let error: QueryError;
 
-function parseTerm(term: Term) {
-  errCheckTerm(term);
-  if (term.errors.length > 0) {
-    return;
-  }
-
-  let text = term.raw;
-  let attr = "";
-
-  // TODO: removal of consecutive duplicates breaks this a bit
-  const iAttr = text.lastIndexOf("_");
-  if (iAttr > -1) {
-    attr = text.substring(iAttr).toUpperCase();
-    text = text.substring(0, iAttr);
-
-    attr = ATTRIBUTES[attr]!;
-    if (!attr) {
-      attr = ATTRIBUTES.all;
-    }
-  }
-
-  let tokens: string[] = text.split(TOKEN_DELIMS_RE);
+  let tokens: string[] = input.split(TOKEN_DELIMS_RE);
   tokens = tokens.filter((token) => token !== undefined && token.length > 0);
-  console.log(tokens);
+  const tokensLen = tokens.length - 1; // for indexing
 
   const termTokens: string[] = [];
-  tokens.forEach((token) => {
-    if (TERM_RE.test(token)) {
-      termTokens.push(token);
-      // continue;
+
+  for (let [index, token] of tokens.entries()) {
+    if (token === "+" || token === "-") {
+      if (operator !== null) {
+        error = makeError("DuplicateOperator", { token, operator }, index);
+        errors.push(error);
+        continue;
+      }
+      // TODO: order?
+      operator = token;
+      continue;
     }
 
-    // if (token === "+" || token === "-") {
-    //   if (termTokens.length > 0) {
-    //     // throws out trailing operators
-    //     term = createTerm(termTokens.join(" "), separator, hasWildcard);
-    //     termsTokens.push(term);
-    //     // reset
-    //     // termTokens = [];
-    //     // hasWildcard = false;
-    //   }
-    //   separator = token as Separator;
-    // } else if (token.startsWith("*")) {
-    //   if (termTokens.length == 0) {
-    //     const error = `term may not begin with a wildcard`;
-    //     errors.push(error);
-    //   }
-    //   if (hasWildcard) {
-    //     const error = `term may not have more than one wildcard`;
-    //     errors.push(error);
-    //   }
-    //
-    //   hasWildcard = true;
-    //   termTokens.push(token);
-    // } else if (TERM_RE.test(token)) {
-    //   termTokens.push(token);
-    // } else {
-    //   const error = `term must be letters, numbers, or UCSUR text`;
-    //   errors.push(error);
-    // }
-  });
+    if (token.includes("*")) {
+      if (token.startsWith("*") && index === 0) {
+        error = makeError("LeadingWildcard", {}, index);
+        errors.push(error);
+      }
+      if (hasWildcard === true) {
+        error = makeError("DuplicateWildcard", {}, index);
+        errors.push(error);
+      }
+      hasWildcard = true;
+    }
 
-  // if (termTokens.length > 0) {
-  //   terms.push(createTerm(termTokens.join(" "), separator, hasWildcard));
-  // }
+    if (token.includes("_")) {
+      if (index !== tokensLen) {
+        // attr must be on last token of term
+        error = makeError("EarlyAttribute", { token }, index);
+        errors.push(error);
+      }
+      if (token.at(-1) === "_") {
+        // can't be empty
+        error = makeError("EmptyAttribute", { token }, index);
+        errors.push(error);
+      }
+      const iAttr = token.indexOf("_") + 1;
+      rawAttr = token.substring(iAttr).toUpperCase();
+      if (rawAttr in ATTRIBUTES) {
+        attr = rawAttr as Attribute;
+      } else {
+        error = makeError("InvalidAttribute", { attr: rawAttr, token }, index);
+        errors.push(error);
+      }
+      // the only time token will be redefined
+      token = token.substring(0, iAttr - 1);
+    }
+    if (!TERM_RE.test(token)) {
+      error = makeError("InvalidToken", { token }, index);
+      errors.push(error);
+    }
 
-  term.text = tokens.join(" ");
-  term.len = tokens.length;
-  term.attr = 0;
+    termTokens.push(token);
+  }
+
+  const text = termTokens.join(" ");
+  const len = termTokens.length;
+  const attrId = ATTRIBUTES[attr];
+  const term: Term = {
+    raw,
+    repr: raw,
+    text,
+    len,
+    attr,
+    attrId,
+    operator,
+    hasWildcard,
+    errors,
+  };
+  return term;
 }
 
-function parseTerms(query: Query) {
+function parseTerms(query: string): Term[] {
   const terms: Term[] = [];
-  const rawTerms = query.repr!.split(TERM_DELIMS_RE);
+  const rawTerms = query.split(TERM_DELIMS_RE);
+
+  console.log(rawTerms);
   // TODO: does this preserve operators
   // if so, they need to be on the left
-  for (let t of rawTerms) {
-    t = t.trim();
-    const term: Term = {
-      raw: t,
-      repr: t,
-      text: null,
-      len: null,
-      attr: null,
-      separator: null,
-      hasWildcard: false,
-      errors: [],
-    };
-    parseTerm(term);
-
+  for (const t of rawTerms) {
+    const term = parseTerm(t);
     terms.push(term);
   }
-  query.terms = terms;
+  return terms;
 }
 
-function cleanQuery(query: Query) {
-  let text = query.raw;
-
-  text = text.toLowerCase();
-  // removing consecutive duplicates
-  // NOTE: UCSUR text is not replaced because I don't provide the unicode flag
+function cleanQuery(input: string): string {
+  input = input.trim();
+  input = input.toLowerCase();
+  // NOTE: used to remove consecutive duplicates, but stopped
+  // because it would destroy attributes
+  // NOTE: UCSUR text is not reduced without the Unicode flag (intended)
   // text = text.replace(/(.)\1+/g, "$1");
-  text = text.trim();
-  // text = text + attr;
+  return input;
+}
 
-  query.repr = text;
+function parseQuery(input: string): Query {
+  const raw = input;
+  input = cleanQuery(input);
+
+  const terms = parseTerms(input);
+  const repr = queryRepr(terms);
+  const errors = terms.flatMap((t) => t.errors);
+  const query: Query = {
+    raw,
+    repr,
+    terms,
+    errors,
+  };
   return query;
 }
-
 function parseQueries(input: string): Query[] {
   const queries: Query[] = [];
 
   const rawQueries = splitOnDelim(input, ",");
-  for (let q of rawQueries) {
-    q = q.trim();
-    const query: Query = {
-      raw: q,
-      repr: q,
-      terms: [],
-      errors: [],
-    };
-    cleanQuery(query);
-    parseTerms(query);
-
+  for (const q of rawQueries) {
+    const query = parseQuery(q);
     queries.push(query);
   }
-
   return queries;
 }
 

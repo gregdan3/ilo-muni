@@ -50,6 +50,7 @@ const frontmatter = { title: "ilo Muni" };
     FIELDS,
   } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
+  import { consoleLogAsync } from "@utils/debug";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
@@ -173,7 +174,7 @@ const frontmatter = { title: "ilo Muni" };
     if (!queries) {
       return;
     }
-    console.log(queries);
+    // console.log(queries);
     dumpErrors(queries);
 
     // valid queries are given stable syntax

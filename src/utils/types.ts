@@ -8,6 +8,8 @@ import {
   ATTRIBUTES,
 } from "@utils/constants";
 
+import type { QueryError } from "@utils/errors";
+
 import { FORMATTERS } from "@utils/ui.ts";
 
 export const lengths = LENGTHS.map((n: string): number => {
@@ -18,7 +20,7 @@ export const smoothings = SMOOTHINGS.map((n: string): number => {
 });
 
 // user input
-export type Separator = "+" | "-" | null;
+export type Operator = "+" | "-";
 
 export type Length = (typeof lengths)[number];
 export type Attribute = keyof typeof ATTRIBUTES;
@@ -74,30 +76,26 @@ export interface RanksURLParams {
   year: string | null;
 }
 
-// searchable term after split by separator and stripped of whitespace
+// searchable term after split by operator and stripped of whitespace
 export interface Term {
   raw: string; // the user's given input for the term
-  repr: string | null; // the way we will print the input on the legend
+  repr: string; // the way we will print the input on the legend
 
-  text: string | null; // a single term, no separators or annotations
+  text: string; // a single term, no operators or annotations
   len: Length; // how many words are in the term
-  attr: AttributeId; // what context to search the term in
-  separator: Separator; // how the current term connects to the previous term
+  attr: Attribute; // what context to search the term in
+  attrId: AttributeId; // same but as id
+  operator: Operator | null; // how the current term connects to the previous term
   hasWildcard: boolean; // whether a single * exists in raw/
 
-  errors: Error[];
+  errors: QueryError[];
 }
 
 // searches after split by , and stripped of whitespace
 export interface Query {
   raw: string; // unaltered user input, per term
-  repr: string | null; // to be printed later
+  repr: string; // to be printed later
 
   terms: Term[];
-  errors: Error[]; // if len(error) is > 1, only `raw` may have a value
-}
-
-export interface Error {
-  message: string;
-  tokenIndex?: number;
+  errors: QueryError[]; // if len(error) is > 1, only `raw` may have a value
 }
