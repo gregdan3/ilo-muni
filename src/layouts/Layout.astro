@@ -69,34 +69,60 @@ import { BASE_URL } from "@utils/constants";
   </head>
 
   <body>
-    <nav>
-      <a href=`${BASE_URL}/`>Search</a>
-      <!-- <a href=`${BASE_URL}/ranks`>Ranks</a> -->
-      <a href=`${BASE_URL}/about`>About</a>
-      <a href=`${BASE_URL}/help`>Help!</a>
-    </nav>
-
-    <article>
+    <div class="design">
       <header>
-        <img src=`${BASE_URL}/favicon.svg` />
-        <h3>{title}</h3>
+        <a href="/">
+          <div class="logo">
+            <img src=`${BASE_URL}/favicon.svg` />
+            <h3>{title}</h3>
+          </div>
+        </a>
+        <nav>
+          <a href=`${BASE_URL}/`>Search</a>
+          <!-- <a href=`${BASE_URL}/ranks`>Ranks</a> -->
+          <a href=`${BASE_URL}/about`>About</a>
+          <a href=`${BASE_URL}/help`>Help!</a>
+        </nav>
       </header>
 
-      <slot />
+      <main>
+        <div class="spacer"></div>
 
-      <footer style="margin-top: 1em">
-        <div style="display: flex; justify-content: center; ">
-          <a href="https://github.com/gregdan3" style="margin:0.5em;">
+        <slot />
+      </main>
+      <footer>
+        <div class="license">
+          <!-- <div> -->
+          <!--   <a href="https://github.com/gregdan3/ilo-muni">Code on GitHub</a> -->
+          <!--   - -->
+          <!--   <a href="https://github.com/gregdan3/ilo-muni/issues" -->
+          <!--     >Report an issue</a -->
+          <!--   > -->
+          <!--   - -->
+          <!--   <a href="https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz" -->
+          <!--     >Download the DB</a -->
+          <!--   > -->
+          <!-- </div> -->
+          <div>
+            Licensed under
+            <a href="/LICENSE.AGPL-3.0-or-later.txt">AGPL-3.0-or-later</a>
+            and
+            <a href="/LICENSE.CC-BY-SA-4.0.txt">CC BY-SA-4.0</a>
+          </div>
+        </div>
+
+        <div class="socials">
+          <a href="https://github.com/gregdan3/ilo-muni">
             <img src={GithubGif.src} alt="@gregdan3 on GitHub" class="social" />
           </a>
-          <a href="https://youtube.com/@gregdan3d" style="margin:0.5em;">
+          <a href="https://youtube.com/@gregdan3d">
             <img
               src={YouTubeGif.src}
               alt="@gregdan3d on YouTube"
               class="social"
             />
           </a>
-          <a href="https://mun.la/sona" style="margin:0.5em;">
+          <a href="https://mun.la/sona">
             <img
               src={TokiPonaGif.src}
               alt="toki pona lessons on mun.la"
@@ -104,30 +130,8 @@ import { BASE_URL } from "@utils/constants";
             />
           </a>
         </div>
-
-        <div style="margin-top: 1em; text-align: center; line-height: 1.8em">
-          <div>
-            <a href="https://github.com/gregdan3/ilo-muni">Code on GitHub</a>
-            -
-            <a href="https://github.com/gregdan3/ilo-muni/issues"
-              >Report an issue</a
-            >
-            -
-            <a href="https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz"
-              >Download the DB</a
-            >
-          </div>
-          <div>
-            Licensed under
-            <a href="/LICENSE.AGPL-3.0-or-later.txt"
-              >AGPL-3.0-or-later</a
-            >
-            and
-            <a href="/LICENSE.CC-BY-SA-4.0.txt">CC BY-SA-4.0</a>
-          </div>
-        </div>
       </footer>
-    </article>
+    </div>
   </body>
 </html>
 
@@ -155,49 +159,100 @@ import { BASE_URL } from "@utils/constants";
       Cantarell, "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
   body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     margin: 0;
+    min-height: 100vh;
+    min-width: 100vw;
   }
 
-  header {
+  .design {
     display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin: 0 auto 0 auto;
+    padding: 3%;
+    padding-top: 1%;
+    background: var(--prim-bg);
+    color: var(--prim-fg);
+    box-shadow:
+      0 5px 10px rgba(0, 0, 0, 0.2),
+      0 15px 40px rgba(0, 0, 0, 0.05);
+  }
+
+  main {
+    flex: 1;
+    line-height: 1.5em;
+  }
+  .spacer {
+    width: 85vw;
+    min-width: 85vw;
+  }
+  canvas {
+    max-width: 90vw;
+  }
+  header {
+    position: relative;
+    display: flex;
+    height: 3em;
     padding-block: 1em;
   }
-  header > h3 {
-    margin-block: auto;
-    margin-left: 0.75em;
-    margin-right: auto;
-  }
-  header > img {
-    width: 4em;
-    height: 3em;
-  }
-  nav {
-    text-align: center;
-    font-weight: bold;
-    margin: 1em;
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
+  header * {
+    color: inherit !important;
+    text-decoration: none !important;
   }
 
-  nav > a {
-    color: inherit;
+  .logo {
+    display: flex;
+    position: absolute;
+  }
+  .logo h3 {
+    margin-block: auto;
+    margin-left: 0.5em;
+  }
+  .logo img {
+    width: 4em;
+    height: auto;
+  }
+
+  nav {
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 10%;
+  }
+  nav a {
     border: 0.3em outset lightgray;
     padding: 0.5em;
-    padding-left: 1.5%;
-    padding-right: 1.5%;
-    margin: 1%;
-    margin-left: 1.5%;
-    margin-right: 1.5%;
+    font-weight: bold;
     box-shadow: 0.15em 0.15em 0 0 rgba(0, 0, 0, 1);
   }
-
   nav > a:hover {
     box-shadow: 0.25em 0.25em 0 0 rgba(0, 0, 0, 1);
   }
-
   nav > a:active {
     border-style: inset;
     background: #dddddd;
+    box-shadow: 0.2em 0.2em 0 0 rgba(0, 0, 0, 1);
+  }
+
+  footer {
+    font-size: 0.75em;
+    line-height: 1em;
+    margin-bottom: 1em;
+  }
+
+  .license {
+    margin-top: 0.5em;
+    text-align: center;
+    line-height: 1.8em;
+  }
+  .socials {
+    display: flex;
+    justify-content: center;
+    gap: 3%;
+    margin-top: 0.5em;
   }
 
   code {
@@ -214,32 +269,32 @@ import { BASE_URL } from "@utils/constants";
     margin-top: 10px;
   }
 
-  article summary {
+  summary {
     cursor: pointer;
     padding: var(--indent);
   }
-  article summary > * {
+  summary > * {
     display: inline-block;
   }
 
-  article details {
+  details {
     display: block;
     color: var(--spoil-fg);
     background: var(--spoil-bg);
     border-left: var(--block-mark) solid var(--spoil-fg);
     margin: var(--indent);
   }
-  article details > p {
+  details > p {
     padding: var(--indent);
   }
-  article details[open] {
+  details[open] {
     padding-bottom: 0.25em;
   }
-  article details[open] > summary {
+  details[open] > summary {
     border-bottom: var(--block-mark) solid var(--spoil-fg);
   }
 
-  article blockquote {
+  blockquote {
     margin: var(--indent);
     padding: var(--indent);
   }
@@ -249,32 +304,14 @@ import { BASE_URL } from "@utils/constants";
     border-left: var(--block-mark) solid var(--sec-fg);
   }
 
-  article {
-    margin: 6% auto;
-    margin-top: 0%;
-    padding: 4%;
-    padding-top: 0%;
-    background: var(--prim-bg);
-    color: var(--prim-fg);
-    max-width: 80%;
-    box-shadow:
-      0 5px 10px rgba(0, 0, 0, 0.2),
-      0 15px 40px rgba(0, 0, 0, 0.05);
-    line-height: 1.5em;
-  }
-  footer {
-    font-size: 0.75em;
-    line-height: 1em;
-    margin-top: 1em;
-  }
-  article a {
+  a {
     text-decoration: underline var(--url);
     color: var(--url);
   }
-  article a:hover {
+  a:hover {
     text-decoration: underline dotted;
   }
-  article a:visited {
+  a:visited {
     text-decoration: underline var(--urlvisited);
     color: var(--urlvisited);
   }
@@ -286,10 +323,11 @@ import { BASE_URL } from "@utils/constants";
     border: 2px solid var(--prim-fg);
     image-rendering: pixelated;
   }
-
   .social:hover {
     box-shadow: 0.2em 0.2em 0 0 rgba(0, 0, 0, 1);
-    border: 2px solid var(--prim-fg);
+  }
+  .social:active {
+    box-shadow: 0.15em 0.15em 0 0 rgba(0, 0, 0, 1);
   }
 
   @media (min-width: 600px) {
@@ -303,7 +341,7 @@ import { BASE_URL } from "@utils/constants";
     html {
       font-size: 18px;
     }
-    article {
+    main {
       line-height: 1.7em;
     }
     .social {
@@ -338,11 +376,17 @@ import { BASE_URL } from "@utils/constants";
     html {
       font-size: 16px;
     }
-    article {
+    .design {
       max-width: 100%;
-      padding: 6%;
-      padding-top: 0;
+      padding: 5%;
+      padding-top: 1%;
       margin: 0;
+    }
+    footer {
+      margin-bottom: 5em;
+    }
+    .logo h3 {
+      display: none;
     }
   }
 </style>
