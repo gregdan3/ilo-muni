@@ -7,10 +7,10 @@ import {
   FIELDS,
   ATTRIBUTES,
 } from "@utils/constants";
-
 import type { QueryError } from "@utils/errors";
+import { FORMATTERS } from "@utils/ui";
 
-import { FORMATTERS } from "@utils/ui.ts";
+export type Stringable = string | number | boolean | bigint | symbol;
 
 export const lengths = LENGTHS.map((n: string): number => {
   return parseInt(n, 10);
@@ -36,6 +36,7 @@ export type SmoothingParam = (typeof SMOOTHINGS)[number];
 export type Axis = "linear" | "logarithmic";
 export type Field = keyof typeof FIELDS;
 
+// "row" of the db
 export interface Row {
   day: number; // timestamp representing a date
   hits: number;
@@ -43,37 +44,18 @@ export interface Row {
   hpa: number;
 }
 export interface Result {
-  term: string;
+  term: Term;
   data: Row[];
 }
+export interface QueryResult {
+  query: Query;
+  data: Row[];
+}
+
 export interface Rank {
   term: string;
   hits: number;
   authors: number;
-}
-
-export interface QueryParams {
-  term: Term;
-  scale: Scale;
-  smoothing: number;
-  start: number;
-  end: number;
-}
-
-export interface SearchURLParams {
-  query: string;
-  minSentLen: LengthParam | null;
-  scale: Scale | null;
-  smoothing: SmoothingParam | null;
-  smoother: Smoother | null;
-  field: Field | null;
-  start: string | null;
-  end: string | null;
-}
-
-export interface RanksURLParams {
-  termLen: LengthParam | null;
-  year: string | null;
 }
 
 // searchable term after split by operator and stripped of whitespace
@@ -98,4 +80,29 @@ export interface Query {
 
   terms: Term[];
   errors: QueryError[]; // if len(error) is > 1, only `raw` may have a value
+}
+
+export interface Params {
+  scale: Scale;
+  field: Field;
+  smoother: Smoother;
+  smoothing: number;
+  start: number;
+  end: number;
+}
+
+export interface SearchURLParams {
+  query: string;
+  minSentLen: LengthParam | null;
+  scale: Scale | null;
+  smoothing: SmoothingParam | null;
+  smoother: Smoother | null;
+  field: Field | null;
+  start: string | null;
+  end: string | null;
+}
+
+export interface RanksURLParams {
+  termLen: LengthParam | null;
+  year: string | null;
 }

@@ -176,6 +176,19 @@ export async function reloadUsageChart(
   scale: ScaleData,
   field: Field,
 ) {
+  //   TODO: can we do this but preserve the original data on the tooltip?
+  //  and change the axis to start at 1?
+  // data =
+  //   scale.axis === "logarithmic"
+  //     ? data.map((result) => ({
+  //         ...result,
+  //         data: result.data.map((d) => ({
+  //           ...d,
+  //           hits: d.hits + 1,
+  //         })),
+  //       }))
+  //     : data;
+
   if (!existingChart) {
     existingChart = await initUsageChart(canvas, data, scale, field);
   } else {

@@ -17,13 +17,17 @@ import type {
   Row,
   Rank,
   Result,
-  QueryParams,
+  Params,
   Attribute,
+  AttributeId,
+  Stringable,
+  QueryResult,
 } from "@utils/types";
 import { SCALES } from "@utils/constants";
-import { scaleFunctions } from "@utils/post_processing/scaling.ts";
-import { smootherFunctions } from "@utils/post_processing/smoothing.ts";
+import { scaleFunctions } from "@utils/post_processing/scaling";
+import { smootherFunctions } from "@utils/post_processing/smoothing";
 import { consoleLogAsync } from "./debug";
+import { makeError } from "./errors";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -31,7 +35,6 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
   const worker = await createDbWorker(
     [
       {
-        // TODO: investigate
         from: "inline",
         config: {
           serverMode: "full",
@@ -53,15 +56,16 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
   return worker;
 }
 
-/* TODO: queryresult? */
-export async function queryDb(query: string, params: any[]): Promise<any[]> {
+export async function queryDb(
+  query: string,
+  params: Stringable[],
+): Promise<any[]> {
   if (!workerPromise) {
     workerPromise = initDB(DB_URL_PREFIX);
   }
   const worker = await workerPromise;
-
   await consoleLogAsync(query, params);
-  let result = await worker.db.query(query, params);
+  const result = await worker.db.query(query, params);
   return result;
 }
 
@@ -152,26 +156,30 @@ function mergeRows(series: Row[][], operators: Operator[]): Row[] {
     for (let j = 0; j < series.length; j++) {
       if (operators[j] === "-") {
         totalHits -= series[j][i].hits;
-      } else {
+      } else if (operators[j] === "+") {
         totalHits += series[j][i].hits;
+      } else {
+        // TODO: make an error?
       }
     }
 
-    // NOTE: there are at least 2 items in `series` and authors cannot be summed
+    // TODO: NoSetMath error
     result.push({ day, hits: totalHits, authors: NaN, hpa: NaN });
   }
   return result;
 }
 
-async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
+async function resolveTerm(term: Term, params: Params): Promise<Row[]> {
   let resp = await queryDb(MONTHLY_QUERY, [
-    params.term.text,
-    params.term.attrId,
+    term.text,
+    term.attrId,
     params.start,
     params.end,
   ]);
   if (resp.length === 0) {
-    return null; // for filtering in next func
+    const error = makeError("NoResultsTerm", { term: params.term.repr });
+    term.errors.push(error);
+    return []; // for filtering in next func
   }
 
   resp = resp.map(
@@ -187,12 +195,7 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
   let iResult = 0;
   let iCompare = 0;
 
-  const totals = await fetchTotals(
-    params.term.len,
-    0, // TODO: attr
-    params.start,
-    params.end,
-  );
+  const totals = await fetchTotals(1, 0, params);
 
   while (iCompare < totals.length) {
     const comparisonDay = totals[iCompare].day;
@@ -220,28 +223,67 @@ async function fetchOneRow(params: QueryParams): Promise<Row[] | null> {
   return result;
 }
 
+export async function resolveQuery(
+  query: Query,
+  params: Params,
+): Promise<QueryResult> {
+  if (params.end > LATEST_TIMESTAMP) {
+    params.end = LATEST_TIMESTAMP;
+  }
+  const termDataPromises = query.terms.map(async (term: Term) => {
+    const rows = await resolveTerm(term, params);
+    return rows !== null ? { rows, operator: term.operator } : null;
+  });
+  const termsData = await Promise.all(termDataPromises);
+
+  if (termsData.some((term): boolean => term === null)) {
+    return null;
+  }
+
+  let mergedRows = mergeRows(
+    termsData.map((hit): Row[] => hit!.rows),
+    termsData.map((hit): Operator => hit!.operator),
+  );
+
+  // TODO: pass a term's length or attr into this? eh?
+  const totals = await fetchTotals(1, 0, params);
+
+  // NOTE:
+  // If I want to show more fields in the tooltip later on, this will be
+  // needed so the data doesn't appear to change from one graph view to
+  // another. Right now I only show the current graph's data on the tooltip,
+  // so no harm done.
+  // for (const key of Object.keys(FIELDS)) {
+  //   mergedRows = scaleFunctions[scale](mergedRows, totals, key);
+  //   if (smoothing > 0 && SCALES[scale].smoothable) {
+  //     const smootherFunction = smootherFunctions[smoother];
+  //     mergedRows = smootherFunction(mergedRows, smoothing, key);
+  //   }
+  // }
+
+  mergedRows = scaleFunctions[params.scale](mergedRows, totals, params.field);
+  if (params.smoothing > 0 && SCALES[params.scale].smoothable) {
+    const smootherFunction = smootherFunctions[params.smoother];
+    mergedRows = smootherFunction(mergedRows, params.smoothing, params.field);
+  }
+
+  return {
+    query: query,
+    data: mergedRows,
+  };
+}
+
 export async function fetchManyRows(
   queries: Query[],
-  scale: Scale,
-  field: Field,
-  smoother: Smoother,
-  smoothing: number,
-  start: number,
-  end: number,
+  params: Params,
 ): Promise<Result[]> {
-  if (end > LATEST_TIMESTAMP) {
-    end = LATEST_TIMESTAMP;
+  if (params.end > LATEST_TIMESTAMP) {
+    params.end = LATEST_TIMESTAMP;
   }
 
   const queryPromises = queries.map(async (query: Query) => {
     const termDataPromises = query.terms.map(async (term: Term) => {
-      const rows = await fetchOneRow({
-        term,
-        scale,
-        smoothing,
-        start,
-        end,
-      } as QueryParams);
+      const rows = await resolveTerm(term, params);
       return rows !== null ? { rows, operator: term.operator } : null;
     });
 
@@ -256,7 +298,8 @@ export async function fetchManyRows(
       termsData.map((hit): Operator => hit!.operator),
     );
 
-    const totals = await fetchTotals(1, 1, start, end);
+    // 0 is default attr
+    const totals = await fetchTotals(1, 0, params);
 
     // NOTE:
     // If I want to show more fields in the tooltip later on, this will be
@@ -271,10 +314,10 @@ export async function fetchManyRows(
     //   }
     // }
 
-    mergedRows = scaleFunctions[scale](mergedRows, totals, field);
-    if (smoothing > 0 && SCALES[scale].smoothable) {
-      const smootherFunction = smootherFunctions[smoother];
-      mergedRows = smootherFunction(mergedRows, smoothing, field);
+    mergedRows = scaleFunctions[params.scale](mergedRows, totals, params.field);
+    if (params.smoothing > 0 && SCALES[params.scale].smoothable) {
+      const smootherFunction = smootherFunctions[params.smoother];
+      mergedRows = smootherFunction(mergedRows, params.smoothing, params.field);
     }
 
     return {
@@ -290,9 +333,8 @@ export async function fetchManyRows(
 
 async function fetchTotals(
   termLen: Length,
-  attr: Attribute,
-  start: number,
-  end: number,
+  attrId: AttributeId,
+  params: Params,
 ): Promise<Row[]> {
   // const minSentLen = 1; // params.term.minSentLen;
   // const termLen = 1; // params.term.length;
@@ -319,7 +361,12 @@ async function fetchTotals(
   // And this could be useful because in the above search, the resultant line would be "Percentage prevalence of 'tenpo ni' without the prevalence of 'tenpo ni la' or 'lon tenpo ni'"
   // Which right now you can only get in absolute mode
 
-  let result = await queryDb(TOTAL_QUERY, [termLen, attr, start, end]);
+  let result = await queryDb(TOTAL_QUERY, [
+    1, // termLen,
+    0, // attrId,
+    params.start,
+    params.end,
+  ]);
   result = result.map(
     (row: Row): Row => ({
       day: localizeTimestamp(row.day),

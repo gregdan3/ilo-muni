@@ -34,6 +34,7 @@ const frontmatter = { title: "ilo Muni" };
     Query,
     Field,
     Error,
+    Params,
   } from "@utils/types";
   import { parseInput } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
@@ -51,6 +52,7 @@ const frontmatter = { title: "ilo Muni" };
   } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
   import { consoleLogAsync } from "@utils/debug";
+  import { makeError } from "@utils/errors";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
@@ -219,19 +221,18 @@ const frontmatter = { title: "ilo Muni" };
 
     // TODO: do this once per query
     let error: Error;
-    const results = await fetchManyRows(
-      queries,
+    const results = await fetchManyRows(queries, {
       scale,
       field,
       smoother,
       smoothing,
       start,
       end,
-    );
+    } as Params);
 
     if (results.length === 0) {
       queries.forEach((query) => {
-        error = { message: "No results for this query." };
+        error = makeError("NoResultsQuery", {});
         query.errors.push(error);
       });
       return queries;
@@ -240,7 +241,7 @@ const frontmatter = { title: "ilo Muni" };
       const resultTerms = new Set(results.map((result) => result.term));
       queries.forEach((query) => {
         if (!resultTerms.has(query.repr)) {
-          error = { message: "No results for this query." };
+          error = makeError("NoResultsQuery", {});
           query.errors.push(error);
         }
       });

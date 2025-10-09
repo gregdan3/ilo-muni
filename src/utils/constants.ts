@@ -70,6 +70,7 @@ export const ATTRIBUTES = {
   END: 2,
   FULL: 3,
   LONG: 4,
+  // SHORT: 5,
 };
 
 export const FIELDS = {

@@ -18,26 +18,6 @@ function splitOnDelim(input: string, delimiter: string): string[] {
     .filter((item) => item !== "");
 }
 
-function countSubstring(s: string, match: string): number {
-  if (!match) return 0;
-  let count = 0;
-  let pos = 0;
-
-  while (true) {
-    pos = s.indexOf(match, pos);
-    if (pos === -1) break;
-    count++;
-    pos += match.length;
-  }
-
-  return count;
-}
-
-// TODO
-function termRepr(): string {
-  return "";
-}
-
 function queryRepr(query: Query): string;
 function queryRepr(terms: Term[]): string;
 function queryRepr(arg: Query | Term[]): string {
@@ -49,60 +29,56 @@ function queryRepr(arg: Query | Term[]): string {
     .join(" ");
 }
 
-function dedupeQueries(queries: Query[]): ProcessedQueries {
+function markDupeQueries(queries: Query[]) {
   const seen = new Set<string>();
-  const errors: QueryError[] = [];
-  queries = queries.filter((query) => {
+  let error: QueryError;
+  queries.map((query) => {
     if (seen.has(query.repr)) {
-      errors.push({ query: query.repr, error: "Duplicate query" });
-      return false;
+      error = makeError("DuplicateQuery", {});
+      query.errors.push(error);
     } else {
       seen.add(query.repr);
-      return true;
     }
   });
-
-  return { queries, errors };
 }
 
-async function expandWildcards(queries: Query[]): Promise<Query[]> {
-  const expandedQueries: Query[] = [];
+async function expandWildcardQuery(query: Query): Promise<Query[]> {
+  // returns expanded queries, or original query if error
+  const wildcardTerms = query.terms.filter((term) => term.hasWildcard);
+  let error: QueryError;
 
-  for (const query of queries) {
-    // Find all terms with wildcards
-    const wildcardTerms = query.terms.filter((term) => term.hasWildcard);
-
-    if (wildcardTerms.length === 0) {
-      expandedQueries.push(query);
-    } else if (wildcardTerms.length === 1) {
-      const wildcardTerm = wildcardTerms[0];
-      const topTerms = await fetchTopTerms(wildcardTerm);
-      if (topTerms.length === 0) {
-        errors.push({
-          query: query.raw,
-          error: "No results for this wildcard.",
-        });
-        continue;
-      }
-
-      for (const topTerm of topTerms) {
-        const newQuery = {
-          ...query,
-          terms: query.terms.map(
-            (term: Term): Term =>
-              term === wildcardTerm
-                ? { ...term, text: topTerm, repr: topTerm }
-                : term,
-          ),
-        };
-        // TODO: kinda a mixed responsibility thing right
-        newQuery.repr = queryRepr(newQuery.terms);
-        expandedQueries.push(newQuery);
-      }
-    }
+  if (wildcardTerms.length > 1) {
+    error = makeError("MultiTermWildcard", {});
+    query.errors.push(error);
+    return [query];
   }
 
-  return queries;
+  // if (wildcardTerms.length === 0) {
+  //   error = makeError("NoWildcard", { wildcard: wildcardTerm.repr });
+  //   query.errors.push(error);
+  //   return [query];
+  // }
+
+  const wildcardTerm = wildcardTerms[0];
+  const topTerms = await fetchTopTerms(wildcardTerm);
+  if (topTerms.length === 0) {
+    error = makeError("NoResultsWildcard", { wildcard: wildcardTerm.repr });
+    query.errors.push(error);
+    return [query];
+  }
+
+  return topTerms.map((topTerm): Query => {
+    const newQuery = {
+      ...query,
+      terms: query.terms.map((term) =>
+        term === wildcardTerm
+          ? { ...term, text: topTerm, repr: topTerm }
+          : term,
+      ),
+    };
+    newQuery.repr = queryRepr(newQuery);
+    return newQuery;
+  });
 }
 
 function parseTerm(input: string): Term {
@@ -116,9 +92,10 @@ function parseTerm(input: string): Term {
   let error: QueryError;
 
   let tokens: string[] = input.split(TOKEN_DELIMS_RE);
-  tokens = tokens.filter((token) => token !== undefined && token.length > 0);
+  tokens = tokens
+    .map((token) => token?.trim())
+    .filter((token) => token !== undefined && token.length > 0);
   const tokensLen = tokens.length - 1; // for indexing
-
   const termTokens: string[] = [];
 
   for (let [index, token] of tokens.entries()) {
@@ -138,10 +115,12 @@ function parseTerm(input: string): Term {
         error = makeError("LeadingWildcard", {}, index);
         errors.push(error);
       }
-      if (hasWildcard === true) {
-        error = makeError("DuplicateWildcard", {}, index);
-        errors.push(error);
-      }
+      // >1 wildcard per term is fine
+      // more than one per query is not
+      // if (hasWildcard === true) {
+      //   error = makeError("DuplicateWildcard", {}, index);
+      //   errors.push(error);
+      // }
       hasWildcard = true;
     }
 
@@ -177,12 +156,13 @@ function parseTerm(input: string): Term {
 
   const text = termTokens.join(" ");
   const len = termTokens.length;
+  const repr = attr ? text + "_" + attr : text;
   const attrId = ATTRIBUTES[attr];
   const term: Term = {
     raw,
-    repr: raw,
+    repr,
     text,
-    len,
+    len, // this can be zero - caller's responsibility to clean out
     attr,
     attrId,
     operator,
@@ -193,16 +173,11 @@ function parseTerm(input: string): Term {
 }
 
 function parseTerms(query: string): Term[] {
-  const terms: Term[] = [];
   const rawTerms = query.split(TERM_DELIMS_RE);
+  const terms = rawTerms
+    .map((term) => parseTerm(term))
+    .filter((term) => term !== undefined && term !== null && term!.len > 0);
 
-  console.log(rawTerms);
-  // TODO: does this preserve operators
-  // if so, they need to be on the left
-  for (const t of rawTerms) {
-    const term = parseTerm(t);
-    terms.push(term);
-  }
   return terms;
 }
 
@@ -243,9 +218,28 @@ function parseQueries(input: string): Query[] {
 }
 
 export async function parseInput(input: string): Promise<Query[]> {
-  const queries = parseQueries(input);
-  await expandWildcards(queries);
-  dedupeQueries(queries);
+  const parsed = parseQueries(input);
+  const expanded: Query[] = [];
 
-  return queries;
+  // if the wildcards expand successfully, their originals will be thrown out
+  for (const q of parsed) {
+    if (hasWildcard(q) && !canRun(q)) {
+      expanded.push(...(await expandWildcardQuery(q)));
+    } else {
+      expanded.push(q);
+    }
+  }
+  markDupeQueries(expanded);
+  return expanded;
+}
+
+function canRun(query: Query): boolean {
+  return (
+    query.errors.some((e) => e.result === "error") ||
+    query.terms.some((t) => t.errors.some((e) => e.result === "error"))
+  );
+}
+
+function hasWildcard(query: Query): boolean {
+  return query.terms.some((t) => t.hasWildcard);
 }
