@@ -1,6 +1,6 @@
 ---
 layout: "@layouts/Layout.astro"
-title: Help! for ilo Muni
+title: Help!
 ---
 
 import { Icon } from "astro-icon/components";
@@ -169,35 +169,37 @@ the word "toki" which are not in the term "toki pona".
 **Note**: If you're currently viewing the **authors** or **hits per author**
 field, subtracting terms is disabled.
 
-<!-- ### Minimum Sentence Length -->
-<!---->
-<!-- You can **set a minimum sentence length** for a term by adding an underscore `_` -->
-<!-- and a number from 1 to 6 **to the end of that term**. For example, -->
-<!-- [**toki_1, toki_6**](/?query=toki,+toki_6) will show you the percentage of times -->
-<!-- toki appeared in any sentence, versus the smaller percentage of times that it -->
-<!-- was in specifically sentences of length 6. You can do this with any length of -->
-<!-- term: [**ona li, ona li_6**](/?query=ona+li,+ona+li_6) -->
-<!---->
-<!-- You can use this with subtraction to **isolate a term**: Searching -->
-<!-- [**toki - toki_2**](/?query=toki+-+toki_2) will show you every time "toki" -->
-<!-- appeared, except for the times it appeared in sentences with 2 or more words. -->
-<!-- This means means you have all the times "toki" was the only word in the -->
-<!-- sentence! -->
-<!---->
-<!-- Read ahead to the options section on -->
-<!-- [minimum sentence length](#minimum-sentence-length-1) for more details. -->
-<!---->
-<!-- <details> -->
-<!--   <summary>**Examples**</summary> -->
-<!---->
-<!-- - Get even more accurate information about greetings: -->
-<!--   [**sina seme - sina seme_3, sina pali e seme - sina pali e seme_5**](/?query=sina+seme+-+sina+seme_3,+sina+pali+e+seme+-+sina+pali+e+seme_5) -->
-<!-- - See if there is a difference in relative use of words: -->
-<!--   [**toki, pona, toki_6, pona_6**](/?query=toki,+pona,+toki_6,+pona_6). (there -->
-<!--   is! "pona" is more common in short sentences; "toki" is more common in long -->
-<!--   sentences!) -->
-<!---->
-<!-- </details> -->
+{/*
+### Minimum Sentence Length
+
+You can **set a minimum sentence length** for a term by adding an underscore `_`
+and a number from 1 to 6 **to the end of that term**. For example,
+[**toki_1, toki_6**](/?query=toki,+toki_6) will show you the percentage of times
+toki appeared in any sentence, versus the smaller percentage of times that it
+was in specifically sentences of length 6. You can do this with any length of
+term: [**ona li, ona li_6**](/?query=ona+li,+ona+li_6)
+
+You can use this with subtraction to **isolate a term**: Searching
+[**toki - toki_2**](/?query=toki+-+toki_2) will show you every time "toki"
+appeared, except for the times it appeared in sentences with 2 or more words.
+This means means you have all the times "toki" was the only word in the
+sentence!
+
+Read ahead to the options section on
+[minimum sentence length](#minimum-sentence-length-1) for more details.
+
+<details>
+  <summary>**Examples**</summary>
+
+- Get even more accurate information about greetings:
+  [**sina seme - sina seme_3, sina pali e seme - sina pali e seme_5**](/?query=sina+seme+-+sina+seme_3,+sina+pali+e+seme+-+sina+pali+e+seme_5)
+- See if there is a difference in relative use of words:
+  [**toki, pona, toki_6, pona_6**](/?query=toki,+pona,+toki_6,+pona_6). (there
+  is! "pona" is more common in short sentences; "toki" is more common in long
+  sentences!)
+
+</details>
+*/}
 
 ---
 
@@ -662,85 +664,87 @@ As of 2024-12-17, I have switched back to monthly buckets.
 
 </details>
 
-<!-- ### Minimum Sentence Length -->
-<!---->
-<!-- **Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to -->
-<!-- show it. -->
-<!---->
-<!-- <IntDropdown -->
-<!--   options={LENGTHS} -->
-<!--   singularText="All sentences" -->
-<!--   pluralText="+ words per sentence" -->
-<!--   id="sentLenDropdown" -->
-<!-- /> -->
-<!---->
-<!-- This option is also called **words per sentence** in its dropdown. By default, -->
-<!-- **All sentences** is set, meaning you will see how words or phrases appear in -->
-<!-- any length of sentence. If you set this option to **3+ words per sentence**, -->
-<!-- you'll see how words or phrases appear in sentences which have **at least 3 -->
-<!-- words**. This can be helpful if you want to study more "substantial" uses of -->
-<!-- words, i.e. those that appear in longer sentences. -->
-<!---->
-<!-- If one of your searches -->
-<!-- [sets the minimum sentence length for a term](#set-minimum-sentence-length), pay -->
-<!-- attention to the legend below the graph: If the legend shows the term without an -->
-<!-- underscore, it means the length you chose was already being searched. This can -->
-<!-- happen with a search like [**toki pona_2**](/?query=toki+pona_2) normally, or -->
-<!-- [**wawa_3**](/?query=wawa_3&minSentLen=3) while the minimum sentence length -->
-<!-- dropdown is set to 3. -->
-<!---->
-<!-- This happens to the phrase **toki pona** with a minimum sentence length of 2 -->
-<!-- because phrases have a minimum sentence length equal to how many words are in -->
-<!-- them. That is, "toki pona" can only appear in sentences with at least two words- -->
-<!-- which I hope makes sense! Because of this, the minimum sentence length is always -->
-<!-- implicitly set to at least the length of the phrase. You can always set it to be -->
-<!-- higher, of course. -->
-<!---->
-<!-- Note that when graphing on any **relative scale**, the percentage is derived by -->
-<!-- dividing the number of occurrences for the search term by the total number of -->
-<!-- words in the same time period. -->
-<!---->
-<!-- If you're curious why this is done instead of dividing by the number of words in -->
-<!-- sentences of the appropriate minimum length, here's a simplified example: -->
-<!---->
-<!-- <details> -->
-<!-- <summary>**Demonstration**</summary> -->
-<!---->
-<!-- Imagine the following scenario: -->
-<!---->
-<!-- - There are 10,000 words in total -->
-<!-- - 9,000 of those words are in sentences with at least 2 words -->
-<!-- - 100 of the words are **toki** -->
-<!-- - 90 of those **toki** are in sentences with at least 2 words -->
-<!---->
-<!-- With this data, asking "What percentage of words are toki?" means we get 1% (100 -->
-<!-- / 10,000), which makes sense, and this is the only reasonable question to -->
-<!-- measure toki on its own. -->
-<!---->
-<!-- However, there are two ways to measure toki in sentences with at least 2 words -->
-<!-- (**toki_2**): You could measure it as a portion of all words, or as a portion of -->
-<!-- words from sentences with at least 2 words. These two different choices have -->
-<!-- different results: **toki_2** is **0.9%** (90 / 10,000) of all words, but **1%** -->
-<!-- (90 / 9,000) of the words in sentences with at least 2 words. -->
-<!---->
-<!-- We can use this information to determine which answer is best for this graphing -->
-<!-- tool by exploring what happens when you search **toki - toki_2**. -->
-<!---->
-<!-- In the sample data, graphing **toki - toki_2** with toki_2 measured as a portion -->
-<!-- of all words means we get **0.1%**: ((100 - 90) / 10,000). That is, toki appears -->
-<!-- exactly 10 times on its own in this data. Graphing instead with **toki_2** -->
-<!-- measured as a portion of words in sentences with 2 or more words means we get -->
-<!-- **0%**: ((100 / 10,000) - (90 / 9,000)). In other words, we get a misleading -->
-<!-- outcome because we're subtracting two incomparable percentages. -->
-<!---->
-<!-- There is value in knowing what portion of sentences with at least 2 words are -->
-<!-- some specific word. This graphing tool does not offer that information because -->
-<!-- doing so would produce misleading graphs for both side-by-side comparison and -->
-<!-- for adding or subtracting specific results. If you're interested in that -->
-<!-- alternate data, -->
-<!-- [download the database!](https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz) -->
-<!---->
-<!-- </details> -->
+{/*
+### Minimum Sentence Length
+
+**Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to
+show it.
+
+<IntDropdown
+  options={LENGTHS}
+  singularText="All sentences"
+  pluralText="+ words per sentence"
+  id="sentLenDropdown"
+/>
+
+This option is also called **words per sentence** in its dropdown. By default,
+**All sentences** is set, meaning you will see how words or phrases appear in
+any length of sentence. If you set this option to **3+ words per sentence**,
+you'll see how words or phrases appear in sentences which have **at least 3
+words**. This can be helpful if you want to study more "substantial" uses of
+words, i.e. those that appear in longer sentences.
+
+If one of your searches
+[sets the minimum sentence length for a term](#set-minimum-sentence-length), pay
+attention to the legend below the graph: If the legend shows the term without an
+underscore, it means the length you chose was already being searched. This can
+happen with a search like [**toki pona_2**](/?query=toki+pona_2) normally, or
+[**wawa_3**](/?query=wawa_3&minSentLen=3) while the minimum sentence length
+dropdown is set to 3.
+
+This happens to the phrase **toki pona** with a minimum sentence length of 2
+because phrases have a minimum sentence length equal to how many words are in
+them. That is, "toki pona" can only appear in sentences with at least two words-
+which I hope makes sense! Because of this, the minimum sentence length is always
+implicitly set to at least the length of the phrase. You can always set it to be
+higher, of course.
+
+Note that when graphing on any **relative scale**, the percentage is derived by
+dividing the number of occurrences for the search term by the total number of
+words in the same time period.
+
+If you're curious why this is done instead of dividing by the number of words in
+sentences of the appropriate minimum length, here's a simplified example:
+
+<details>
+<summary>**Demonstration**</summary>
+
+Imagine the following scenario:
+
+- There are 10,000 words in total
+- 9,000 of those words are in sentences with at least 2 words
+- 100 of the words are **toki**
+- 90 of those **toki** are in sentences with at least 2 words
+
+With this data, asking "What percentage of words are toki?" means we get 1% (100
+/ 10,000), which makes sense, and this is the only reasonable question to
+measure toki on its own.
+
+However, there are two ways to measure toki in sentences with at least 2 words
+(**toki_2**): You could measure it as a portion of all words, or as a portion of
+words from sentences with at least 2 words. These two different choices have
+different results: **toki_2** is **0.9%** (90 / 10,000) of all words, but **1%**
+(90 / 9,000) of the words in sentences with at least 2 words.
+
+We can use this information to determine which answer is best for this graphing
+tool by exploring what happens when you search **toki - toki_2**.
+
+In the sample data, graphing **toki - toki_2** with toki_2 measured as a portion
+of all words means we get **0.1%**: ((100 - 90) / 10,000). That is, toki appears
+exactly 10 times on its own in this data. Graphing instead with **toki_2**
+measured as a portion of words in sentences with 2 or more words means we get
+**0%**: ((100 / 10,000) - (90 / 9,000)). In other words, we get a misleading
+outcome because we're subtracting two incomparable percentages.
+
+There is value in knowing what portion of sentences with at least 2 words are
+some specific word. This graphing tool does not offer that information because
+doing so would produce misleading graphs for both side-by-side comparison and
+for adding or subtracting specific results. If you're interested in that
+alternate data,
+[download the database!](https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz)
+
+</details>
+*/}
 
 ### Smoother
 
@@ -803,12 +807,11 @@ Window Average
 In previous sections, I discussed how [smoothing](#smoothing) can create
 misleading graphs, and how the math works for
 [phrases with 2 or more words](#relative)
-
-<!-- and [words as they appear in sentences with a minimum length](#minimum-sentence-length) -->
-
 to create a consistent interpretation across the dataset. However, these are not
 the only interpretation challenges. Most of the remaining bias is in where and
 how the data is collected, which I describe the specifics of below.
+
+{/* and [words as they appear in sentences with a minimum length](#minimum-sentence-length) */}
 
 ### Bots
 

@@ -1,22 +1,20 @@
 ---
 layout: "@layouts/Layout.astro"
-title: About ilo Muni
+title: About
 ---
 
 This page is about **what ilo Muni is, and how and why it exists**, as well as
 thanks for everyone who helped make it possible. If you want to know how to use
 ilo Muni, [check the help page!](/help/)
 
-Feel free to skip around. If you don't care about a section, that's totally
-okay!
-
 ## Table of Contents
 
-## My question isn't here!
+## My question isn't here
 
 Feel free to [email me](mailto:gregdan3+ilomuni@protonmail.com)! You can also
 reach out on other platforms, but email is easiest for me to see and respond to
-(because it is the quietest way people try to talk to me).
+(because it is the quietest way people try to talk to me). That said, if you
+already talk to me on Discord or Telegram, those are perfectly fine too.
 
 ## Why did you make ilo Muni?
 
@@ -33,17 +31,19 @@ move~~ This turned out to be challenging for many reasons beyond the
 documentation of how toki pona and sitelen pona are used.
 
 First, many of the members of the workgroup did not agree on what words should
-be encoded or why. We examined the
-[Linku usage data](https://sona.pona.la/wiki/Usage_categories) to get a
-reasonable answer for what words to encode- that took a while and had its own
-complexities, but it did work out at the time.
+be encoded or why. We started by using
+[the Linku usage data](https://sona.pona.la/wiki/Usage_categories) to determine
+what to encode, based on what words survey respondents reported to use. that
+took a while and had its own complexities, but it did work out at the time.
 
-Unfortunately, there was no comparable data for sitelen pona glyphs. While many
-were obvious because most words only have one glyph, over a dozen words have
-multiple glyphs with different levels of use- especially when the words
-themselves are low use. We tried running an ad-hoc survey to study glyph usage,
-but this simultaneously revealed how limited our perspective was and how
-difficult it would be to answer our original question.
+Unfortunately, the Linku usage data only covers toki pona words, not sitelen
+pona glyphs, and there was no comparable data for sitelen pona. While many
+encoding decisions were obvious because most words only have one glyph, over a
+dozen words have multiple glyphs with different levels of use- and this is made
+both more significant and more difficult to address when the words themselves
+are low use. We tried running an ad-hoc survey to study glyph usage, but this
+simultaneously revealed how limited our perspective was and how difficult it
+would be to answer our original question.
 
 While examining the survey data, we found we had failed to offer at least one
 glyph as an option, resulting in a large number of write-ins for a version of
@@ -64,15 +64,15 @@ words, and the prior agreement about what words to encode in the first place had
 fallen apart _because_ of the observed issues with the two glyph surveys. At
 that point, we chose to pivot: What if we directly studied usage?
 
-We submitted a preliminary proposal with the only set of words we could all
-agree _must_ be in the proposal, that being the
-[nimi pu](https://sona.pona.la/wiki/nimi_pu) plus
-[tonsi](https://sona.pona.la/wiki/tonsi). It has not been added to the
-[Unicode document register](https://www.unicode.org/L2/L-curdoc.htm) as of
-writing, but Unicode has acknowledged it!
+To round up the work we had already done, we submitted a preliminary proposal
+with the only set of words we could all agree _must_ be in the proposal, that
+being the [nimi pu](https://sona.pona.la/wiki/nimi_pu) plus
+[tonsi](https://sona.pona.la/wiki/tonsi). There wasn't anything else we could do
+to improve the proposal without data, and we'd be waiting a long time on a
+response from Unicode anyway.
 
-After this, the work left to be done was much more open-ended. I started
-improving upon my Discord bot,
+After this, the work left to be done was much more open-ended. How do we
+actually study usage directly? First, I started improving upon my Discord bot,
 [ilo pi toki pona taso](https://github.com/gregdan3/ilo-pi-toki-pona-taso). At
 the time, it had a simple way to detect whether or not you were speaking toki
 pona, so that it could remind you to speak toki pona if you didn't. But when I
@@ -82,12 +82,88 @@ Pona's alphabet, or ignored entirely by quoting your text. This wouldn't do,
 since my goal was to fetch all the data I could from as many communities as I
 could and examine only the messages that are "in toki pona."
 
-From there, I created a parsing library called
+To address these limitations, I created a parsing library called
 [sona toki](https://github.com/gregdan3/sona-toki), a script called
 [sona mute](https://github.com/gregdan3/sona-mute) for counting all the words in
 toki pona sentences and stuffing it into a database, and this tool,
 [ilo Muni](https://github.com/gregdan3/ilo-muni). The work you're reading now
-has been five months in the making!
+has been five months in the making, not to mention the time I've spent since to
+improve its functionality and add more dimensions of data!
+
+<details>
+<summary> Footnote on the Sitelen Pona proposal (click) </summary>
+
+We ended up waiting from our submission in April 2024 until February of 2025
+before getting a response back. The proposal was added to the
+[2024 Unicode document register](https://www.unicode.org/L2/L2024/Register-2024.html)
+some time in early 2025, and
+[you can read it here](https://www.unicode.org/L2/L2024/24275-encode-sitelen-pona.pdf)!
+That proposal was also briefly acknowledged in
+[the first UTC meeting of 2025](https://www.unicode.org/L2/L2025/25003.htm):
+
+> **D.1 6.6. Sitelen Pona**
+>
+> Long discussion of stability.
+
+Following that, Jan Kučera of the Unicode Script Encoding Working Group reached
+out to us to relay the working group's thoughts on our proposal:
+
+<details>
+<summary> Jan Kučera's email to our workgroup (click) </summary>
+
+> Hello Gregory,
+>
+> Apologies for the delay in responding. We thrive to provide comments on all
+> proposals, even if they are not favorable. While I am happy to answer your
+> questions, please keep in mind the big picture. Too often people spend a lot
+> of time on fixing whatever they can in the proposals, even though it cannot
+> progress without addressing the main concern.
+>
+> As noted in the report, the biggest concern with Sitelen Pona is that there is
+> no authority or organization providing a standardized set. The community needs
+> to go through its own process of standardization before we can consider
+> encoding this script in Unicode. When this was originally proposed by Spencer
+> van der Meulen, it came with a note: “Sitelen Pona is an open class of
+> characters. New characters are created as new Toki Pona words are coined and
+> enter into usage. Creators of Sitelen Pona fonts have a leading role in the
+> standardization of characters for new words." This was taken as a strong sign
+> of open-ended project, with community coming up with new drawings as new
+> concepts are being added to the language. Members of the group also pointed
+> out that there are several instances of people on r/tokipona proposing new
+> things, such as
+> `https://www.reddit.com/r/tokipona/comments/1gzi5o0/nasin_nanpa_ilo_my_proposed_number_system_for/`,
+> again not an indication of stable conventions.
+>
+> As an opened-ended system, and with examples as above, some members were not
+> convinced the script indeed is or will remain logographic in the future, and
+> there is a worry that we don’t know how many codepoints is coming. It was also
+> noted that even if the language was closed set, it doesn’t provide any
+> guarantees on the script repertoire. Some of the glyph variants in 4a would
+> not be considered unifiable in other scripts, and even for a core set of
+> logographs it wasn’t viewed as stable.
+>
+> As for formal stability requirements, no changes to the repertoire in the last
+> 5 years would be viewed as a good indication of stability. You might be able
+> to argue a case without meeting this bar, but note that this is already a
+> compromise and some members feel much longer periods should be observed.
+>
+> Personally I would suggest to not worry about “fixing” the proposal too much
+> now. Get the community to stabilize the repertoire, and/or establish some body
+> governing the script, and let it live for some time. I cannot promise that
+> will guarantee encoding, but it would help to overcome some of the strongest
+> arguments against it.
+>
+> Hope this helps,
+>
+> Jan Kučera  
+> Script Encoding Working Group
+
+</details>
+
+To be frank, this email was utterly baffling. But I suppose it makes more sense
+from an outsider perspective? I'm unsure.
+
+</details>
 
 ## Where is the data from?
 
@@ -174,6 +250,26 @@ one Toki Pona video, I added all of them to a separate list- and then I
 downloaded every video from each of these channels. This functionally guarantees
 an extremely high degree of coverage.
 
+### poki Lapo
+
+[poki Lapo](https://github.com/kulupu-lapo/poki) is a project attempting to
+collect all toki pona media in one place, transcribing where necessary, with
+attributed authors and dates. This is an extremely valuable project for my
+purpose, because it is significantly easier to fetch and parse these stories if
+they've already been collected into a single, consistent format!
+
+Although, this is a somewhat strange addition. poki Lapo's content is not
+discussion posts, but media, and thus its entries don't necessarily conform to
+trends in the language the way social media posts, messenger conversations, and
+forum discussions do. However, I don't think this is a huge concern; the goal of
+ilo Muni is to faithfully represent trends in toki pona as a whole, and this
+would be reflected in media too.
+
+poki Lapo does present one notable complexity over the other datastes, however.
+New entries can be added in the past, as older media is discovered. This isn't a
+problem for ilo Muni's dataset, but it does mean that I have to note: the poki
+Lapo data in ilo Muni is from the main branch as of 2025-10-XX!
+
 ### forums.tokipona.org
 
 To an outsider, it may seem odd to want to include a specific singular forum in
@@ -245,6 +341,30 @@ purports to let you download Tumblr and Twitter data, but my experience is that
 it gets rate limited aggressively by both platforms- even with the slowest
 settings.
 
+It is also possible to download most of the data needed for ilo Muni via
+[gallery-dl](https://github.com/mikf/gallery-dl/), but that still requires you
+to have a list of known blogs to fetch from first.
+
+### Twitter
+
+I haven't done a deep dive into toki pona activity on Twitter, but given its age
+and its prior position as the only notable social media platform of its kind, I
+can only assume there _must_ be a lot of discussion. That said, actually
+fetching data from Twitter has been near impossible for several years after the
+neutering and subsequent near-destruction of their API.
+
+### Bluesky
+
+Toki Pona activity on Bluesky has skyrocketed since the untimely death of
+Twitter! One of the most important features that has made this possible is the
+ability for users to make programmatically curated timelines like
+[this one](https://bsky.app/profile/did:plc:cou5zhxub6gtvvjzxgbd7pvo/feed/aaapzgighrvkc)
+which is entirely in Toki Pona, or
+[this one](https://bsky.app/profile/did:plc:ikyfyphgbzu45uvrb73a3mio/feed/jan-toki)
+which is both toki pona language use and toki pona discussion. That said,
+Bluesky is a fairly young platform, so there are not many tools for fetching
+posts from it.
+
 ### LiveJournal
 
 There are at least two LiveJournal blogs that focused on toki pona,
@@ -268,20 +388,6 @@ by [mazziechai](https://github.com/mazziechai/) which closed abruptly in
 November 2023 due to trolling. The forum was archived fully by Mazzie before the
 shutdown, but the format is pure HTML, making it a difficult to get the
 necessary data out of it.
-
-### poki Lapo
-
-[poki Lapo](https://github.com/kulupu-lapo/poki) is a project attempting to
-collect all toki pona media in one place, transcribing where necessary, with
-attributed authors and dates. This is an extremely valuable project for my
-purpose, because it is significantly easier to fetch and parse these stories if
-they've already been collected into a single format!
-
-I'll grant, there is an argument in favor of their omission: They are not
-discussion posts, but media, and thus don't necessarily conform to trends in the
-language the way social media and discussion forums do. However, I don't think
-this is a huge concern; the goal of ilo Muni is to faithfully represent trends
-in toki pona as a whole, and this would be reflected in media too.
 
 ### lipu Wikipesija
 
@@ -313,32 +419,54 @@ though- just better accuracy for the existing data!
 ## What updates have you made so far?
 
 Since the most important changes follow from database revisions, I list the
-changes I've made below based on the corresponding database.
+changes I've made below based on the corresponding database. All revisions other
+than the most recent are hidden by default.
+
+### 2025-10-XX Database
+
+- Used by ilo Muni from 2025-10-XX to present
+- Improvements in sona-toki's parser, better tokenization and rejection of
+  non-tp sentences
+- Replaces min_sent_len with an attribute system
+  - Available attributes are default (0), start of sentence (1), end of sentence
+    (2), entire sentence (3), and sentence having 4 or more words (4)
+- Uses monthly unit times
+- Represents Discord, Telegram, Reddit, YouTube, the Toki Pona forum, and
+  [poki Lapo](https://lipu.pona.la/).
+  - Discord, Telegram, YouTube, and poki Lapo data is included through
+    July 2025. Reddit is only included through July 2024. The forums are
+    archived, so there will not be any further updates to its data.
+- Earliest date is 2002-03-01, latest date is 2025-07-01 July
+- [Download here](https://gregdan3.com/sqlite/2025-10-XX-trimmed.sqlite.gz)
+
+<details>
+  <summary>Older database revisions</summary>
 
 ### 2024-11-29 Database
 
-- Used by ilo Muni from 2024-12-17 to present
+- Used by ilo Muni from 2024-12-17 to 2025-10-XX
 - Includes word frequency and filtered authorship data (>= 20 sentences
   required)
 - Uses monthly unit times
 - Represents Discord, Telegram, Reddit, YouTube, and the Toki Pona forum
-- Earliest date is 2002-03-20
+- Earliest date is 2002-03-01, latest date is 2024-07-01
 - [Download here](https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz)
 
 ### 2024-11-01 Database
 
+- Never used in ilo Muni
 - Improvements to scoring in sona-toki
   - Even better rejection of false positives from non-tp languages ("saluton")
-- Never used in ilo Muni
+- Schema updated for naming clarity
 - Includes frequency data and unfiltered authorship data
 - Uses monthly unit times
 - Represents Discord, Telegram, Reddit, YouTube, and the Toki Pona forum
-- Earliest date is 2002-03-20
-- **NOTE**: The schema has changed to improve naming.
+- Earliest date is 2002-03-01, latest date is 2024-07-01
 - [Download here](https://gregdan3.com/sqlite/2024-11-01-trimmed.sqlite.gz)
 
 ### 2024-09-07 Database
 
+- Used by ilo Muni from 2024-09-12 to 2024-12-17
 - Improvements to scoring in sona-toki
   - Better rejection of false positives from non-tp languages ("manipulate")
   - Recognition of intra-word punctuation in word tokenizer ("isn't")
@@ -347,7 +475,6 @@ changes I've made below based on the corresponding database.
     single backticks)
   - Replace markdown URLs with just the linked text
   - Omit emails
-- Used by ilo Muni from 2024-09-12 to 2024-12-17
 - Only includes word frequency data, not authorship
 - Uses 4-weekly unit times starting from 2001-08-08
 - Represents Discord, Telegram, Reddit, YouTube, and the Toki Pona forum
@@ -362,6 +489,8 @@ changes I've made below based on the corresponding database.
 - Represents Discord, Telegram, and Reddit
 - Earliest date is 2010-10-01, latest date is 2024-08-01 (not graphed)
 - [Download here](https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz)
+
+</details>
 
 ## What can I do with ilo Muni?
 
@@ -388,17 +517,17 @@ Here are some samples in various citation formats:
 
 #### MLA 9
 
+- Danielson, G., III. _ilo Muni_, 10 Aug. 2024. `<https://ilo.muni.la/>`.
+  Accessed 17 Dec. 2024.
 - Danielson, G., III. _ilo Muni_, 10 Aug. 2024.
-  https://ilo.muni.la/. Accessed 17 Dec. 2024.
-- Danielson, G., III. _ilo Muni_, 10 Aug. 2024.
-  https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz.
+  `<https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz>`.
 
 #### APA 7
 
 - Danielson, G., III. (2024, August 10). _Ilo Muni_ [Computer software]. Retrieved
-  December 17th, 2024, from https://ilo.muni.la/
+  December 17th, 2024, from `<https://ilo.muni.la/>`
 - Danielson, G., III. (2024, August 10). _Ilo Muni_ [Dataset].
-  https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz
+  `<https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz>`
 
 ### How can I contribute?
 
@@ -429,7 +558,7 @@ preference for Muni!), so I decided to search both names in the version of ilo
 Muni that existed at that time- "Nimu" had just over 40 results, but "Muni"
 didn't come up, so I went with it. Here we are!
 
-## Thank you to...
+## Thank you to
 
 - **ilo Nija** for the logo! It's a stylized version of the sitelen pona name
   for ilo Muni- the three bars are "mute" and the rectangle is "nimi". It's so
