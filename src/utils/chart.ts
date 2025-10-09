@@ -1,8 +1,15 @@
 import { htmlLegendPlugin, crossHairPlugin } from "@utils/plugins";
 import { FORMATTERS } from "@utils/ui.ts";
-import { FIELDS } from "@utils/constants.ts";
+import { FIELDS, SCALES } from "@utils/constants.ts";
 import { truncateLabel } from "@utils/other.ts";
-import type { ScaleData, FormatterFn, Field, Result, Row } from "@utils/types";
+import type {
+  ScaleData,
+  FormatterFn,
+  Field,
+  Row,
+  Query,
+  Params,
+} from "@utils/types";
 import type { ChartTypeRegistry, TooltipItem } from "chart.js/auto";
 import Chart from "chart.js/auto";
 import "chartjs-adapter-date-fns";
@@ -11,16 +18,18 @@ let existingChart: Chart<keyof ChartTypeRegistry, Row[], unknown> | null = null;
 
 async function initUsageChart(
   canvas: HTMLCanvasElement,
-  data: Result[],
-  scale: ScaleData,
-  field: Field,
+  data: Query[],
+  params: Params,
 ) {
+  const scale = SCALES[params.scale];
+  const field = params.field;
+
   const chart = new Chart(canvas, {
     type: "line",
     data: {
-      datasets: data.map((result: Result) => ({
-        label: result.term,
-        data: result.data,
+      datasets: data.map((q) => ({
+        label: q.repr,
+        data: q.data,
       })),
     },
     plugins: [htmlLegendPlugin, crossHairPlugin],
@@ -172,9 +181,8 @@ function formatLabel(
 
 export async function reloadUsageChart(
   canvas: HTMLCanvasElement,
-  data: Result[],
-  scale: ScaleData,
-  field: Field,
+  queries: Query[],
+  params: Params,
 ) {
   //   TODO: can we do this but preserve the original data on the tooltip?
   //  and change the axis to start at 1?
@@ -189,12 +197,15 @@ export async function reloadUsageChart(
   //       }))
   //     : data;
 
+  const scale = SCALES[params.scale];
+  const field = params.field;
+
   if (!existingChart) {
-    existingChart = await initUsageChart(canvas, data, scale, field);
+    existingChart = await initUsageChart(canvas, queries, params);
   } else {
-    existingChart.data.datasets = data.map((result: Result) => ({
-      label: result.term,
-      data: result.data,
+    existingChart.data.datasets = queries.map((q) => ({
+      label: q.repr,
+      data: q.data,
     }));
     // @ts-expect-error: value can apparently be `false` but it never is
     existingChart.options.parsing!.yAxisKey! = field;

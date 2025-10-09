@@ -27,18 +27,10 @@ const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type {
-    Length,
-    Scale,
-    Smoother,
-    Query,
-    Field,
-    Error,
-    Params,
-  } from "@utils/types";
-  import { parseInput } from "@utils/input";
+  import type { Scale, Smoother, Query, Field, Params } from "@utils/types";
+  import { parseInput, hasError } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
-  import { fetchManyRows } from "@utils/sqlite";
+  import { resolveQuery } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { countQuery } from "@utils/analytics";
   import { truncateLabel } from "@utils/other.ts";
@@ -107,19 +99,41 @@ const frontmatter = { title: "ilo Muni" };
   function dumpErrors(queries: Query[]) {
     errorBin.innerHTML = "";
     errorBin.textContent = "";
+
     for (const q of queries) {
-      if (q.errors.length === 0) {
-        continue;
-      }
+      const hasErrors =
+        q.errors.length > 0 || q.terms.some((t) => t.errors.length > 0);
+      if (!hasErrors) continue;
+
+      // for query
       const ul = document.createElement("ul");
 
-      q.errors.forEach((err) => {
-        const li = document.createElement("li");
-        const truncLabel = truncateLabel(q.raw);
-        li.textContent = `${truncLabel}: ${err.message}`;
-        ul.appendChild(li);
-      });
+      // query's label
+      const headerLi = document.createElement("li");
+      headerLi.textContent = truncateLabel(q.repr) + ":";
+      ul.appendChild(headerLi);
 
+      // error container
+      const childUl = document.createElement("ul");
+
+      // query-level errs
+      for (const err of q.errors) {
+        const li = document.createElement("li");
+        li.textContent = `${err.message}`;
+        childUl.appendChild(li);
+      }
+
+      // term-level errors
+      for (const t of q.terms) {
+        for (const err of t.errors) {
+          const li = document.createElement("li");
+          const label = truncateLabel(t.repr);
+          li.textContent = `${label}: ${err.message}`;
+          childUl.appendChild(li);
+        }
+      }
+
+      ul.appendChild(childUl);
       errorBin.appendChild(ul);
     }
   }
@@ -162,30 +176,28 @@ const frontmatter = { title: "ilo Muni" };
     }
 
     loader.style.visibility = "visible";
-    let queries = await updateChart(
-      queryText,
+    let queries = await updateChart(queryText, {
       scale,
       field,
       smoother,
       smoothing,
       start,
       end,
-    );
+    } as Params);
+    // TODO: if an error occurs, catch here!
     loader.style.visibility = "hidden";
+    await consoleLogAsync("test", queries);
 
     if (!queries) {
       return;
     }
-    // console.log(queries);
     dumpErrors(queries);
 
-    // valid queries are given stable syntax
-    // TODO: filter out queries with errors
-    let queryReprs = queries.map((query: Query) => query.repr);
-    // errors are preserved as is
-    // queryReprs.push(...queries.map((error: Query) => error.query));
+    // valid queries have stable syntax
+    let queryReprs = queries.filter((q) => !hasError(q)).map((q) => q.repr);
+    // errors are removed
     let query = queryReprs.join(", ");
-    // the space is technically wasteful but looks better
+    // technically wasteful but looks better
 
     let usedParams: Record<string, string> = {
       query: query,
@@ -205,50 +217,16 @@ const frontmatter = { title: "ilo Muni" };
     countQuery();
   }
 
-  async function updateChart(
-    input: string,
-    scale: Scale,
-    field: Field,
-    smoother: Smoother,
-    smoothing: number,
-    start: number,
-    end: number,
-  ): Promise<Query[]> {
+  async function updateChart(input: string, params: Params): Promise<Query[]> {
     const queries = await parseInput(input);
-    if (queries.length === 0) {
-      return queries;
+    const queryResultProms = queries.map((query) =>
+      resolveQuery(query, params),
+    );
+    await Promise.all(queryResultProms);
+    const graphable = queries.filter((q) => !hasError(q));
+    if (graphable.length > 0) {
+      await reloadUsageChart(usageCanvas, graphable, params);
     }
-
-    // TODO: do this once per query
-    let error: Error;
-    const results = await fetchManyRows(queries, {
-      scale,
-      field,
-      smoother,
-      smoothing,
-      start,
-      end,
-    } as Params);
-
-    if (results.length === 0) {
-      queries.forEach((query) => {
-        error = makeError("NoResultsQuery", {});
-        query.errors.push(error);
-      });
-      return queries;
-    }
-    if (results.length < queries.length) {
-      const resultTerms = new Set(results.map((result) => result.term));
-      queries.forEach((query) => {
-        if (!resultTerms.has(query.repr)) {
-          error = makeError("NoResultsQuery", {});
-          query.errors.push(error);
-        }
-      });
-    }
-
-    const scaleData = SCALES[scale];
-    await reloadUsageChart(usageCanvas, results, scaleData, field);
     return queries;
   }
 

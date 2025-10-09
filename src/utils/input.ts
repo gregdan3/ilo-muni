@@ -5,22 +5,31 @@ import {
   ATTRIBUTES,
 } from "@utils/constants";
 import { fetchTopTerms } from "@utils/sqlite";
+import { consoleLogAsync } from "@utils/debug";
 
 import type { Operator, Term, Query, Attribute } from "@utils/types";
 
 import { makeError } from "@utils/errors";
 import type { QueryError } from "@utils/errors";
 
-function splitOnDelim(input: string, delimiter: string): string[] {
+export function splitOnDelim(input: string, delimiter: string): string[] {
   return input
     .split(delimiter)
     .map((item) => item.trim())
     .filter((item) => item !== "");
 }
 
-function queryRepr(query: Query): string;
-function queryRepr(terms: Term[]): string;
-function queryRepr(arg: Query | Term[]): string {
+export function termRepr(term: Term): string;
+export function termRepr(text: string, attr: string): string;
+export function termRepr(term: Term | string, attr?: string): string {
+  const text = typeof term === "string" ? term : term.text;
+  const attribute = typeof term === "string" ? attr : term.attr;
+  return attribute ? `${text}_${attribute}` : text;
+}
+
+export function queryRepr(query: Query): string;
+export function queryRepr(terms: Term[]): string;
+export function queryRepr(arg: Query | Term[]): string {
   const terms = Array.isArray(arg) ? arg : arg.terms;
   return terms
     .map((term) =>
@@ -33,7 +42,7 @@ function markDupeQueries(queries: Query[]) {
   const seen = new Set<string>();
   let error: QueryError;
   queries.map((query) => {
-    if (seen.has(query.repr)) {
+    if (seen.has(query.repr) && !hasError(query)) {
       error = makeError("DuplicateQuery", {});
       query.errors.push(error);
     } else {
@@ -70,9 +79,15 @@ async function expandWildcardQuery(query: Query): Promise<Query[]> {
   return topTerms.map((topTerm): Query => {
     const newQuery = {
       ...query,
+      errors: query.errors.map((e) => copyErr(e)),
       terms: query.terms.map((term) =>
         term === wildcardTerm
-          ? { ...term, text: topTerm, repr: topTerm }
+          ? {
+              ...term,
+              text: topTerm,
+              repr: termRepr(topTerm, term.attr),
+              errors: query.errors.map((e) => copyErr(e)),
+            }
           : term,
       ),
     };
@@ -156,18 +171,19 @@ function parseTerm(input: string): Term {
 
   const text = termTokens.join(" ");
   const len = termTokens.length;
-  const repr = attr ? text + "_" + attr : text;
+  const repr = termRepr(text, attr);
   const attrId = ATTRIBUTES[attr];
   const term: Term = {
     raw,
     repr,
     text,
-    len, // this can be zero - caller's responsibility to clean out
+    len,
     attr,
     attrId,
     operator,
     hasWildcard,
     errors,
+    data: [],
   };
   return term;
 }
@@ -197,12 +213,13 @@ function parseQuery(input: string): Query {
 
   const terms = parseTerms(input);
   const repr = queryRepr(terms);
-  const errors = terms.flatMap((t) => t.errors);
+  // const errors = terms.flatMap((t) => t.errors);
   const query: Query = {
     raw,
     repr,
     terms,
-    errors,
+    errors: [],
+    data: [],
   };
   return query;
 }
@@ -223,23 +240,38 @@ export async function parseInput(input: string): Promise<Query[]> {
 
   // if the wildcards expand successfully, their originals will be thrown out
   for (const q of parsed) {
-    if (hasWildcard(q) && !canRun(q)) {
+    if (hasWildcard(q) && !hasError(q)) {
       expanded.push(...(await expandWildcardQuery(q)));
     } else {
       expanded.push(q);
     }
   }
+
   markDupeQueries(expanded);
   return expanded;
 }
 
-function canRun(query: Query): boolean {
-  return (
-    query.errors.some((e) => e.result === "error") ||
-    query.terms.some((t) => t.errors.some((e) => e.result === "error"))
-  );
+export function hasError(term: Term): boolean;
+export function hasError(query: Query): boolean;
+export function hasError(input: Term | Query): boolean {
+  if ("terms" in input) {
+    return (
+      input.errors.some((e) => e.result === "error") ||
+      input.terms.some((t) => t.errors.some((e) => e.result === "error"))
+    );
+  } else {
+    return input.errors.some((e) => e.result === "error");
+  }
 }
 
-function hasWildcard(query: Query): boolean {
+export function hasWildcard(query: Query): boolean {
   return query.terms.some((t) => t.hasWildcard);
+}
+
+export function copyErr(e: QueryError): QueryError {
+  return {
+    message: e.message,
+    result: e.result,
+    ...(e.tokenIndex !== undefined && { tokenIndex: e.tokenIndex }),
+  };
 }

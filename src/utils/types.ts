@@ -36,26 +36,18 @@ export type SmoothingParam = (typeof SMOOTHINGS)[number];
 export type Axis = "linear" | "logarithmic";
 export type Field = keyof typeof FIELDS;
 
+export interface Rank {
+  term: string;
+  hits: number;
+  authors: number;
+}
+
 // "row" of the db
 export interface Row {
   day: number; // timestamp representing a date
   hits: number;
   authors: number;
   hpa: number;
-}
-export interface Result {
-  term: Term;
-  data: Row[];
-}
-export interface QueryResult {
-  query: Query;
-  data: Row[];
-}
-
-export interface Rank {
-  term: string;
-  hits: number;
-  authors: number;
 }
 
 // searchable term after split by operator and stripped of whitespace
@@ -71,6 +63,7 @@ export interface Term {
   hasWildcard: boolean; // whether a single * exists in raw/
 
   errors: QueryError[];
+  data: Row[];
 }
 
 // searches after split by , and stripped of whitespace
@@ -80,6 +73,7 @@ export interface Query {
 
   terms: Term[];
   errors: QueryError[]; // if len(error) is > 1, only `raw` may have a value
+  data: Row[];
 }
 
 export interface Params {

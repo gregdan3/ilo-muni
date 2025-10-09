@@ -4,30 +4,26 @@ import {
   BASE_URL,
   DB_URL_PREFIX,
   LATEST_TIMESTAMP,
-  FIELDS,
+  EARLIEST_TIMESTAMP,
 } from "@utils/constants";
 import type {
-  Scale,
-  Field,
   Length,
   Term,
   Query,
   Operator,
-  Smoother,
   Row,
   Rank,
-  Result,
   Params,
   Attribute,
   AttributeId,
   Stringable,
-  QueryResult,
 } from "@utils/types";
 import { SCALES } from "@utils/constants";
+import { hasError } from "@utils/input";
 import { scaleFunctions } from "@utils/post_processing/scaling";
 import { smootherFunctions } from "@utils/post_processing/smoothing";
-import { consoleLogAsync } from "./debug";
-import { makeError } from "./errors";
+import { consoleLogAsync } from "@utils/debug";
+import { makeError } from "@utils/errors";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -139,37 +135,103 @@ function localizeTimestamp(timestamp: number): number {
 }
 
 function mergeRows(series: Row[][], operators: Operator[]): Row[] {
-  if (series.length === 0 || series[0].length === 0) {
+  const nonEmpty = series.filter((s) => s.length > 0);
+  if (nonEmpty.length === 0) {
     return [];
   }
-  // do not merge if it would be a no-op
-  if (series.length === 1) {
-    return series[0];
+
+  const expectedLength = nonEmpty[0].length;
+  const filteredSeries = nonEmpty.filter((s) => s.length === expectedLength);
+
+  if (filteredSeries.length === 0) {
+    return [];
+  }
+  if (filteredSeries.length === 1) {
+    return filteredSeries[0];
   }
 
   const result: Row[] = [];
 
-  for (let i = 0; i < series[0].length; i++) {
-    const day = series[0][i].day;
+  for (let i = 0; i < expectedLength; i++) {
+    const day = filteredSeries[0][i].day;
     let totalHits = 0;
 
-    for (let j = 0; j < series.length; j++) {
-      if (operators[j] === "-") {
-        totalHits -= series[j][i].hits;
-      } else if (operators[j] === "+") {
-        totalHits += series[j][i].hits;
-      } else {
-        // TODO: make an error?
+    for (let j = 0; j < filteredSeries.length; j++) {
+      const op = operators[j] ?? "+";
+      const row = filteredSeries[j][i];
+
+      if (!row) continue;
+
+      if (op === "-") {
+        totalHits -= row.hits;
+      } else if (op === "+") {
+        totalHits += row.hits;
       }
     }
-
     // TODO: NoSetMath error
     result.push({ day, hits: totalHits, authors: NaN, hpa: NaN });
   }
   return result;
 }
 
-async function resolveTerm(term: Term, params: Params): Promise<Row[]> {
+function sumTerms(query: Query) {
+  const terms = query.terms;
+  if (terms.length === 0) {
+    query.data = [];
+    query.errors.push(makeError("NoResultsQuery", {}));
+    return;
+  }
+
+  const nonEmpty = terms.filter(
+    (t) => Array.isArray(t.data) && t.data.length > 0,
+  );
+  if (nonEmpty.length === 0) {
+    query.data = [];
+    query.errors.push(makeError("NoResultsQuery", {}));
+    return;
+  }
+
+  const expectedLen = nonEmpty[0].data.length;
+  const validTerms = nonEmpty.filter(
+    (t) => t.data!.length === expectedLen && !hasError(t),
+  );
+
+  if (validTerms.length === 0) {
+    query.data = [];
+    return;
+  }
+
+  if (validTerms.length === 1) {
+    query.data = validTerms[0].data;
+    return;
+  }
+
+  const result: Row[] = [];
+
+  for (let i = 0; i < expectedLen; i++) {
+    const day = validTerms[0].data[i].day;
+    let totalHits = 0;
+
+    for (const term of validTerms) {
+      const op = term.operator ?? "+";
+      const row = term.data[i];
+
+      if (!row) continue;
+
+      if (op === "-") {
+        totalHits -= row.hits;
+      } else if (op === "+") {
+        totalHits += row.hits;
+      }
+    }
+
+    result.push({ day, hits: totalHits, authors: NaN, hpa: NaN });
+  }
+
+  query.data = result;
+}
+
+async function resolveTerm(term: Term, params: Params) {
   let resp = await queryDb(MONTHLY_QUERY, [
     term.text,
     term.attrId,
@@ -177,9 +239,10 @@ async function resolveTerm(term: Term, params: Params): Promise<Row[]> {
     params.end,
   ]);
   if (resp.length === 0) {
-    const error = makeError("NoResultsTerm", { term: params.term.repr });
+    const error = makeError("NoResultsTerm", { term: term.repr });
     term.errors.push(error);
-    return []; // for filtering in next func
+    term.data = [];
+    return;
   }
 
   resp = resp.map(
@@ -197,6 +260,7 @@ async function resolveTerm(term: Term, params: Params): Promise<Row[]> {
 
   const totals = await fetchTotals(1, 0, params);
 
+  // may be missing some periods - insert them
   while (iCompare < totals.length) {
     const comparisonDay = totals[iCompare].day;
 
@@ -220,30 +284,29 @@ async function resolveTerm(term: Term, params: Params): Promise<Row[]> {
     }
   }
 
-  return result;
+  term.data = result;
 }
 
-export async function resolveQuery(
-  query: Query,
-  params: Params,
-): Promise<QueryResult> {
+export async function resolveQuery(query: Query, params: Params) {
+  if (params.start < EARLIEST_TIMESTAMP) {
+    params.start = EARLIEST_TIMESTAMP;
+  }
   if (params.end > LATEST_TIMESTAMP) {
     params.end = LATEST_TIMESTAMP;
   }
-  const termDataPromises = query.terms.map(async (term: Term) => {
-    const rows = await resolveTerm(term, params);
-    return rows !== null ? { rows, operator: term.operator } : null;
-  });
-  const termsData = await Promise.all(termDataPromises);
 
-  if (termsData.some((term): boolean => term === null)) {
-    return null;
+  if (hasError(query)) {
+    query.data = []; // TODO: is this a good idea?
+    // query.errors.push(makeError("NoResultsQuery", {}));
+    return;
   }
 
-  let mergedRows = mergeRows(
-    termsData.map((hit): Row[] => hit!.rows),
-    termsData.map((hit): Operator => hit!.operator),
-  );
+  const termDataPromises = query.terms.map(async (term: Term) => {
+    await resolveTerm(term, params);
+  });
+  await Promise.all(termDataPromises);
+
+  sumTerms(query);
 
   // TODO: pass a term's length or attr into this? eh?
   const totals = await fetchTotals(1, 0, params);
@@ -261,74 +324,11 @@ export async function resolveQuery(
   //   }
   // }
 
-  mergedRows = scaleFunctions[params.scale](mergedRows, totals, params.field);
+  query.data = scaleFunctions[params.scale](query.data, totals, params.field);
   if (params.smoothing > 0 && SCALES[params.scale].smoothable) {
     const smootherFunction = smootherFunctions[params.smoother];
-    mergedRows = smootherFunction(mergedRows, params.smoothing, params.field);
+    query.data = smootherFunction(query.data, params.smoothing, params.field);
   }
-
-  return {
-    query: query,
-    data: mergedRows,
-  };
-}
-
-export async function fetchManyRows(
-  queries: Query[],
-  params: Params,
-): Promise<Result[]> {
-  if (params.end > LATEST_TIMESTAMP) {
-    params.end = LATEST_TIMESTAMP;
-  }
-
-  const queryPromises = queries.map(async (query: Query) => {
-    const termDataPromises = query.terms.map(async (term: Term) => {
-      const rows = await resolveTerm(term, params);
-      return rows !== null ? { rows, operator: term.operator } : null;
-    });
-
-    const termsData = await Promise.all(termDataPromises);
-
-    if (termsData.some((term): boolean => term === null)) {
-      return null;
-    }
-
-    let mergedRows = mergeRows(
-      termsData.map((hit): Row[] => hit!.rows),
-      termsData.map((hit): Operator => hit!.operator),
-    );
-
-    // 0 is default attr
-    const totals = await fetchTotals(1, 0, params);
-
-    // NOTE:
-    // If I want to show more fields in the tooltip later on, this will be
-    // needed so the data doesn't appear to change from one graph view to
-    // another. Right now I only show the current graph's data on the tooltip,
-    // so no harm done.
-    // for (const key of Object.keys(FIELDS)) {
-    //   mergedRows = scaleFunctions[scale](mergedRows, totals, key);
-    //   if (smoothing > 0 && SCALES[scale].smoothable) {
-    //     const smootherFunction = smootherFunctions[smoother];
-    //     mergedRows = smootherFunction(mergedRows, smoothing, key);
-    //   }
-    // }
-
-    mergedRows = scaleFunctions[params.scale](mergedRows, totals, params.field);
-    if (params.smoothing > 0 && SCALES[params.scale].smoothable) {
-      const smootherFunction = smootherFunctions[params.smoother];
-      mergedRows = smootherFunction(mergedRows, params.smoothing, params.field);
-    }
-
-    return {
-      term: query.repr,
-      data: mergedRows,
-    };
-  });
-
-  const resolvedResults = await Promise.all(queryPromises);
-
-  return resolvedResults.filter((result) => result !== null) as Result[];
 }
 
 async function fetchTotals(
@@ -336,31 +336,6 @@ async function fetchTotals(
   attrId: AttributeId,
   params: Params,
 ): Promise<Row[]> {
-  // const minSentLen = 1; // params.term.minSentLen;
-  // const termLen = 1; // params.term.length;
-  // NOTE:
-  // if (!CANNOT_SMOOTH.includes(params.scale)) {
-  // Override minimum sentence length when non-absolute scale is set for totals.
-  // This creates more comparable percentages,
-  // because the percentages are made against the total number of words,
-  // rather than among the words in sentences of a specific length.
-  // Critically, searches like "toki_2 - toki_1" cannot produce negative values.
-  // minSentLen = params.term.length;
-  // termLen = params.term.length;
-  // minSentLen = 1;
-  // termLen = 1;
-  // }
-
-  // NOTE: Why not override termLen too?
-  // Google measures percentages by their hits among same-length ngrams
-  // This means percentages for different-length ngrams are **not** comparable
-  // Demonstrating: https://books.google.com/ngrams/graph?content=%28kindergarten+-+child+care%29&year_start=1800
-  // Granted, it is differently misleading to take them as a percentage of unigrams
-  // But this would mean you couldn't go negative when subtracting longer ngrams from a shorter ngram contained within the longer ones
-  // e.g. tenpo ni - tenpo ni la - lon tenpo ni
-  // And this could be useful because in the above search, the resultant line would be "Percentage prevalence of 'tenpo ni' without the prevalence of 'tenpo ni la' or 'lon tenpo ni'"
-  // Which right now you can only get in absolute mode
-
   let result = await queryDb(TOTAL_QUERY, [
     1, // termLen,
     0, // attrId,
@@ -390,11 +365,12 @@ export async function fetchTopTerms(term: Term): Promise<string[]> {
   // term which has an attached wildcard
   const result = await queryDb(WILDCARD_QUERY, [
     term.len,
-    0, // TODO: attr
+    // TODO: is it better to fetch terms by default attr? or given attr?
+    term.attrId,
+    // 0,
     term.text,
   ]);
   return result.map((term: { term: string }) => term.term);
-  // yes this is silly TODO: maybe wrong now
 }
 
 export async function fetchYearly(
