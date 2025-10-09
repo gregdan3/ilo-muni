@@ -110,7 +110,7 @@ const frontmatter = { title: "ilo Muni" };
 
       // query's label
       const headerLi = document.createElement("li");
-      headerLi.textContent = truncateLabel(q.repr) + ":";
+      headerLi.textContent = truncateLabel(q.raw ?? q.repr) + ":";
       ul.appendChild(headerLi);
 
       // error container
@@ -127,7 +127,7 @@ const frontmatter = { title: "ilo Muni" };
       for (const t of q.terms) {
         for (const err of t.errors) {
           const li = document.createElement("li");
-          const label = truncateLabel(t.repr);
+          const label = truncateLabel(t.raw ?? t.repr);
           li.textContent = `${label}: ${err.message}`;
           childUl.appendChild(li);
         }
