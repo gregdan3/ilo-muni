@@ -5,16 +5,14 @@ import {
   DB_URL_PREFIX,
   LATEST_TIMESTAMP,
   EARLIEST_TIMESTAMP,
+  UNIT_TIMES,
 } from "@utils/constants";
 import type {
   Length,
   Term,
   Query,
-  Operator,
   Row,
-  Rank,
   Params,
-  Attribute,
   AttributeId,
   Stringable,
 } from "@utils/types";
@@ -24,6 +22,7 @@ import { scaleFunctions } from "@utils/post_processing/scaling";
 import { smootherFunctions } from "@utils/post_processing/smoothing";
 import { consoleLogAsync } from "@utils/debug";
 import { makeError } from "@utils/errors";
+import { WILDCARD_QUERY } from "@utils/queries";
 
 let workerPromise: Promise<WorkerHttpvfs> | null = null;
 
@@ -65,68 +64,6 @@ export async function queryDb(
   return result;
 }
 
-// inclusive on both ends makes sense for the graph
-const MONTHLY_QUERY = `SELECT
-  day,
-  hits,
-  authors
-FROM
-  monthly mo
-  JOIN term t ON mo.term_id = t.id
-WHERE
-  t.text = ?
-  AND mo.attr = ?
-  AND mo.day >= ?
-  AND mo.day <= ?
-ORDER BY
-  mo.day;`;
-
-const TOTAL_QUERY = `SELECT
-  day,
-  hits,
-  authors
-FROM
-  total_monthly
-WHERE
-  term_len = ?
-  AND attr = ?
-  AND day >= ?
-  AND day <= ?
-ORDER BY
-  day;`;
-
-// but for ranks, we've queried ahead data which is exclusive on the right
-const YEARLY_QUERY = `SELECT
-  t.text AS term,
-  yr.hits,
-  yr.authors
-FROM
-  yearly yr
-  JOIN term t ON yr.term_id = t.id
-WHERE
-  t.len = ?
-  AND yr.attr = ?
-  AND yr.day = ?
-ORDER BY
-  hits DESC;`;
-
-// NOTE: this query is inefficient because i have to order by hits, which means reading the entire table to process the query
-const WILDCARD_QUERY = `SELECT
-  t.text AS term
-FROM
-  term t
-  JOIN yearly yr ON t.id = yr.term_id
-WHERE
-  t.len = ?
-  AND yr.attr = ?
-  AND yr.day = 0
-  AND t.text GLOB ?
-ORDER BY
-  yr.hits DESC
-LIMIT
-  10;`;
-// day=0 is all time in ranks table
-
 const DAY_IN_MS = 24 * 60 * 60 * 1000; // stupidest hack of all time
 const timezoneOffset = new Date().getTimezoneOffset() * 60 * 1000; // Offset in milliseconds
 
@@ -134,57 +71,9 @@ function localizeTimestamp(timestamp: number): number {
   return timestamp * 1000 + DAY_IN_MS;
 }
 
-function mergeRows(series: Row[][], operators: Operator[]): Row[] {
-  const nonEmpty = series.filter((s) => s.length > 0);
-  if (nonEmpty.length === 0) {
-    return [];
-  }
-
-  const expectedLength = nonEmpty[0].length;
-  const filteredSeries = nonEmpty.filter((s) => s.length === expectedLength);
-
-  if (filteredSeries.length === 0) {
-    return [];
-  }
-  if (filteredSeries.length === 1) {
-    return filteredSeries[0];
-  }
-
-  const result: Row[] = [];
-
-  for (let i = 0; i < expectedLength; i++) {
-    const day = filteredSeries[0][i].day;
-    let totalHits = 0;
-
-    for (let j = 0; j < filteredSeries.length; j++) {
-      const op = operators[j] ?? "+";
-      const row = filteredSeries[j][i];
-
-      if (!row) continue;
-
-      if (op === "-") {
-        totalHits -= row.hits;
-      } else if (op === "+") {
-        totalHits += row.hits;
-      }
-    }
-    // TODO: NoSetMath error
-    result.push({ day, hits: totalHits, authors: NaN, hpa: NaN });
-  }
-  return result;
-}
-
-function sumTerms(query: Query) {
+function sumTerms(query: Query, params: Params) {
   const terms = query.terms;
-  if (terms.length === 0) {
-    query.data = [];
-    query.errors.push(makeError("NoResultsQuery", {}));
-    return;
-  }
-
-  const nonEmpty = terms.filter(
-    (t) => Array.isArray(t.data) && t.data.length > 0,
-  );
+  const nonEmpty = terms.filter((t) => t.data.length > 0);
   if (nonEmpty.length === 0) {
     query.data = [];
     query.errors.push(makeError("NoResultsQuery", {}));
@@ -228,11 +117,15 @@ function sumTerms(query: Query) {
     result.push({ day, hits: totalHits, authors: NaN, hpa: NaN });
   }
 
+  if (!SCALES[params.scale].sums && params.field !== "hits") {
+    query.errors.push(makeError("NoSetMath", {}));
+  }
+
   query.data = result;
 }
 
 async function resolveTerm(term: Term, params: Params) {
-  let resp = await queryDb(MONTHLY_QUERY, [
+  let resp = await queryDb(UNIT_TIMES[params.unit].dataQuery, [
     term.text,
     term.attrId,
     params.start,
@@ -306,23 +199,10 @@ export async function resolveQuery(query: Query, params: Params) {
   });
   await Promise.all(termDataPromises);
 
-  sumTerms(query);
+  sumTerms(query, params);
 
-  // TODO: pass a term's length or attr into this? eh?
+  // TODO: pass a term's length or attr into this? which?
   const totals = await fetchTotals(1, 0, params);
-
-  // NOTE:
-  // If I want to show more fields in the tooltip later on, this will be
-  // needed so the data doesn't appear to change from one graph view to
-  // another. Right now I only show the current graph's data on the tooltip,
-  // so no harm done.
-  // for (const key of Object.keys(FIELDS)) {
-  //   mergedRows = scaleFunctions[scale](mergedRows, totals, key);
-  //   if (smoothing > 0 && SCALES[scale].smoothable) {
-  //     const smootherFunction = smootherFunctions[smoother];
-  //     mergedRows = smootherFunction(mergedRows, smoothing, key);
-  //   }
-  // }
 
   query.data = scaleFunctions[params.scale](query.data, totals, params.field);
   if (params.smoothing > 0 && SCALES[params.scale].smoothable) {
@@ -336,7 +216,7 @@ async function fetchTotals(
   attrId: AttributeId,
   params: Params,
 ): Promise<Row[]> {
-  let result = await queryDb(TOTAL_QUERY, [
+  let result = await queryDb(UNIT_TIMES[params.unit].totalQuery, [
     1, // termLen,
     0, // attrId,
     params.start,
@@ -365,26 +245,8 @@ export async function fetchTopTerms(term: Term): Promise<string[]> {
   // term which has an attached wildcard
   const result = await queryDb(WILDCARD_QUERY, [
     term.len,
-    // TODO: is it better to fetch terms by default attr? or given attr?
     term.attrId,
-    // 0,
     term.text,
   ]);
   return result.map((term: { term: string }) => term.term);
-}
-
-export async function fetchYearly(
-  termLen: Length,
-  attr: Attribute,
-  start: number,
-  // end: number,
-): Promise<Rank[]> {
-  const result = await queryDb(YEARLY_QUERY, [
-    termLen,
-    attr,
-    start,
-    // end,
-  ]);
-
-  return result as Rank[];
 }

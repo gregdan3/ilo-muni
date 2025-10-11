@@ -1,4 +1,5 @@
 import { makeAugust } from "@utils/other";
+import { SERIES_QUERY, TOTAL_QUERY } from "@utils/queries";
 
 export const MAX_LABEL_LEN = 33;
 export const BASE_URL = "";
@@ -61,16 +62,29 @@ export const SMOOTHINGS = [
 ];
 
 export const ATTRIBUTES = {
-  // implicit relationships
-  // [undefined]: 0,
-  // [null]: 0,
   "": 0,
   ALL: 0,
-  START: 1,
-  END: 2,
-  FULL: 3,
-  LONG: 4,
-  // SHORT: 5,
+  START: 1, // start of sentence
+  END: 2, // end of sentence
+  FULL: 3, // both start and end of sentence
+  LONG: 4, // sentence with >= 4 words
+  SHORT: 5, // sentence with < 4 words
+  INNER: 6, // neither start nor end of sentence
+};
+
+const tablename = "TABLENAME";
+
+export const UNIT_TIMES = {
+  monthly: {
+    dataQuery: SERIES_QUERY.replace(tablename, "monthly"),
+    totalQuery: TOTAL_QUERY.replace(tablename, "total_monthly"),
+    smoothable: true,
+  },
+  yearly: {
+    dataQuery: SERIES_QUERY.replace(tablename, "yearly"),
+    totalQuery: TOTAL_QUERY.replace(tablename, "total_yearly"),
+    smoothable: false,
+  },
 };
 
 export const FIELDS = {

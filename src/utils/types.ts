@@ -6,6 +6,7 @@ import {
   SMOOTHINGS,
   FIELDS,
   ATTRIBUTES,
+  UNIT_TIMES,
 } from "@utils/constants";
 import type { QueryError } from "@utils/errors";
 import { FORMATTERS } from "@utils/ui";
@@ -32,6 +33,7 @@ export type ScaleData = (typeof SCALES)[Scale];
 export type LengthParam = (typeof LENGTHS)[number];
 export type Smoother = keyof typeof SMOOTHERS;
 export type SmoothingParam = (typeof SMOOTHINGS)[number];
+export type UnitTime = keyof typeof UNIT_TIMES;
 
 export type Axis = "linear" | "logarithmic";
 export type Field = keyof typeof FIELDS;
@@ -83,6 +85,7 @@ export interface Params {
   smoothing: number;
   start: number;
   end: number;
+  unit: UnitTime;
 }
 
 export interface SearchURLParams {
