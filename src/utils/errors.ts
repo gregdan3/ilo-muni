@@ -66,11 +66,11 @@ export const ERRORS: Record<string, QueryError> = {
   },
   NoResultsQuery: {
     message: "No results for this query",
-    result: "error",
+    result: "warn", // no graph, but preserve url
   },
   NoSetMath: {
-    message: "Cannot add or subtract authors (ignoring)",
-    result: "warn",
+    message: "Cannot add or subtract authors (can't do set math on integers)",
+    result: "warn", // ditto
   },
 };
 
