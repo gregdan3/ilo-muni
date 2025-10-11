@@ -41,6 +41,7 @@ export const defaultScale = "rel";
 export const defaultSmoother = "gauss";
 export const defaultSmoothing = "2";
 export const defaultField = "hits";
+export const defaultUnit = "month";
 
 export const LENGTHS = ["1", "2", "3", "4", "5", "6", "7"];
 export const SMOOTHINGS = [
@@ -75,15 +76,19 @@ export const ATTRIBUTES = {
 const tablename = "TABLENAME";
 
 export const UNIT_TIMES = {
-  monthly: {
+  month: {
     dataQuery: SERIES_QUERY.replace(tablename, "monthly"),
     totalQuery: TOTAL_QUERY.replace(tablename, "total_monthly"),
     smoothable: true,
+    label: "per month",
+    category: "period",
   },
-  yearly: {
+  year: {
     dataQuery: SERIES_QUERY.replace(tablename, "yearly"),
     totalQuery: TOTAL_QUERY.replace(tablename, "total_yearly"),
     smoothable: false,
+    category: "period",
+    label: "per year",
   },
 };
 

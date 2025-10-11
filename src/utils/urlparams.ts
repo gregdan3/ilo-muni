@@ -5,59 +5,10 @@ import {
   SMOOTHINGS,
   SAMPLE_SEARCHES,
   FIELDS,
+  UNIT_TIMES,
 } from "@utils/constants";
-import type {
-  LengthParam,
-  SmoothingParam,
-  Scale,
-  Smoother,
-  SearchURLParams,
-  RanksURLParams,
-  Field,
-} from "@utils/types";
+import type { SearchURLParams, RanksURLParams } from "@utils/types";
 import { randomElem, isValidTimestamp } from "@utils/other";
-
-function coalesceLength(maybeLen: string): LengthParam | null {
-  let len: LengthParam | null = null;
-  if (maybeLen && LENGTHS.includes(maybeLen)) {
-    len = maybeLen as LengthParam;
-  }
-  return len;
-}
-
-function coalesceSmoothing(
-  maybeSmoothing: string | null,
-): SmoothingParam | null {
-  let smoothing: SmoothingParam | null = null;
-  if (maybeSmoothing && SMOOTHINGS.includes(maybeSmoothing)) {
-    smoothing = maybeSmoothing as SmoothingParam;
-  }
-  return smoothing;
-}
-
-function coalesceSmoother(maybeSmoother: string | null): Smoother | null {
-  let smoother: Smoother | null = null;
-  if (maybeSmoother && maybeSmoother in SMOOTHERS) {
-    smoother = maybeSmoother as Smoother;
-  }
-  return smoother;
-}
-
-function coalesceField(maybeField: string | null): Field | null {
-  let field: Field | null = null;
-  if (maybeField && maybeField in FIELDS) {
-    field = maybeField as Field;
-  }
-  return field;
-}
-
-function coalesceScale(maybeScale: string | null): Scale | null {
-  let scale: Scale | null = null;
-  if (maybeScale && maybeScale in SCALES) {
-    scale = maybeScale as Scale;
-  }
-  return scale;
-}
 
 function coalesceTimestamp(maybeTimestamp: string | null): string | null {
   let timestamp = null;
@@ -79,52 +30,46 @@ function coalesceRandomly(
   return param;
 }
 
+function coalesceParam<T extends string>(
+  maybeValue: string | null,
+  options: readonly T[] | Record<T, unknown>,
+): T | null {
+  if (!maybeValue) return null;
+  if (Array.isArray(options)) {
+    return options.includes(maybeValue as T) ? (maybeValue as T) : null;
+  }
+  if (maybeValue in options) {
+    return maybeValue as T;
+  }
+  return null;
+}
+
 export function getSearchParams(): SearchURLParams {
   const urlParams = new URLSearchParams(window.location.search);
 
-  const queryParam = urlParams.get("query");
-  const query = coalesceRandomly(queryParam, SAMPLE_SEARCHES);
+  const query = coalesceRandomly(urlParams.get("query"), SAMPLE_SEARCHES);
 
-  // TODO: no longer a supported option!
-  // what do we do with it?
-  const minLenParam = urlParams.get("minSentLen") || "";
-  const minSentLen = coalesceLength(minLenParam);
+  const scale = coalesceParam(urlParams.get("scale"), SCALES);
+  const field = coalesceParam(urlParams.get("field"), FIELDS);
+  const unit = coalesceParam(urlParams.get("unit"), UNIT_TIMES);
+  const smoothing = coalesceParam(urlParams.get("smoothing"), SMOOTHINGS);
+  const smoother = coalesceParam(urlParams.get("smoother"), SMOOTHERS);
 
-  const scaleParam = urlParams.get("scale");
-  const scale = coalesceScale(scaleParam);
+  const start = coalesceTimestamp(urlParams.get("start"));
+  const end = coalesceTimestamp(urlParams.get("end"));
 
-  const fieldParam = urlParams.get("field") || "";
-  const field = coalesceField(fieldParam);
-
-  const smoothingParam = urlParams.get("smoothing") || "";
-  const smoothing = coalesceSmoothing(smoothingParam);
-
-  const smootherParam = urlParams.get("smoother") || "";
-  const smoother = coalesceSmoother(smootherParam);
-
-  const startParam = urlParams.get("start") || "";
-  const start = coalesceTimestamp(startParam);
-
-  const endParam = urlParams.get("end") || "";
-  const end = coalesceTimestamp(endParam);
-
-  // TODO: move field?
-  return { query, scale, smoothing, field, smoother, minSentLen, start, end };
+  return { query, scale, field, unit, smoothing, smoother, start, end };
 }
 
 export function getRanksParams(): RanksURLParams {
   const urlParams = new URLSearchParams(window.location.search);
 
-  const termLenParam = urlParams.get("termLen") || "";
-  const termLen = coalesceLength(termLenParam);
-
-  const minLenParam = urlParams.get("minSentLen") || "";
-  const minSentLen = coalesceLength(minLenParam);
+  const termLen = coalesceParam(urlParams.get("termLen"), LENGTHS);
 
   const yearParam = urlParams.get("year") || "";
   const year = coalesceTimestamp(yearParam);
 
-  return { termLen: termLen, minSentLen, year };
+  return { termLen, year };
 }
 
 export function toURLParams(params: Record<string, string>) {

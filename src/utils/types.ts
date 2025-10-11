@@ -90,11 +90,11 @@ export interface Params {
 
 export interface SearchURLParams {
   query: string;
-  minSentLen: LengthParam | null;
   scale: Scale | null;
+  field: Field | null;
+  unit: UnitTime | null;
   smoothing: SmoothingParam | null;
   smoother: Smoother | null;
-  field: Field | null;
   start: string | null;
   end: string | null;
 }

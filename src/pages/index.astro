@@ -14,46 +14,50 @@ import {
   EARLIEST_YEAR,
   FIELDS,
   LATEST_YEAR,
-  LENGTHS,
   SCALES,
   SMOOTHERS,
   SMOOTHINGS,
+  UNIT_TIMES,
   defaultScale,
   defaultSmoother,
   defaultSmoothing,
   defaultField,
+  defaultUnit,
 } from "@utils/constants";
 
 const frontmatter = { title: "ilo Muni" };
 ---
 
 <script>
-  import type { Scale, Smoother, Query, Field, Params } from "@utils/types";
+  import type {
+    Scale,
+    Smoother,
+    Query,
+    Field,
+    Params,
+    UnitTime,
+  } from "@utils/types";
   import { parseInput, hasError } from "@utils/input";
   import { reloadUsageChart } from "@utils/chart";
   import { resolveQuery } from "@utils/sqlite";
   import { getSearchParams, toURLParams } from "@utils/urlparams";
   import { countQuery } from "@utils/analytics";
   import { truncateLabel } from "@utils/other.ts";
-  import {
-    SCALES,
-    defaultScale,
-    defaultSmoother,
-    defaultSmoothing,
-    defaultField,
-    FIELDS,
-  } from "@utils/constants";
+  import { FIELDS, SCALES, defaultScale } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
-  import { consoleLogAsync } from "@utils/debug";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
+
   let scaleDropdown: HTMLInputElement;
+  let unitDropdown: HTMLInputElement;
+  let fieldDropdown: HTMLInputElement;
   let smootherDropdown: HTMLInputElement;
   let smoothingDropdown: HTMLInputElement;
-  let fieldDropdown: HTMLInputElement;
+
   let startDropdown: HTMLInputElement;
   let endDropdown: HTMLInputElement;
+
   let loader: HTMLSpanElement;
   let errorer: HTMLSpanElement;
   let errorBin: HTMLDivElement;
@@ -64,22 +68,20 @@ const frontmatter = { title: "ilo Muni" };
 
   function initFetch() {
     usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
-
     searchBox = document.getElementById("searchBox")! as HTMLInputElement;
 
     scaleDropdown = document.getElementById(
       "scaleDropdown",
     )! as HTMLInputElement;
-
+    unitDropdown = document.getElementById("unitDropdown")! as HTMLInputElement;
+    fieldDropdown = document.getElementById(
+      "fieldDropdown",
+    )! as HTMLInputElement;
     smootherDropdown = document.getElementById(
       "smootherDropdown",
     )! as HTMLInputElement;
     smoothingDropdown = document.getElementById(
       "smoothingDropdown",
-    )! as HTMLInputElement;
-
-    fieldDropdown = document.getElementById(
-      "fieldDropdown",
     )! as HTMLInputElement;
 
     startDropdown = document.getElementById(
@@ -152,6 +154,7 @@ const frontmatter = { title: "ilo Muni" };
     const smoothing = Number(smoothingDropdown.value);
     const start = Number(startDropdown.value);
     const end = Number(endDropdown.value);
+    const unit = unitDropdown.value as UnitTime;
 
     const summable = FIELDS[field].summable;
     const options = Array.from(scaleDropdown.querySelectorAll("option"));
@@ -187,7 +190,7 @@ const frontmatter = { title: "ilo Muni" };
       smoothing,
       start,
       end,
-      unit: "monthly",
+      unit,
     };
 
     let queries: Query[] = [];
@@ -285,8 +288,10 @@ const frontmatter = { title: "ilo Muni" };
       let state = smootherDropdown.className === "nodisplay";
 
       if (state) {
+        smoothingDropdown.className = "inline";
         smootherDropdown.className = "inline";
       } else {
+        smoothingDropdown.className = "nodisplay";
         smootherDropdown.className = "nodisplay";
       }
     });
@@ -322,11 +327,18 @@ const frontmatter = { title: "ilo Muni" };
         selected={defaultField}
       />
 
+      <CategorizedDropdown
+        id="unitDropdown"
+        options={UNIT_TIMES}
+        selected={defaultUnit}
+      />
+
       <IntDropdown
         id="smoothingDropdown"
         options={SMOOTHINGS}
         selected={defaultSmoothing}
         pluralText=" smoothing"
+        style="nodisplay"
       />
 
       <CategorizedDropdown
