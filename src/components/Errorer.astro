@@ -1,0 +1,20 @@
+---
+export interface ErrorerProps {
+  id?: string;
+  // content: string;
+}
+
+const { id } = Astro.props;
+---
+
+{id ? <span id={id}>⚠︎</span> : <span>⚠︎</span>}
+
+<style>
+  span {
+    color: orange;
+    font-size: 4em;
+    visibility: hidden;
+
+    pointer-events: none;
+  }
+</style>

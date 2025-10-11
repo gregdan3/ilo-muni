@@ -2,6 +2,7 @@
 import Layout from "@layouts/Layout.astro";
 import EpochRangePicker from "@components/EpochRangePicker.astro";
 import Loader from "@components/Loader.astro";
+import Errorer from "@components/Errorer.astro";
 import IntDropdown from "@components/IntDropdown.astro";
 import CategorizedDropdown from "@components/CategorizedDropdown.astro";
 import IconButton from "@components/IconButton.astro";
@@ -44,7 +45,6 @@ const frontmatter = { title: "ilo Muni" };
   } from "@utils/constants";
   import { randomQuery, copyUrlToClipboard } from "@utils/ui";
   import { consoleLogAsync } from "@utils/debug";
-  import { makeError } from "@utils/errors";
 
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
@@ -55,6 +55,7 @@ const frontmatter = { title: "ilo Muni" };
   let startDropdown: HTMLInputElement;
   let endDropdown: HTMLInputElement;
   let loader: HTMLSpanElement;
+  let errorer: HTMLSpanElement;
   let errorBin: HTMLDivElement;
 
   let advancedButton: HTMLElement;
@@ -87,6 +88,7 @@ const frontmatter = { title: "ilo Muni" };
     endDropdown = document.getElementById("endDropdown")! as HTMLInputElement;
 
     loader = document.getElementById("loader")! as HTMLSpanElement;
+    errorer = document.getElementById("errorer")! as HTMLSpanElement;
     errorBin = document.getElementById("errorBin")! as HTMLDivElement;
 
     sampleQueryButton = document.getElementById(
@@ -176,22 +178,32 @@ const frontmatter = { title: "ilo Muni" };
     }
 
     loader.style.visibility = "visible";
-    let queries = await updateChart(queryText, {
+    errorer.style.visibility = "hidden";
+
+    let params: Params = {
       scale,
       field,
       smoother,
       smoothing,
       start,
       end,
-    } as Params);
-    // TODO: if an error occurs, catch here!
-    loader.style.visibility = "hidden";
-    await consoleLogAsync("test", queries);
+      unit: "month",
+    };
 
-    if (!queries) {
-      return;
+    let queries: Query[] = [];
+    try {
+      queries = await updateChart(queryText, params);
+      dumpErrors(queries);
+    } catch (err) {
+      console.error("Couldn't update chart!", err);
+
+      errorBin.innerHTML = "";
+      errorBin.textContent = "";
+      errorBin.textContent = `Something went wrong! ${err}`;
+      errorer.style.visibility = "visible";
+    } finally {
+      loader.style.visibility = "hidden";
     }
-    dumpErrors(queries);
 
     // valid queries have stable syntax
     let queryReprs = queries.filter((q) => !hasError(q)).map((q) => q.repr);
@@ -223,7 +235,7 @@ const frontmatter = { title: "ilo Muni" };
       resolveQuery(query, params),
     );
     await Promise.all(queryResultProms);
-    const graphable = queries.filter((q) => !hasError(q));
+    const graphable = queries.filter((q) => q.data.length > 0);
     if (graphable.length > 0) {
       await reloadUsageChart(usageCanvas, graphable, params);
     }
@@ -348,13 +360,14 @@ const frontmatter = { title: "ilo Muni" };
     <IconButton id="sampleQueryButton" icon="mingcute:refresh-3-line" />
   </div>
 
-  <div style="position: relative; margin-top: 0.25em; max-height: 100%;">
-    <canvas id="usage" style="width: 100%;  max-height: 30em;"></canvas>
+  <div style="position: relative; margin-top: 0.25em;">
+    <canvas id="usage" style="width: 100%;  max-height: 70vh;"></canvas>
     <div id="usageLegend" style="margin-top: 0.75em;"></div>
     <div
       style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events: none;"
     >
       <Loader id="loader" />
+      <Errorer id="errorer" />
     </div>
   </div>
 

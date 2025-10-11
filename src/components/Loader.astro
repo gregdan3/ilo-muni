@@ -11,15 +11,18 @@ const { id } = Astro.props;
 
 <style>
   span {
-    border: 8px solid rgb(210, 210, 210);
-    border-top: 8px solid #3498db; /* Blue */
+    border: 12px solid rgb(210, 210, 210);
+    border-top: 12px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 2em;
-    height: 2em;
+
+    width: 2.5em;
+    height: 2.5em;
     animation: spin 1.25s linear infinite;
+
     display: inline-block;
-    vertical-align: text-bottom;
     visibility: hidden;
+
+    pointer-events: none;
   }
 
   @keyframes spin {
