@@ -20,6 +20,7 @@ async function initUsageChart(
   canvas: HTMLCanvasElement,
   data: Query[],
   params: Params,
+  epsilon: number,
 ) {
   const scale = SCALES[params.scale];
   const field = params.field;
@@ -156,7 +157,7 @@ async function initUsageChart(
           },
           callbacks: {
             label: (ctx: TooltipItem<keyof ChartTypeRegistry>) =>
-              formatLabel(ctx, FORMATTERS[scale.tooltipNums]),
+              formatLabel(ctx, FORMATTERS[scale.tooltipNums], epsilon),
           },
         },
       },
@@ -165,15 +166,44 @@ async function initUsageChart(
   return chart;
 }
 
+function adjustZeroLogScale(queries: Query[], field: Field) {
+  const allWholeNumbers = queries.every((q) =>
+    q.data.every((d) => Number.isInteger(d[field])),
+  );
+
+  const allStrictlyPos = queries
+    .flatMap((q) => q.data.map((d) => d[field]))
+    .filter((v) => v > 0);
+
+  let epsilon: number;
+  if (allWholeNumbers) {
+    epsilon = 1;
+  } else if (allStrictlyPos.length > 0) {
+    epsilon = Math.min(...allStrictlyPos) * 0.5;
+  } else {
+    epsilon = 1e-9;
+  }
+
+  // Apply epsilon uniformly to all queries
+  for (const query of queries) {
+    query.data = query.data.map((d) => ({
+      ...d,
+      [field]: d[field] + epsilon,
+    }));
+  }
+  return epsilon;
+}
+
 function formatLabel(
   ctx: TooltipItem<keyof ChartTypeRegistry>,
   format: FormatterFn,
+  epsilon: number,
 ): string {
   // @ts-expect-error: why let me reference the config then
   const key: Field = ctx.chart.config._config!.options.parsing.yAxisKey;
   const field: string = FIELDS[key]["label"].toLowerCase();
   // @ts-expect-error: it doesn't know about `raw`
-  const formattedData = format(ctx.raw[key]);
+  const formattedData = format(ctx.raw[key] - epsilon);
   const truncLabel = truncateLabel(ctx.dataset.label!);
   const label = `${truncLabel}: ${formattedData} ${field}`;
   return label;
@@ -184,24 +214,16 @@ export async function reloadUsageChart(
   queries: Query[],
   params: Params,
 ) {
-  //   TODO: can we do this but preserve the original data on the tooltip?
-  //  and change the axis to start at 1?
-  // data =
-  //   scale.axis === "logarithmic"
-  //     ? data.map((result) => ({
-  //         ...result,
-  //         data: result.data.map((d) => ({
-  //           ...d,
-  //           hits: d.hits + 1,
-  //         })),
-  //       }))
-  //     : data;
-
   const scale = SCALES[params.scale];
   const field = params.field;
 
+  let epsilon = 0;
+  if (scale.axis === "logarithmic") {
+    epsilon = adjustZeroLogScale(queries, field);
+  }
+
   if (!existingChart) {
-    existingChart = await initUsageChart(canvas, queries, params);
+    existingChart = await initUsageChart(canvas, queries, params, epsilon);
   } else {
     existingChart.data.datasets = queries.map((q) => ({
       label: q.repr,
@@ -215,7 +237,7 @@ export async function reloadUsageChart(
       FORMATTERS[scale.axisNums];
     existingChart.options.plugins!.tooltip!.callbacks!.label = (
       ctx: TooltipItem<keyof ChartTypeRegistry>,
-    ) => formatLabel(ctx, FORMATTERS[scale.tooltipNums]);
+    ) => formatLabel(ctx, FORMATTERS[scale.tooltipNums], epsilon);
     existingChart.update();
   }
 }
