@@ -1,4 +1,4 @@
-import type { Axis, Row, Field } from "@utils/types.ts";
+import type { Row, Field } from "@utils/types.ts";
 
 type ScalerFn = (rows: Row[], totals: Row[], key: Field) => Row[];
 

@@ -49,14 +49,14 @@ const frontmatter = { title: "ilo Muni" };
   let usageCanvas: HTMLCanvasElement;
   let searchBox: HTMLInputElement;
 
-  let scaleDropdown: HTMLInputElement;
-  let unitDropdown: HTMLInputElement;
-  let fieldDropdown: HTMLInputElement;
-  let smootherDropdown: HTMLInputElement;
-  let smoothingDropdown: HTMLInputElement;
+  let scaleDropdown: HTMLSelectElement;
+  let unitDropdown: HTMLSelectElement;
+  let fieldDropdown: HTMLSelectElement;
+  let smootherDropdown: HTMLSelectElement;
+  let smoothingDropdown: HTMLSelectElement;
 
-  let startDropdown: HTMLInputElement;
-  let endDropdown: HTMLInputElement;
+  let startDropdown: HTMLSelectElement;
+  let endDropdown: HTMLSelectElement;
 
   let loader: HTMLSpanElement;
   let errorer: HTMLSpanElement;
@@ -66,28 +66,32 @@ const frontmatter = { title: "ilo Muni" };
   let sampleQueryButton: HTMLElement;
   let copyUrlButton: HTMLElement;
 
+  let usageForm: HTMLFormElement;
+
   function initFetch() {
     usageCanvas = document.getElementById("usage")! as HTMLCanvasElement;
     searchBox = document.getElementById("searchBox")! as HTMLInputElement;
 
     scaleDropdown = document.getElementById(
       "scaleDropdown",
-    )! as HTMLInputElement;
-    unitDropdown = document.getElementById("unitDropdown")! as HTMLInputElement;
+    )! as HTMLSelectElement;
+    unitDropdown = document.getElementById(
+      "unitDropdown",
+    )! as HTMLSelectElement;
     fieldDropdown = document.getElementById(
       "fieldDropdown",
-    )! as HTMLInputElement;
+    )! as HTMLSelectElement;
     smootherDropdown = document.getElementById(
       "smootherDropdown",
-    )! as HTMLInputElement;
+    )! as HTMLSelectElement;
     smoothingDropdown = document.getElementById(
       "smoothingDropdown",
-    )! as HTMLInputElement;
+    )! as HTMLSelectElement;
 
     startDropdown = document.getElementById(
       "startDropdown",
-    )! as HTMLInputElement;
-    endDropdown = document.getElementById("endDropdown")! as HTMLInputElement;
+    )! as HTMLSelectElement;
+    endDropdown = document.getElementById("endDropdown")! as HTMLSelectElement;
 
     loader = document.getElementById("loader")! as HTMLSpanElement;
     errorer = document.getElementById("errorer")! as HTMLSpanElement;
@@ -98,6 +102,8 @@ const frontmatter = { title: "ilo Muni" };
     )! as HTMLElement;
     copyUrlButton = document.getElementById("copyUrlButton")! as HTMLElement;
     advancedButton = document.getElementById("advancedButton")! as HTMLElement;
+
+    usageForm = document.getElementById("usageForm")! as HTMLFormElement;
   }
 
   function dumpErrors(queries: Query[]) {
@@ -152,8 +158,30 @@ const frontmatter = { title: "ilo Muni" };
     const field = fieldDropdown.value as Field;
     const smoother = smootherDropdown.value as Smoother;
     const smoothing = Number(smoothingDropdown.value);
-    const start = Number(startDropdown.value);
-    const end = Number(endDropdown.value);
+
+    let start = Number(startDropdown.value);
+    let end = Number(endDropdown.value);
+
+    if (end < start) {
+      [start, end] = [end, start];
+      [startDropdown.value, endDropdown.value] = [
+        endDropdown.value,
+        startDropdown.value,
+      ];
+    } else if (end === start) {
+      const opts = Array.from(startDropdown.options, (o) => Number(o.value));
+      const idx = opts.indexOf(start);
+
+      if (idx < opts.length - 1) {
+        // move end to next value
+        end = opts[idx + 1];
+        endDropdown.value = String(end);
+      } else if (idx > 0) {
+        start = opts[idx - 1];
+        startDropdown.value = String(start);
+      }
+    }
+
     const unit = unitDropdown.value as UnitTime;
 
     const summable = FIELDS[field].summable;
@@ -251,9 +279,6 @@ const frontmatter = { title: "ilo Muni" };
     let initialParams = getSearchParams();
     // aside from query which starts empty, allow defaults of form
     searchBox.value = initialParams.query;
-    if (initialParams.minSentLen) {
-      // TODO: set all terms to be long?
-    }
     if (initialParams.field) {
       fieldDropdown.value = initialParams.field;
     }
@@ -271,6 +296,9 @@ const frontmatter = { title: "ilo Muni" };
     }
     if (initialParams.end) {
       endDropdown.value = initialParams.end;
+    }
+    if (initialParams.unit) {
+      unitDropdown.value = initialParams.unit;
     }
 
     // runs chart updates and such
@@ -296,8 +324,7 @@ const frontmatter = { title: "ilo Muni" };
       }
     });
 
-    const form = document.getElementById("usageForm")! as HTMLFormElement;
-    form.addEventListener("change", async () => {
+    usageForm.addEventListener("change", async () => {
       await updatePage();
     });
   });
@@ -387,6 +414,15 @@ const frontmatter = { title: "ilo Muni" };
 </Layout>
 
 <style>
+  #errorBin {
+    font-size: 0.9em;
+    line-height: 1.5em;
+  }
+  #errorBin * {
+    padding: 0;
+    margin: 0;
+  }
+
   #searchBox {
     width: 65%;
     height: 1.6em;

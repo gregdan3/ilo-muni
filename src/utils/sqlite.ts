@@ -76,7 +76,8 @@ function sumTerms(query: Query, params: Params) {
   const nonEmpty = terms.filter((t) => t.data.length > 0);
   if (nonEmpty.length === 0) {
     query.data = [];
-    query.errors.push(makeError("NoResultsQuery", {}));
+    // query.errors.push(makeError("NoResultsQuery", {}));
+    // each term will report it is empty anyway
     return;
   }
 
