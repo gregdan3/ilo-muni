@@ -32,16 +32,16 @@ export async function initDB(dbUrlPrefix: string): Promise<WorkerHttpvfs> {
       {
         from: "inline",
         config: {
-          serverMode: "full",
-          requestChunkSize: 1024,
-          url: "/db/2025-09-30-trimmed.sqlite",
-          //
-          // serverMode: "chunked",
+          // serverMode: "full",
           // requestChunkSize: 1024,
-          // databaseLengthBytes: 569713664,
-          // serverChunkSize: 26214400,
-          // urlPrefix: dbUrlPrefix,
-          // suffixLength: 3,
+          // url: "/db/2025-10-20-trimmed.sqlite",
+
+          serverMode: "chunked",
+          requestChunkSize: 1024,
+          databaseLengthBytes: 851628032,
+          serverChunkSize: 26214400,
+          urlPrefix: dbUrlPrefix,
+          suffixLength: 3,
         },
       },
     ],

@@ -10,7 +10,7 @@ const frontmatter = { title: "Rank by Frequency" };
 
 <script>
   import type { Length } from "@utils/types";
-  import { fetchYearly } from "@utils/sqlite";
+  // import { fetchYearly } from "@utils/sqlite";
   import { reloadBarChart } from "@utils/ranks";
   import { getRanksParams, toURLParams } from "@utils/urlparams";
 
@@ -41,65 +41,65 @@ const frontmatter = { title: "Rank by Frequency" };
     // copyUrlButton = document.getElementById("copyUrlButton")! as HTMLElement;
   }
 
-  async function updateChart(
-    ranksDiv: HTMLDivElement,
-    termLen: Length,
-    minSentLen: Length,
-    year: number,
-  ) {
-    let data = await fetchYearly(termLen, minSentLen, year);
+  // async function updateChart(
+  //   ranksDiv: HTMLDivElement,
+  //   termLen: Length,
+  //   minSentLen: Length,
+  //   year: number,
+  // ) {
+  //   let data = await fetchYearly(termLen, minSentLen, year);
+  //
+  //   await reloadBarChart(ranksDiv, data, termLen);
+  // }
 
-    await reloadBarChart(ranksDiv, data, termLen);
-  }
+  // async function updatePage(event: Event | null) {
+  //   let termLen = Number(termLenDropdown.value) as Length;
+  //   let sentLen = Number(sentLenDropdown.value) as Length;
+  //   const year = Number(yearDropdown.value);
+  //
+  //   if (event?.target === termLenDropdown && sentLen < termLen) {
+  //     sentLenDropdown.value = termLenDropdown.value;
+  //     sentLen = termLen;
+  //   }
+  //   if (event?.target === sentLenDropdown && termLen > sentLen) {
+  //     termLenDropdown.value = sentLenDropdown.value;
+  //     termLen = sentLen;
+  //   }
+  //
+  //   loader.style.visibility = "visible";
+  //   await updateChart(ranksDiv, termLen, sentLen, year);
+  //   loader.style.visibility = "hidden";
+  //
+  //   let usedParams: Record<string, string> = {
+  //     termLen: termLenDropdown.value,
+  //     minSentLen: sentLenDropdown.value,
+  //     year: yearDropdown.value,
+  //   };
+  //
+  //   toURLParams(usedParams);
+  // }
 
-  async function updatePage(event: Event | null) {
-    let termLen = Number(termLenDropdown.value) as Length;
-    let sentLen = Number(sentLenDropdown.value) as Length;
-    const year = Number(yearDropdown.value);
-
-    if (event?.target === termLenDropdown && sentLen < termLen) {
-      sentLenDropdown.value = termLenDropdown.value;
-      sentLen = termLen;
-    }
-    if (event?.target === sentLenDropdown && termLen > sentLen) {
-      termLenDropdown.value = sentLenDropdown.value;
-      termLen = sentLen;
-    }
-
-    loader.style.visibility = "visible";
-    await updateChart(ranksDiv, termLen, sentLen, year);
-    loader.style.visibility = "hidden";
-
-    let usedParams: Record<string, string> = {
-      termLen: termLenDropdown.value,
-      minSentLen: sentLenDropdown.value,
-      year: yearDropdown.value,
-    };
-
-    toURLParams(usedParams);
-  }
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    initFetch();
-
-    let initialParams = getRanksParams();
-    if (initialParams.minSentLen) {
-      sentLenDropdown.value = initialParams.minSentLen;
-    }
-    if (initialParams.termLen) {
-      termLenDropdown.value = initialParams.termLen;
-    }
-    if (initialParams.year) {
-      yearDropdown.value = initialParams.year;
-    }
-
-    await updatePage(null);
-
-    const form = document.getElementById("ranksForm")! as HTMLFormElement;
-    form.addEventListener("change", async (event) => {
-      await updatePage(event);
-    });
-  });
+  // document.addEventListener("DOMContentLoaded", async () => {
+  //   initFetch();
+  //
+  //   let initialParams = getRanksParams();
+  //   if (initialParams.minSentLen) {
+  //     sentLenDropdown.value = initialParams.minSentLen;
+  //   }
+  //   if (initialParams.termLen) {
+  //     termLenDropdown.value = initialParams.termLen;
+  //   }
+  //   if (initialParams.year) {
+  //     yearDropdown.value = initialParams.year;
+  //   }
+  //
+  //   await updatePage(null);
+  //
+  //   const form = document.getElementById("ranksForm")! as HTMLFormElement;
+  //   form.addEventListener("change", async (event) => {
+  //     await updatePage(event);
+  //   });
+  // });
 </script>
 
 <Layout frontmatter={frontmatter}>
