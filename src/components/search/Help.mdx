@@ -4,16 +4,16 @@
 import { Icon } from "astro-icon/components";
 
 <h3 style="margin: 0;">What is this?</h3>
-This is **ilo Muni pi mute nimi**, "word-frequency tool named Muni." It graphs how words are used over time, like [Google Ngrams](https://books.google.com/ngrams/) but for [Toki
-Pona](https://tokipona.org).
-If you don't know what to search, press <Icon name="mingcute:refresh-3-line" /> to
-make a random query!
+This is **ilo Muni pi mute nimi**, "word-frequency tool named Muni." It's like [Google Ngrams](https://books.google.com/ngrams/) but for [Toki
+Pona](https://tokipona.org), graphing word use over time.
+Get a random query with the <Icon name="mingcute:refresh-3-line" /> button!
 
 <h3 style="margin-bottom: 0; line-height: 0.5em;">Search</h3>
 - Search **1 to 6 word terms**: `toki pona`
 - Search **multiple terms** with commas: `soweli, waso`
-- Search **sentence parts**: `toki_short, taso_end`
-- Search **top matching terms** with wildcards: `ona li *, to*`
+- Search **sentence parts**: `taso_start, toki_full`
+    - All parts: `start`, `end`, `inner`, `full`, `short`, `long`
+- Search **top matching terms** with wildcards: `ona *, t*i p*a`
 - **Add** and **subtract** terms: `ale + ali, toki - toki pona`
 - Put it together: `toki - toki_inner, taso *_start`
 
