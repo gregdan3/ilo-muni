@@ -59,8 +59,8 @@ lots of things!
 ### Terms
 
 You can search for **up to 6 words in one term**, such as
-[**mi kama sona e toki pona**](/?query=mi+kama+sona+e+toki+pona). Note that the
-more words are in a term, the fewer times it is likely to appear- so don't be
+[**mi kama sona e toki pona**](/?query=mi+kama+sona+e+toki+pona). Note: The more
+words are in a term, the fewer times it is likely to appear- so don't be
 surprised if you don't get a result. Try searching for shorter terms, like
 [**kama pona**](/?query=kama+pona) or [**anu seme**](/?query=anu+seme).
 
@@ -81,9 +81,9 @@ surprised if you don't get a result. Try searching for shorter terms, like
 
 You can graph **multiple terms at once** by separating them with commas `,`. You
 can even mix different lenght terms on one graph:
-[**toki, pona, toki pona**](/ilo-muni?query=toki,+pona,+toki+pona). Often,
-different terms will have very different amounts of use, resulting in it being
-hard to read more than the top one or two graphs. You can address that with
+[**toki, pona, toki pona**](/?query=toki,+pona,+toki+pona). Often, different
+terms will have very different amounts of use, resulting in it being hard to
+read more than the top one or two graphs. You can address that with
 [logarithmic](#logarithmic) or [minmax](#minmax) scales seen later in this
 tutorial.
 
@@ -106,18 +106,27 @@ tutorial.
 
 ### Wildcard
 
-You can search for **multiple similar terms** by replacing **one word in a
-term** with a wildcard `*`. This will search for the **ten most popular terms**
-that match your search and graph them. Note that you may only use one wildcard
-per search term, and you cannot start a term with a wildcard.
+You can search for **multiple similar terms** by adding a **wildcard** `*`
+anywhere in your search except the start, including in the middle of a word.
+This will find the **ten most popular terms** matching your search and graph
+them.
+
+Note that the number of words in the terms your search finds depends on how many
+"words" are in your search term. You can insert extra wildcards after a space to
+search for longer terms.
 
 <details>
   <summary>**Examples**</summary>
 
-- Estimate the most popular prepositional phrases for "tawa":
-  [**tawa \***](suli:4321/ilo-muni?query=tawa+*)
+- Find the most popular prepositional phrases for "tawa":
+  [**tawa \***](/?query=tawa+*)
 - Observe the disparity in the top 1-2 uses of a word versus the rest:
-  [**sona \***](/ilo-muni?query=sona+*), [**ona \***](/ilo-muni?query=ona+*)
+  [**sona \***](/?query=sona+*), [**ona \***](/?query=ona+*)
+- Find anything that starts with "at": [**at\***](/?query=at*)
+- Find words starting with p and ending with a: [**p\*a**](/?query=p*a)
+- Find phrases where the first word is "tawa" and the second starts with "w":
+  [**tawa w\***](/?query=tawa+w*)
+- Find three word phrases beginning with "la": [**la \* \***](/?query=la+*+*)
 
 </details>
 
@@ -140,14 +149,22 @@ so you can see how much the graph has been shifted by the sum, such as in
 - Combine multiple ways to write the same word, like
   [**ala + x**](/?query=ala+%2B+x) or
   [**anu + y, anu, y**](/?query=anu+%2B+y,+anu,+y)
-- Do that with UCSUR text specifically: [**toki + 󱥬**](/?query=toki+%2B+󱥬)
+- Do the same with
+  [UCSUR text](https://www.kreativekorp.com/ucsur/charts/sitelen.html)
+  specifically: [**toki + 󱥬**](/?query=toki+%2B+󱥬)
 - Combine related words to compare to others:
   [**a + n, pona**](/?query=a+%2B+n,+pona)
 
 </details>
 
-**Note**: If you're currently viewing the **authors** or **hits per author**
-field, adding terms is disabled.
+**Notes**:
+
+- If you're viewing the **authors** or **hits per author** field, addition is
+  disabled. This is because authors are sets, rather than integers. Read more in
+  the [section on Authors](#authors).
+- You can only use wildcards in one term of a search which uses addition. This
+  limitation is necessary, because otherwise a search like **toki \* + musi \***
+  would result in attempting to graph one hundred terms.
 
 ### Subtracting terms
 
@@ -161,15 +178,61 @@ the word "toki" which are not in the term "toki pona".
 
 - Determine what grammatical positions a term is most common in:
   [**tenpo ni - tenpo ni la - lon tenpo ni, tenpo ni**](/?query=tenpo+ni+-+tenpo+ni+la+-+lon+tenpo+ni,+tenpo+ni)
-- Examine the use of a word without other conflicting terms, like in
-  [**san - kekan san**](/?query=san+-+kekan+san)
+- Examine the use of a word while omitting conflicting but unrelated terms, like
+  in [**san - kekan san**](/?query=san+-+kekan+san) or
+  [**usawi - jan usawi**](/?query=usawi+-+jan+usawi)
 
 </details>
 
-**Note**: If you're currently viewing the **authors** or **hits per author**
-field, subtracting terms is disabled.
+**Notes**:
 
-{/*
+- If you're viewing the **authors** or **hits per author** field, subtraction is
+  disabled. This is because authors are sets, rather than integers. Read more in
+  the [section on Authors](#authors).
+- You can only use wildcards in one term of a search which uses subtraction.
+  This limitation is necessary, because otherwise a search like **toki \* -
+  musi \*** would result in attempting to graph one hundred terms.
+
+### Attributes
+
+You can search for words and terms **in specific contexts** by appending an
+underscore `_` and then any of the following attributes:
+
+- **start**: Count only terms at the start of a sentence:
+  [**taso_start**](/?query=taso_start)
+- **end**: Count only terms at the end of a sentence:
+  [**anu seme_end**](/?query=anu+seme_end)
+- **inner**: Count only terms inside the sentence, neither at the
+  start nor end: [**nasa_inner**](/?query=nasa_inner)
+- **full**: Count only terms that are the entire sentence, at both the start
+  and end: [**toki_full**](/?query=toki_full)
+- **short**: Count only terms in "short" sentences, with fewer than 4 words:
+  [**toki pona_short**](/?query=toki+pona_short)
+- **long**: Count only terms in "long" sentences, with 4 or more words:
+  [**kama pona_long**](/?query=kama+pona_long)
+
+<details>
+  <summary>**Examples**</summary>
+
+- See the most common continuations after a "mi" sentence:
+  [**mi \*\_start**](/?query=mi+*_start)
+- See how sentences end when "la" is the second to last word:
+  [**la \*\_end**](/?query=la+*_end)
+- Combine with addition and subtraction to get more specific categories:
+  [**wawa - wawa_full**](/?query=wawa+-+wawa_full)
+
+</details>
+
+---
+
+<details>
+  <summary>**Obsolete: Minimum Sentence Length**</summary>
+
+**NOTE**: Minimum Sentence Length is no longer available in the current version
+of ilo Muni. This section is kept for those studying older ilo Muni databases.
+
+---
+
 ### Minimum Sentence Length
 
 You can **set a minimum sentence length** for a term by adding an underscore `_`
@@ -199,7 +262,8 @@ Read ahead to the options section on
   sentences!)
 
 </details>
-*/}
+
+</details>
 
 ---
 
@@ -233,8 +297,8 @@ the visual distance from 10 to 20 will be the same as the distance from 20 to
 
 ### Logarithmic
 
-The logarithmic scales squish all the data on the graph closer together by
-rendering every power of ten at the same size. This means that the visual
+The **logarithmic scales** squish all the data on the graph closer together by
+rendering every power of ten at the same scale. This means that the visual
 distance from 10 to 100 will be the same as the visual distance from 100 to
 1,000, and so on for 1,000 to 10,000 and beyond.
 
@@ -242,10 +306,10 @@ The benefit of this is that you can visually compare two graphs that a linear
 scale could not, because the graphs would be drawn closer together. On a linear
 scale, a word with 10,000 monthly uses would make a word with only 100 monthly
 uses essentially invisible,
-[which you can see here](/ilo-muni?query=toki%2C+selo&scale=abs). On the
-logarithmic scale though, the trend line of the less common word
-[becomes visible](/ilo-muni?query=toki%2C+selo&scale=logabs), letting you see
-that it still trends the same way as the much more popular word!
+[which you can see here](/?query=toki%2C+selo&scale=abs). On the logarithmic
+scale though, the trend line of the less common word
+[becomes visible](/?query=toki%2C+selo&scale=logabs), letting you see that it
+still trends the same way as the much more popular word!
 
 Another benefit of the logarithmic scale is that the original data, and
 therefore the original ordering of the data, is preserved. For example, in the
@@ -257,11 +321,17 @@ in popularity as the equivalent
 
 ### Minmax
 
+The **minmax scales** squash all of the data on the graph into the same range of
+0 to 1, letting you directly compare the trend of a graph entirely regardless of
+its magnitude. This scaling is achieved by finding the minimum and maximum
+points of a line, then subtracting the minimum from every datapoint and dividing
+each result by (max - min).
+
 For example, the **Relative Minmax scale** normalizes all the points in the
 **relative** graph to be between 0 and 1 while preserving the original curve of
 the graph. This is excellent for demonstrating that words like
-[**ona, li**](/?query=ona%2C+li&scale=normrel) trend similarly with use while
-being in different magnitudes.
+[**ona, li**](/?query=ona%2C+li&scale=normrel) trend similarly with use,
+regardless of the fact that they have wildly different magnitudes of usage.
 
 The **Absolute Minmax scale** normalizes all the points in the **absolute**
 graph to be between 0 and 1 while preserving the original curve of the graph.
@@ -269,8 +339,6 @@ This makes it helpful for demonstrating that
 [**toki, meli**](/?query=toki,+meli&scale=normabs) trend similarly with
 community activity while being in different mangitudes. This even applies
 [when comparing words and phrases](/?query=toki,+pona,+wawa+mute&scale=normabs).
-
-### Other
 
 ---
 
@@ -351,7 +419,7 @@ Here are the percentages that result from this data:
 - **toki pona** is **0.9%** of all words when you count it as a word itself. (90
   / 10000)
 
----
+With this data, we can ask the following reasonable questions:
 
 1. **What percentage of all same-length terms are this term?**
 
@@ -368,20 +436,21 @@ user, this would imply that all of the occurrences of **toki** were in the
 phrase **toki pona**, which they are not.
 
 Under this method, there isn't a way to compare "toki" and "toki pona" because
-their percentages are measured against unrelated totals: "percentage of all
-words" is not comparable to "percentage of all phrases of length 2", and
-percentages of each cannot be meaningfully added or subtracted. Doing math as
-though they are comparable will create confusing and incorrect results as we
-observed.
+their percentages are measured against unrelated totals derived from unrelated
+groups: "percentage of all words" is not comparable to "percentage of all
+phrases of length 2", and percentages of each cannot be meaningfully added or
+subtracted. Doing math as though they are comparable will create confusing and
+incorrect results as we observed.
 
 Strangely,
 [Google Ngrams does this intentionally according to their info page](https://books.google.com/ngrams/info),
 in spite of the fact that they allow you to add and subtract n-grams of
 different length. Direct quote, with bold added by me:
 
-> What the y-axis shows is this: **of all the bigrams** [terms of length 2] contained
-> in our sample of books written in English and published in the United States, **what
-> percentage of them** are "nursery school" or "child care"?
+> What the y-axis shows is this: **of all the bigrams** [terms of length 2]
+> contained in our sample of books written in English and published in the
+> United States, **what percentage of them** are "nursery school" or "child
+> care"?
 
 All that said, **this method is still useful.** It produces a sensible result on
 its own, still lets you do valid math on two or more terms with the same length,
@@ -479,8 +548,9 @@ determining how much of the entire language is these terms.
 It can be difficult to compare relative graphs for words which are in different
 magnitudes, such as
 [kijetesantakalu, soweli](/?query=kijetesantakalu%2C+soweli&scale=rel). I
-recommend the [Relative Minmax scale](#minmax) for cases like these, which can
-help to identify words which trend in the same way no matter their magnitude.
+recommend the [Relative Log scale](#logarithmic) or
+[Relative Minmax scale](#minmax) for cases like these, which can help to
+identify words which trend in the same way no matter their magnitude.
 
 #### Cumulative
 
@@ -523,8 +593,10 @@ set to be removed.
 
 Now, the issue should be obvious: If we only had the number of authors without
 knowing who the original authors were, we would remove the 2 authors of **toki
-pona** from the 4 authors of **toki** and get 2 authors. But we already know
-this is incorrect.
+pona** from the 4 authors of **toki** and get 2 authors. But in the above
+example, we know that there were 4 authors who said **toki**, and that only one
+of those authors had said **toki pona**, so the correct result should be 3
+authors.
 
 I'm considering a new database backend which would let me do the set math when
 performing such a query, but for the time being that cannot be done.
@@ -587,8 +659,8 @@ those zeroes appear in the middle of an otherwise busy graph, but this causes
 some misleading graphs when a word had no data from the start of a graphed
 period. Smoothing such a graph could
 [**imply that misikeke existed before November 2019**](/?query=misikeke&smoothing=10&smoother=gauss).
-This was fixed on August 13th; now, smoothing does not occur until the first
-non-zero element of a graph.
+This was fixed on August 13th 2024; now, smoothing does not occur until the
+first non-zero element of a graph.
 
 </details>
 
@@ -664,7 +736,9 @@ As of 2024-12-17, I have switched back to monthly buckets.
 
 </details>
 
-{/*
+<details>
+  <summary>**Obsolete: Minimum Sentence Length**</summary>
+
 ### Minimum Sentence Length
 
 **Note**: This is hidden by default! Click <Icon name="mingcute:tool-line" /> to
@@ -742,9 +816,11 @@ doing so would produce misleading graphs for both side-by-side comparison and
 for adding or subtracting specific results. If you're interested in that
 alternate data,
 [download the database!](https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz)
+(old link)
 
 </details>
-*/}
+
+</details>
 
 ### Smoother
 
@@ -757,7 +833,7 @@ show it.
   selected={defaultSmoother}
 />
 
-By default, **Window Avg** is set, and I don't recommend changing it from the
+By default, **Gaussian** is set, and I don't recommend changing it from the
 default unless you're aware of what change you're making and why. The different
 smoothers have different properties, but almost all of them boil down to making
 the data more readable when the month-to-month values are messy.
@@ -766,7 +842,8 @@ the data more readable when the month-to-month values are messy.
 
 The **Gaussian** smoother is the default smoother as of 2024-12-17. It makes
 highly smooth and presentable curves, and does a better job of preserving the
-locations of peaks and troughs than either Window Average or Exponential.
+locations and relative sizes of peaks and troughs than either Window Average or
+Exponential.
 
 #### Window Avg
 
@@ -781,8 +858,8 @@ data will
 [tend toward a flat line](/?query=toki%2C+pona%2C+toki+pona&smoothing=50&smoother=cwin)
 as all datapoints are set to the average of the entire graph, although data with
 regular peaks will exhibit
-[phantom peaks](/ilo-muni?query=suno+pi+toki+pona&smoothing=7&smoother=cwin)
-with sufficiently high smoothing.
+[phantom peaks](/?query=suno+pi+toki+pona&smoothing=7&smoother=cwin) with
+sufficiently high smoothing.
 
 #### Exponential
 
@@ -795,8 +872,8 @@ due to weighting later events more heavily than earlier ones.
 
 The **median** smoother finds the median of every value in the smoothing window,
 which results in a very square-looking graph. It occasionally exhibits the same
-[phantom peaks](/ilo-muni?query=suno+pi+toki+pona&smoothing=7&smoother=med) as
-Window Average
+[phantom peaks](/?query=suno+pi+toki+pona&smoothing=7&smoother=med) as Window
+Average
 
 #### Triangular
 
@@ -806,12 +883,12 @@ Window Average
 
 In previous sections, I discussed how [smoothing](#smoothing) can create
 misleading graphs, and how the math works for
-[phrases with 2 or more words](#relative)
-to create a consistent interpretation across the dataset. However, these are not
-the only interpretation challenges. Most of the remaining bias is in where and
-how the data is collected, which I describe the specifics of below.
+[phrases with 2 or more words](#relative) to create a consistent interpretation
+across the dataset. However, these are not the only interpretation challenges.
+Most of the remaining bias is in where and how the data is collected, which I
+describe the specifics of below.
 
-{/* and [words as they appear in sentences with a minimum length](#minimum-sentence-length) */}
+{/*and [words as they appear in sentences with a minimum length](#minimum-sentence-length)*/}
 
 ### Bots
 
@@ -961,9 +1038,9 @@ instant as the network itself. If you have any suggestions for one,
 ### Why is my subtraction negative?
 
 That's allowed! If you do
-[**tawa pona - kama pona**](ilo-muni/?query=tawa+pona+-+kama+pona), you'll get a
-graph which is mostly negative. This means the phrase "kama pona" is more common
-than the phrase "tawa pona", probably because the community is very welcoming!
+[**tawa pona - kama pona**](/?query=tawa+pona+-+kama+pona), you'll get a graph
+which is mostly negative. This means the phrase "kama pona" is more common than
+the phrase "tawa pona", probably because the community is very welcoming!
 
 It's _probably_ possible to get floating point silliness when subtracting, but I
 haven't seen that happen personally-
@@ -1023,7 +1100,7 @@ most people would agree that those messages are not reflective of how toki pona
 is used in either media or conversation, and these sorts of sentences otherwise
 make it difficult to examine the rest of the data.
 
-### Why is do hits and authors drop so much between Feb and Aug 2023?
+### Why do hits and authors drop so much between Feb and Aug 2023?
 
 Because at the time, the mod team of **ma pona pi toki pona** (including
 myself!), chose to archive half of the channels in the toki pona only category
