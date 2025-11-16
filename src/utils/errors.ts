@@ -74,13 +74,17 @@ export const ERRORS: Record<string, QueryError> = {
   },
 };
 
-function subst(template: string, values: Record<string, string>) {
-  return template.replace(/\$\{(\w+)\}/g, (_, key) => {
-    if (values[key] === undefined) {
-      throw new Error(`Missing value for key "${key}"`);
-    }
-    return values[key];
-  });
+function subst(template: string, values: Record<string, Stringable>) {
+  return template.replace(
+    /\$\{(\w+)\}/g,
+    // @ts-expect-error: stringable is assignable to string
+    (_: string, key: string): Stringable => {
+      if (values[key] === undefined) {
+        throw new Error(`Missing value for key "${key}"`);
+      }
+      return values[key];
+    },
+  );
 }
 
 export function makeError(
