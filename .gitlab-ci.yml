@@ -1,6 +1,7 @@
 image: node:22
 
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
     - .pnpm-store
 
@@ -11,7 +12,7 @@ pages:
   before_script:
     - corepack enable
     - corepack prepare pnpm@latest --activate
-    - pnpm install
+    - pnpm install --frozen-lockfile
   script:
     - pnpm build
     # gitlab serves from public, not dist
