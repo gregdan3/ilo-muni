@@ -1,0 +1,23 @@
+image: node:22
+
+cache:
+  paths:
+    - .pnpm-store
+
+pages:
+  stage: deploy
+  variables:
+    PNPM_HOME: "$CI_PROJECT_DIR/.pnpm-store"
+  before_script:
+    - corepack enable
+    - corepack prepare pnpm@latest --activate
+    - pnpm install
+  script:
+    - pnpm build
+    # gitlab serves from public, not dist
+    - mv dist public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
