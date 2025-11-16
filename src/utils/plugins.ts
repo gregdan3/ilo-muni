@@ -138,10 +138,10 @@ Tooltip.positioners.cursor = function (
   const chart = this.chart;
   const chartArea = chart.chartArea;
   if (
-    eventPosition.x < chartArea.left ||
-    eventPosition.x > chartArea.right ||
-    eventPosition.y < chartArea.top ||
-    eventPosition.y > chartArea.bottom
+    eventPosition.x! < chartArea.left ||
+    eventPosition.x! > chartArea.right ||
+    eventPosition.y! < chartArea.top ||
+    eventPosition.y! > chartArea.bottom
   ) {
     return false;
   }
