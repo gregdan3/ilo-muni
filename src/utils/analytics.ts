@@ -8,8 +8,8 @@ export function countQuery(
 
   function count() {
     // @ts-expect-error: it will exist
-    if (window.goatcounter && window.goatcounter.count) {
-      clearInterval(t);
+    if (window.goatcounter! && window.goatcounter.count) {
+      window.clearInterval(t);
       // @ts-expect-error: it does exist
       window.goatcounter.count({
         path: path,
@@ -18,11 +18,11 @@ export function countQuery(
       });
       counted = true;
     } else if (attempts >= maxAttempts) {
-      clearInterval(t);
+      window.clearInterval(t);
     }
   }
 
-  const t = setInterval(function () {
+  const t = window.setInterval(function () {
     attempts++;
     count();
   }, interval);
