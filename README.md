@@ -11,7 +11,7 @@ depends on and exists because of two prior tools I made,
 
 ## [More about ilo Muni](https://ilo.muni.la/about/)
 
-## [How to use ilo Muni](https://ilo.muni.la//help/)
+## [How to use ilo Muni](https://ilo.muni.la/help/)
 
 ## [Acknowledgements and Thanks](https://ilo.muni.la/about/#thank-you-to)
 
@@ -24,7 +24,6 @@ depends on and exists because of two prior tools I made,
   - ki appears in half a dozen different things that aren't toki pona
 - More distinct colors, but not ugly ones
 - Bold every August (for toki pona's birthday)
-- Always show the last tick on the graph
 
 ### New Features
 
@@ -64,7 +63,7 @@ which is [distributed with this software](./LICENSE-AGPL) applies to all
 components of this software which are not specified by the adjacent CC-BY-SA-4.0
 license.
 
-Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
+Copyright (C) 2024 Gregory Danielson III (@gregdan3, <gregdan3@pm.me>)
 
 ### CC-BY-SA-4.0
 
@@ -74,16 +73,16 @@ which is [distributed with this software](./LICENSE-CC-BY-SA) applies to the
 following files, files in a specified directory, and files at a specified URL;
 each is listed below its original copyright holder.
 
-Copyright (C) 2024 Gregory Danielson III (@gregdan3, gregdan3@pm.me)
+Copyright (C) 2024 Gregory Danielson III (@gregdan3, <gregdan3@pm.me>)
 
 - src/pages/about/
 - src/pages/help/
 - static/db/
-- https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz
-- https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz
-- https://gregdan3.com/sqlite/2024-11-01-trimmed.sqlite.gz
-- https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz
-
+- <https://gregdan3.com/sqlite/2024-08-08-trimmed.sqlite.gz>
+- <https://gregdan3.com/sqlite/2024-09-07-trimmed.sqlite.gz>
+- <https://gregdan3.com/sqlite/2024-11-01-trimmed.sqlite.gz>
+- <https://gregdan3.com/sqlite/2024-11-29-trimmed.sqlite.gz>
+- <https://gregdan3.com/sqlite/2025-10-20-trimmed.sqlite.gz>
 
 Copyright (C) 2024 Nia (@nia.co, @yknowlikenia)
 
