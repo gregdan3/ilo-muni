@@ -203,6 +203,11 @@ export const SAMPLE_SEARCHES = [
   "weka e sona, weka sona e ni, weka sona - weka sona e ni",
   "ni kin li, sona kiwen",
   "o luka e kasi",
+  "toki_full, mu_full",
+  "taso_start, anu seme_end",
+  "wawa_full, a_full",
+  "toki_inner, pona_inner",
+  "toki, toki_long",
 ];
 
 // absolutes should be preserved
