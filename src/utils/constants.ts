@@ -164,6 +164,7 @@ export const SAMPLE_SEARCHES = [
   "sewi, lawa",
   "sina pona, pona tawa sina, pona o tawa sina",
   "sina seme, sina pilin seme, sina pali e seme",
+  "sina seme_full, sina pilin seme_full, sina pali e seme_full",
   "sina wan, sina mute, sina ale",
   "sin, namako",
   "sinpin, monsi",
@@ -188,7 +189,6 @@ export const SAMPLE_SEARCHES = [
   "tenpo wan la, tenpo suno wan la",
   "tenpo weka, tenpo pini",
   "tenpo weka, tenpo poka",
-  // "toki_1 - toki_2, pona_1 - pona_2",
   "toki epanja, ma epanja",
   "toki inli, ma inli",
   "toki kanse, ma kanse",
@@ -208,6 +208,11 @@ export const SAMPLE_SEARCHES = [
   "wawa_full, a_full",
   "toki_inner, pona_inner",
   "toki, toki_long",
+  "a a a_full, musi_full",
+  "wawa_full, wawa_start - wawa_full, wawa_end - wawa_full",
+  "wawa_short, wawa_full",
+  "kama pona, kama sona",
+  "tawa lukin, tawa kute, tawa pilin",
 ];
 
 // absolutes should be preserved
