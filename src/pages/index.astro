@@ -242,12 +242,14 @@ const frontmatter = { title: "ilo Muni" };
     let query = queryReprs.join(", ");
     // technically wasteful but looks better
 
+    // some params get changed by the query itself
     let usedParams: Record<string, string> = {
       query: query,
       scale: scaleDropdown.value,
       field: fieldDropdown.value,
       start: startDropdown.value,
       end: endDropdown.value,
+      unit: unitDropdown.value,
     };
 
     if (SCALES[scale].smoothable) {
